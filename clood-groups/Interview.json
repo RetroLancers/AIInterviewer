@@ -1,0 +1,10 @@
+{
+    "name": "Interview",
+    "description": "Tables and services related to the interview process",
+    "files": [
+        "AIInterviewer.ServiceModel/Tables/Interview/Interview.cs",
+        "AIInterviewer.ServiceModel/Tables/Interview/InterviewChatHistory.cs",
+        "AIInterviewer.ServiceModel/Tables/Interview/InterviewResult.cs",
+        "AIInterviewer/Migrations/Migration1001_CreateInterviewTables.cs"
+    ]
+}

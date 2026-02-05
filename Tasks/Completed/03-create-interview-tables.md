@@ -29,7 +29,7 @@ Create the following tables in `AIInterviewer.ServiceModel/Tables/`:
 - `DateTime CreatedDate` (Required)
 
 ## Checklist
-- [ ] Create table classes in `AIInterviewer.ServiceModel/Tables/`
-- [ ] Add Migrations for the new tables
-- [ ] Run migrations to verify schema
-- [ ] Update clood files for the Database domain
+- [x] Create table classes in `AIInterviewer.ServiceModel/Tables/`
+- [x] Add Migrations for the new tables
+- [x] Run migrations to verify schema
+- [x] Update clood files for the Database domain
