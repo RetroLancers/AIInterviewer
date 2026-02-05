@@ -1,16 +1,9 @@
 using ServiceStack.DataAnnotations;
-<<<<<<< HEAD
-
-namespace AIInterviewer.ServiceModel.Tables.Interview;
-
-[Alias("interviewresults")]
-=======
 using System;
 
 namespace AIInterviewer.ServiceModel.Tables.Interview;
 
 [Alias("interview_result")]
->>>>>>> feature/interview-completion-and-report
 public class InterviewResult
 {
     [AutoIncrement]

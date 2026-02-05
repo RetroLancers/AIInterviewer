@@ -1,22 +1,12 @@
-<<<<<<< HEAD
-using ServiceStack;
-using ServiceStack.DataAnnotations;
 using ServiceStack.OrmLite;
+using ServiceStack.DataAnnotations;
+using System;
 
 namespace AIInterviewer.Migrations;
 
 public class Migration1001_CreateInterviewTables : MigrationBase
 {
-    [Alias("interviews")]
-=======
-using ServiceStack.OrmLite;
-using ServiceStack.DataAnnotations;
-using System;
-
-public class Migration1001_CreateInterviewTables : MigrationBase
-{
     [Alias("interview")]
->>>>>>> feature/interview-completion-and-report
     public class Interview
     {
         [AutoIncrement]
@@ -24,27 +14,17 @@ public class Migration1001_CreateInterviewTables : MigrationBase
         public int Id { get; set; }
 
         [Required]
-<<<<<<< HEAD
-=======
         [StringLength(8000)]
->>>>>>> feature/interview-completion-and-report
         public string Prompt { get; set; }
 
         [Required]
         public DateTime CreatedDate { get; set; }
 
-<<<<<<< HEAD
-        public string? UserId { get; set; }
-    }
-
-    [Alias("interviewchathistories")]
-=======
         [StringLength(255)]
         public string? UserId { get; set; }
     }
 
     [Alias("interview_chat_history")]
->>>>>>> feature/interview-completion-and-report
     public class InterviewChatHistory
     {
         [AutoIncrement]
@@ -58,21 +38,14 @@ public class Migration1001_CreateInterviewTables : MigrationBase
         public DateTime EntryDate { get; set; }
 
         [Required]
-<<<<<<< HEAD
-=======
         [StringLength(50)]
->>>>>>> feature/interview-completion-and-report
         public string Role { get; set; }
 
         [Required]
         public string Content { get; set; }
     }
 
-<<<<<<< HEAD
-    [Alias("interviewresults")]
-=======
     [Alias("interview_result")]
->>>>>>> feature/interview-completion-and-report
     public class InterviewResult
     {
         [AutoIncrement]
