@@ -5,6 +5,7 @@
         "AIInterviewer.ServiceModel/Tables/Configuration/SiteConfig.cs",
         "AIInterviewer.ServiceModel/Tables/Configuration/SiteConfigHolder.cs",
         "AIInterviewer/Migrations/Migration1000_CreateSiteConfig.cs",
+        "AIInterviewer/Migrations/Migration1002_AddTranscriptionProviderToSiteConfig.cs",
         "AIInterviewer.ServiceModel/Types/Configuration/ExtensionMethods/SiteConfigExtensions.cs",
         "AIInterviewer.ServiceModel/Types/Configuration/GetSiteConfigRequest.cs",
         "AIInterviewer.ServiceModel/Types/Configuration/UpdateSiteConfigRequest.cs",
@@ -12,6 +13,7 @@
         "AIInterviewer.ServiceInterface/Services/Configuration/SiteConfigService.cs",
         "AIInterviewer/ConfigureSiteConfig.cs",
         "AIInterviewer/Migrations/Migration1001_AddKokoroVoiceToSiteConfig.cs",
-        "AIInterviewer.Client/src/components/SiteConfigEditor.vue"
+        "AIInterviewer.Client/src/components/SiteConfigEditor.vue",
+        "AIInterviewer.Client/src/composables/useSiteConfig.ts"
     ]
 }

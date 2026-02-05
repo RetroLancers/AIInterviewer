@@ -21,7 +21,14 @@ public class ConfigureSiteConfig : IHostingStartup
             var siteConfigHolder = appHost.Resolve<SiteConfigHolder>();
             if (siteConfigs is { Count: > 0 })
             {
-                siteConfigHolder.SiteConfig = siteConfigs[0];
+                var siteConfig = siteConfigs[0];
+                if (string.IsNullOrWhiteSpace(siteConfig.TranscriptionProvider))
+                {
+                    siteConfig.TranscriptionProvider = "Gemini";
+                    db.Update(siteConfig);
+                }
+
+                siteConfigHolder.SiteConfig = siteConfig;
             }
             else
             {
@@ -30,7 +37,8 @@ public class ConfigureSiteConfig : IHostingStartup
                     GeminiApiKey = "",
                     InterviewModel = "",
                     GlobalFallbackModel = "",
-                    KokoroVoice = "af_heart"
+                    KokoroVoice = "af_heart",
+                    TranscriptionProvider = "Gemini"
                 };
                 siteConfigHolder.SiteConfig = siteConfig;
                 siteConfig.Id = (int)db.Insert(siteConfig, true);

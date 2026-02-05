@@ -6,6 +6,7 @@
         "AIInterviewer.Client/src/pages/interviews/[id]/index.vue",
         "AIInterviewer.Client/src/pages/interviews/[id]/result.vue",
         "AIInterviewer.Client/src/components/InterviewChat.vue",
+        "AIInterviewer.Client/src/components/SiteConfigEditor.vue",
         "AIInterviewer.Client/src/composables/useVocal.ts",
         "AIInterviewer.Client/src/composables/useSiteConfig.ts"
     ]

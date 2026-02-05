@@ -42,7 +42,7 @@
                   @keyup.enter="sendText"
                   placeholder="Type your response..." 
                   class="flex-grow p-3 border dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition"
-                  :disabled="isRecording || processingAi"
+                  :disabled="isActiveRecording || processingAi"
                />
                
                <button 
@@ -50,11 +50,11 @@
                   :disabled="processingAi"
                   :class="[
                       'p-4 rounded-full transition shadow-md flex items-center justify-center',
-                      isRecording ? 'bg-red-600 animate-pulse text-white' : 'bg-blue-600 text-white hover:bg-blue-700'
+                      isActiveRecording ? 'bg-red-600 animate-pulse text-white' : 'bg-blue-600 text-white hover:bg-blue-700'
                   ]"
                   title="Toggle Microphone"
                >
-                  <svg v-if="!isRecording" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg v-if="!isActiveRecording" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
                   </svg>
                   <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -65,7 +65,7 @@
 
                <button 
                   @click="sendText"
-                  :disabled="!textInput.trim() || isRecording || processingAi"
+                  :disabled="!textInput.trim() || isActiveRecording || processingAi"
                   class="bg-green-600 text-white p-4 rounded-full hover:bg-green-700 transition disabled:opacity-50 shadow-md"
                >
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -73,7 +73,7 @@
                   </svg>
                </button>
             </div>
-            <div v-if="isRecording" class="text-center mt-2 text-red-600 text-sm font-bold animate-pulse">
+            <div v-if="isActiveRecording" class="text-center mt-2 text-red-600 text-sm font-bold animate-pulse">
                 Recording... {{ recordingDuration }}s
             </div>
         </div>
@@ -81,8 +81,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick, watch } from 'vue'
+import { computed, ref, onMounted, nextTick, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useSpeechRecognition } from '@vueuse/core'
 import { client } from '@/lib/gateway'
 import { 
     GetInterview, 
@@ -93,6 +94,7 @@ import {
     type InterviewChatHistoryDto 
 } from '@/lib/dtos'
 import { useVocal } from '@/composables/useVocal'
+import { useSiteConfig } from '@/composables/useSiteConfig'
 
 const route = useRoute()
 const router = useRouter()
@@ -104,8 +106,28 @@ const textInput = ref('')
 const chatContainer = ref<HTMLDivElement | null>(null)
 
 const { isRecording, startRecording, stopRecording, blobToBase64 } = useVocal()
+const { siteConfig } = useSiteConfig()
 const recordingDuration = ref(0)
 let durationInterval: any = null
+const lastTranscript = ref('')
+
+const transcriptionProvider = computed(() => siteConfig.value?.transcriptionProvider || 'Gemini')
+const useBrowserTranscription = computed(() => transcriptionProvider.value === 'Browser')
+
+const {
+    result: speechResult,
+    isListening,
+    isSupported: isSpeechSupported,
+    start: startListening,
+    stop: stopListening
+} = useSpeechRecognition({
+    continuous: false,
+    interimResults: false
+})
+
+const isActiveRecording = computed(() =>
+    useBrowserTranscription.value ? isListening.value : isRecording.value
+)
 
 const scrollToBottom = async () => {
     await nextTick()
@@ -126,6 +148,24 @@ const loadInterview = async () => {
 }
 
 const toggleRecording = async () => {
+    if (useBrowserTranscription.value) {
+        if (!isSpeechSupported.value) {
+            alert('Browser speech recognition is not supported in this browser.')
+            return
+        }
+
+        if (isListening.value) {
+            clearInterval(durationInterval)
+            stopListening()
+        } else {
+            lastTranscript.value = ''
+            recordingDuration.value = 0
+            durationInterval = setInterval(() => recordingDuration.value++, 1000)
+            startListening()
+        }
+        return
+    }
+
     if (isRecording.value) {
         clearInterval(durationInterval)
         const { blob, mimeType } = await stopRecording()
@@ -214,6 +254,20 @@ onMounted(() => {
 watch(history, () => {
     scrollToBottom()
 }, { deep: true })
+
+watch(isListening, (listening) => {
+    if (!listening) {
+        clearInterval(durationInterval)
+    }
+})
+
+watch(speechResult, async (value) => {
+    if (!useBrowserTranscription.value) return
+    const transcript = value?.trim()
+    if (!transcript || transcript === lastTranscript.value) return
+    lastTranscript.value = transcript
+    await sendMessage(transcript)
+})
 </script>
 
 <style scoped>

@@ -638,6 +638,7 @@ export class SiteConfigResponse
     public interviewModel: string;
     public globalFallbackModel?: string;
     public kokoroVoice?: string;
+    public transcriptionProvider: string;
 
     public constructor(init?: Partial<SiteConfigResponse>) { (Object as any).assign(this, init); }
 }
@@ -901,6 +902,8 @@ export class UpdateSiteConfigRequest implements IReturn<IdResponse>
 
     public globalFallbackModel?: string;
     public kokoroVoice?: string;
+    // @Validate(Validator="NotEmpty")
+    public transcriptionProvider: string;
 
     public constructor(init?: Partial<UpdateSiteConfigRequest>) { (Object as any).assign(this, init); }
     public getTypeName() { return 'UpdateSiteConfigRequest'; }
@@ -1111,4 +1114,3 @@ export class QueryUsers extends QueryDb<User> implements IReturn<QueryResponse<U
     public getMethod() { return 'GET'; }
     public createResponse() { return new QueryResponse<User>(); }
 }
-

@@ -23,5 +23,8 @@ public class SiteConfig
 
     [StringLength(255)]
     public string? KokoroVoice { get; set; }
-}
 
+    [Required]
+    [StringLength(64)]
+    public string TranscriptionProvider { get; set; } = "Gemini";
+}

@@ -13,27 +13,24 @@ export function useSiteConfig() {
         isLoading.value = true
         error.value = null
 
-        try {
-            // Site config typically has ID of 1 (singleton pattern)
-            const response = await client.api(new GetSiteConfigRequest({ id: 1 }))
+        // Site config typically has ID of 1 (singleton pattern)
+        const response = await client.api(new GetSiteConfigRequest({ id: 1 }))
 
-            if (response.succeeded && response.response) {
-                siteConfig.value = response.response
-            } else {
-                error.value = response.error?.message || 'Failed to load site configuration'
-            }
-        } catch (e: any) {
-            error.value = e.message || 'An error occurred while loading site configuration'
-        } finally {
-            isLoading.value = false
+        if (response.succeeded && response.response) {
+            siteConfig.value = response.response
+        } else {
+            error.value = response.error?.message || 'Failed to load site configuration'
         }
+
+        isLoading.value = false
     }
 
     const saveSiteConfig = async (
         geminiApiKey: string,
         interviewModel: string,
         globalFallbackModel?: string,
-        kokoroVoice?: string
+        kokoroVoice?: string,
+        transcriptionProvider?: string
     ) => {
         if (!siteConfig.value) {
             error.value = 'No configuration loaded'
@@ -44,33 +41,29 @@ export function useSiteConfig() {
         error.value = null
         saveSuccess.value = false
 
-        try {
-            const response = await client.api(new UpdateSiteConfigRequest({
-                id: siteConfig.value.id,
-                geminiApiKey,
-                interviewModel,
-                globalFallbackModel: globalFallbackModel || undefined,
-                kokoroVoice: kokoroVoice || undefined
-            }))
+        const response = await client.api(new UpdateSiteConfigRequest({
+            id: siteConfig.value.id,
+            geminiApiKey,
+            interviewModel,
+            globalFallbackModel: globalFallbackModel || undefined,
+            kokoroVoice: kokoroVoice || undefined,
+            transcriptionProvider: transcriptionProvider || siteConfig.value.transcriptionProvider || 'Gemini'
+        }))
 
-            if (response.succeeded) {
-                saveSuccess.value = true
-                // Reload the config to get the latest state
-                await loadSiteConfig()
-                setTimeout(() => {
-                    saveSuccess.value = false
-                }, 3000)
-                return true
-            } else {
-                error.value = response.error?.message || 'Failed to update site configuration'
-                return false
-            }
-        } catch (e: any) {
-            error.value = e.message || 'An error occurred while saving site configuration'
-            return false
-        } finally {
+        if (response.succeeded) {
+            saveSuccess.value = true
+            // Reload the config to get the latest state
+            await loadSiteConfig()
+            setTimeout(() => {
+                saveSuccess.value = false
+            }, 3000)
             isSaving.value = false
+            return true
         }
+
+        error.value = response.error?.message || 'Failed to update site configuration'
+        isSaving.value = false
+        return false
     }
 
     onMounted(() => {
