@@ -6,7 +6,7 @@ namespace AIInterviewer.ServiceInterface.Services.Chat;
 
 public class ChatService(SiteConfigHolder siteConfigHolder) : Service
 {
-    public async Task<object> Post(TranscribeAudioRequest request)
+    public async Task<TranscribeAudioResponse> Post(TranscribeAudioRequest request)
     {
         var config = siteConfigHolder.SiteConfig;
         if (config == null || string.IsNullOrEmpty(config.GeminiApiKey))

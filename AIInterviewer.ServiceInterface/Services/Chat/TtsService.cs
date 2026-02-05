@@ -7,11 +7,13 @@ using KokoroSharp.Processing;
 using AIInterviewer.ServiceModel.Tables.Configuration;
 using AIInterviewer.ServiceModel.Types.Chat;
 
+namespace AIInterviewer.ServiceInterface.Services.Chat;
+ 
 public class TtsService(SiteConfigHolder siteConfigHolder) : Service
 {
     private static KokoroTTS _tts;
     private static readonly object _lock = new();
-
+ 
     private KokoroTTS GetTts()
     {
         lock (_lock)
@@ -29,8 +31,8 @@ public class TtsService(SiteConfigHolder siteConfigHolder) : Service
             return _tts;
         }
     }
-
-    public async Task<object> Post(TextToSpeechRequest request)
+ 
+    public async Task<HttpResult> Post(TextToSpeechRequest request)
     {
         if (string.IsNullOrEmpty(request.Text))
             throw new HttpError(400, "ValidationError", "Text is required.");
