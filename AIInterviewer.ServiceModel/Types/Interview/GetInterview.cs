@@ -14,4 +14,5 @@ public class GetInterviewResponse
 {
     public InterviewDto Interview { get; set; }
     public List<InterviewChatHistoryDto> History { get; set; }
+    public InterviewResultDto? Result { get; set; }
 }

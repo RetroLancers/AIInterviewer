@@ -34,4 +34,17 @@ public static class InterviewExtensions
         if (tables == null) return new List<InterviewChatHistoryDto>();
         return tables.Select(t => t.ToDto()).ToList();
     }
+
+    public static InterviewResultDto ToDto(this TableNamespace.InterviewResult table)
+    {
+        if (table == null) return null;
+        return new InterviewResultDto
+        {
+            Id = table.Id,
+            InterviewId = table.InterviewId,
+            ReportText = table.ReportText,
+            Score = table.Score,
+            CreatedDate = table.CreatedDate
+        };
+    }
 }

@@ -16,3 +16,12 @@ public class InterviewChatHistoryDto
     public string Content { get; set; }
     public DateTime EntryDate { get; set; }
 }
+
+public class InterviewResultDto
+{
+    public int Id { get; set; }
+    public int InterviewId { get; set; }
+    public string? ReportText { get; set; }
+    public int Score { get; set; }
+    public DateTime CreatedDate { get; set; }
+}

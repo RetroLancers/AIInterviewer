@@ -46,11 +46,13 @@ public class InterviewService : Service
         if (interview == null) throw HttpError.NotFound("Interview not found");
 
         var history = await Db.SelectAsync<InterviewChatHistory>(x => x.InterviewId == request.Id);
+        var result = await Db.SingleAsync<InterviewResult>(x => x.InterviewId == request.Id);
 
         return new GetInterviewResponse
         {
             Interview = interview.ToDto(),
-            History = history.OrderBy(x => x.EntryDate).ToDto()
+            History = history.OrderBy(x => x.EntryDate).ToDto(),
+            Result = result.ToDto()
         };
     }
 
@@ -97,5 +99,66 @@ public class InterviewService : Service
         {
             History = updatedHistory.OrderBy(x => x.EntryDate).ToDto()
         };
+    }
+
+    public async Task<FinishInterviewResponse> Post(FinishInterview request)
+    {
+        var interview = await Db.SingleByIdAsync<AIInterviewer.ServiceModel.Tables.Interview.Interview>(request.Id);
+        if (interview == null) throw HttpError.NotFound("Interview not found");
+
+        var history = await Db.SelectAsync<InterviewChatHistory>(x => x.InterviewId == request.Id);
+        if (!history.Any()) throw HttpError.BadRequest("No conversation to evaluate");
+
+        var conversationParams = string.Join("\n", history.OrderBy(x => x.EntryDate).Select(x => $"{x.Role}: {x.Content}"));
+        
+        var evaluationPrompt = $@"
+Evaluate the following interview based on the candidate's responses.
+Role: Interviewer (AI) vs Candidate (User).
+
+Conversation:
+{conversationParams}
+
+Provide a JSON output with the following schema:
+{{
+  ""Score"": (integer 0-100),
+  ""Feedback"": (string, comprehensive markdown report)
+}}
+";
+        
+        var schema = new Google.GenAI.Types.Schema
+        {
+            Type = Google.GenAI.Types.Type.OBJECT,
+            Properties = new Dictionary<string, Google.GenAI.Types.Schema>
+            {
+                ["Score"] = new() { Type = Google.GenAI.Types.Type.INTEGER },
+                ["Feedback"] = new() { Type = Google.GenAI.Types.Type.STRING }
+            },
+            Required = new List<string> { "Score", "Feedback" }
+        };
+
+        var evaluation = await Gemini.GenerateJsonAsync<EvaluationResponse>(evaluationPrompt, schema);
+
+        if (evaluation == null) throw new Exception("Failed to generate evaluation");
+
+        var result = new InterviewResult
+        {
+            InterviewId = interview.Id,
+            ReportText = evaluation.Feedback,
+            Score = evaluation.Score,
+            CreatedDate = DateTime.UtcNow
+        };
+
+        await Db.SaveAsync(result);
+
+        return new FinishInterviewResponse
+        {
+            Result = result.ToDto()
+        };
+    }
+
+    public class EvaluationResponse
+    {
+        public int Score { get; set; }
+        public string? Feedback { get; set; }
     }
 }
