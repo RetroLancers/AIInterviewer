@@ -1,4 +1,4 @@
-﻿using AIInterviewer.ServiceModel.Tables.Configuration;
+using AIInterviewer.ServiceModel.Tables.Configuration;
 using ServiceStack.Data;
 using ServiceStack.OrmLite;
 
@@ -29,7 +29,8 @@ public class ConfigureSiteConfig : IHostingStartup
                 {
                     GeminiApiKey = "",
                     InterviewModel = "",
-                    GlobalFallbackModel = ""
+                    GlobalFallbackModel = "",
+                    KokoroVoice = "af_heart"
                 };
                 siteConfigHolder.SiteConfig = siteConfig;
                 siteConfig.Id = (int)db.Insert(siteConfig, true);
