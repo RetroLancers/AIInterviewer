@@ -1,5 +1,5 @@
 # Update-Dtos.ps1
-# This script starts the backend server, waits for it to be ready, 
+# This script starts the backend server in a new process, waits briefly,
 # updates the TypeScript DTOs in the client project, and then shuts down the server.
 
 param(
@@ -17,68 +17,9 @@ $portSuffix = $TaskNumber.ToString("00")
 $baseUrl = "https://localhost:50$portSuffix"
 $fallbackUrl = "http://localhost:51$portSuffix"
 
-$metadataPath = "/metadata"
 $clientDir = Join-Path $PSScriptRoot "AIInterviewer.Client"
 $serverDir = Join-Path $PSScriptRoot "AIInterviewer"
-
-
-function Test-ServerReady($url) {
-    try {
-        $response = Invoke-WebRequest -Uri ($url + $metadataPath) -Method Head -TimeoutSec 2 -ErrorAction SilentlyContinue
-        return $response.StatusCode -eq 200
-    }
-    catch {
-        return $false
-    }
-}
-
-# 1. Check if server is already running
-Write-Host "Checking if server is already running..." -ForegroundColor Cyan
-$alreadyRunning = $false
-$targetUrl = ""
-
-if (Test-ServerReady $baseUrl) {
-    $targetUrl = $baseUrl
-    $alreadyRunning = $true
-}
-elseif (Test-ServerReady $fallbackUrl) {
-    $targetUrl = $fallbackUrl
-    $alreadyRunning = $true
-}
-
-$serverProcess = $null
-
-if (-not $alreadyRunning) {
-    Write-Host "Starting server in $serverDir..." -ForegroundColor Cyan
-    # Start dotnet run on specific ports
-    $serverProcess = Start-Process dotnet -ArgumentList "run", "--project", "$serverDir", "--urls", "$baseUrl;$fallbackUrl" -NoNewWindow -PassThru
-    
-    Write-Host "Waiting for server to start successfully..." -ForegroundColor Cyan
-    $timeout = 60 # seconds
-    $elapsed = 0
-    while ($elapsed -lt $timeout) {
-        if (Test-ServerReady $baseUrl) {
-            Write-Host "`nServer started successfully on $baseUrl!" -ForegroundColor Green
-            break
-        }
-        elseif (Test-ServerReady $fallbackUrl) {
-            Write-Host "`nServer started successfully on $fallbackUrl!" -ForegroundColor Green
-            break
-        }
-        Start-Sleep -Seconds 2
-        $elapsed += 2
-        Write-Host "." -NoNewline
-    }
-
-    if ($elapsed -ge $timeout) {
-        Write-Error "Timeout waiting for server to start."
-        if ($serverProcess) { Stop-ServiceStackServer $serverProcess.Id }
-        exit 1
-    }
-}
-else {
-    Write-Host "Server is already running on $targetUrl." -ForegroundColor Green
-}
+$appDataDir = Join-Path $serverDir "App_Data"
 
 function Stop-ServiceStackServer($procId) {
     Write-Host "Stopping server process tree (PID: $procId)..." -ForegroundColor Cyan
@@ -86,7 +27,21 @@ function Stop-ServiceStackServer($procId) {
     taskkill /F /T /PID $procId 2>$null
 }
 
-# 2. Update DTOs
+# 1. Ensure App_Data exists (required for app startup/migrations)
+if (-not (Test-Path -Path $appDataDir -PathType Container)) {
+    Write-Host "Missing App_Data folder in $serverDir." -ForegroundColor Red
+    Write-Host "Create App_Data and run 'npm run migrate' from the AIInterviewer folder, then try again." -ForegroundColor Red
+    exit 1
+}
+
+# 2. Start server in a new process and wait briefly
+Write-Host "Starting server in $serverDir..." -ForegroundColor Cyan
+$serverProcess = Start-Process dotnet -ArgumentList "run", "--project", "$serverDir", "--urls", "$baseUrl;$fallbackUrl" -WorkingDirectory $serverDir -NoNewWindow -PassThru
+
+Write-Host "Waiting 15 seconds for server to start..." -ForegroundColor Cyan
+Start-Sleep -Seconds 15
+
+# 3. Update DTOs
 Write-Host "`nUpdating DTOs in $clientDir..." -ForegroundColor Cyan
 Push-Location $clientDir
 try {
@@ -101,13 +56,10 @@ finally {
     Pop-Location
 }
 
-# 3. Cleanup
+# 4. Cleanup
 if ($serverProcess) {
     Stop-ServiceStackServer $serverProcess.Id
     Write-Host "Server stopped." -ForegroundColor Green
-}
-else {
-    Write-Host "Server was already running; leaving it active." -ForegroundColor Yellow
 }
 
 Write-Host "`nDone!" -ForegroundColor Cyan
