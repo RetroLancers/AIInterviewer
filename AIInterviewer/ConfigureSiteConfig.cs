@@ -27,7 +27,8 @@ public class ConfigureSiteConfig : IHostingStartup
             {
                 GeminiApiKey = "",
                 InterviewModel = "",
-                GlobalFallbackModel = ""
+                GlobalFallbackModel = "",
+                KokoroVoice = "af_heart"
             };
             siteConfigHolder.SiteConfig = siteConfig;
             siteConfig.Id = (int)db.Insert(siteConfig, true);

@@ -17,8 +17,8 @@ Create a backend service that utilizes KokoroSharp to convert text responses fro
 - Note: GPU/CUDA support is currently an optional enhancement.
 
 ## Checklist
-- [ ] Define `TextToSpeech` DTO
-- [ ] Implement `TtsService.cs`
-- [ ] Integrate with `SiteConfigHolder` to get current settings
+- [x] Define `TextToSpeech` DTO
+- [x] Implement `TtsService.cs`
+- [x] Integrate with `SiteConfigHolder` to get current settings
 - [ ] Test with a sample text to ensure audio is generated
-- [ ] Update clood files for Service Interface domain
+- [x] Update clood files for Service Interface domain
