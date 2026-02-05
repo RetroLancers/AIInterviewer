@@ -44,8 +44,8 @@ UI and services exist but there are backend/API correctness gaps.
 - [x] Modify `AIInterviewer.ServiceModel/Tables/Configuration/SiteConfig.cs`: Add `KokoroVoice`.
 - [x] Update DTOs in `AIInterviewer.ServiceModel/Types/Configuration/`.
 - [x] Create/Run migration for `SiteConfig` changes.
-- [ ] Make transcription endpoint strongly typed (`TranscribeAudioResponse`, no `object`).
-- [ ] Make TTS endpoint strongly typed and in correct namespace (return `HttpResult`/`Stream`).
+- [x] Make transcription endpoint strongly typed (`TranscribeAudioResponse`, no `object`).
+- [x] Make TTS endpoint strongly typed and in correct namespace (return `HttpResult`/`Stream`).
 
 ### Frontend
 - [x] Create `AIInterviewer.Client/src/pages/interviews/[id].vue`.
@@ -53,10 +53,10 @@ UI and services exist but there are backend/API correctness gaps.
 - [x] Update `AIInterviewer.Client/src/components/SiteConfigEditor.vue` for voice selection.
 - [x] Integrate TTS playback logic for AI messages.
 - [x] Build responsive chat UI with scroll-to-bottom behavior.
-- [ ] Remove `try/catch` around `client.api` calls and handle `ApiResult`.
-- [ ] Align history role labels if required (`Interviewer` vs `Model`).
+- [x] Remove `try/catch` around `client.api` calls and handle `ApiResult`.
+- [x] Align history role labels if required (`Interviewer` vs `Model`).
 
 ### Verification
-- [ ] Verify voice-to-text and text-to-voice flow.
-- [ ] Verify settings are saved correctly in the DB.
+- [x] Verify voice-to-text and text-to-voice flow.
+- [x] Verify settings are saved correctly in the DB.
 - [x] Update clood files for Frontend and Service Interface domains.
