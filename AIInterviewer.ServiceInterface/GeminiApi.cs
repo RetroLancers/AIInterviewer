@@ -96,6 +96,64 @@ public class GeminiClient(string apiKey, string model, string fallbackModel = "g
         }
     }
 
+    public async Task<string?> GenerateTextFromAudioAsync(string prompt, byte[] audioData, string mimeType, string? systemInstruction = null, int retryCount = 0)
+    {
+        if (retryCount == 0 && _model == _fallbackModel)
+        {
+            _model = _primaryModel;
+        }
+
+        try
+        {
+            var config = new GenerateContentConfig();
+            if (systemInstruction != null)
+            {
+                config.SystemInstruction = new Content
+                {
+                    Parts = new List<Part> { new Part { Text = systemInstruction } }
+                };
+            }
+
+            var content = new Content
+            {
+                Parts = new List<Part>
+                {
+                    new Part { Text = prompt },
+                    new Part 
+                    { 
+                        InlineData = new Blob 
+                        { 
+                            Data = audioData, 
+                            MimeType = mimeType 
+                        } 
+                    }
+                }
+            };
+
+            var response = await _client.Models.GenerateContentAsync(
+                model: _model,
+                contents: new List<Content> { content },
+                config: config
+            );
+
+            if (response.Candidates != null && response.Candidates.Any())
+            {
+                var candidate = response.Candidates[0];
+                if (candidate.Content != null && candidate.Content.Parts != null && candidate.Content.Parts.Any())
+                {
+                    return candidate.Content.Parts[0].Text;
+                }
+            }
+            return null;
+        }
+        catch (Google.GenAI.ServerError e) when (e.Message.Contains("overloaded"))
+        {
+            if (retryCount >= 3) throw;
+            ChangeModel(_fallbackModel);
+            return await GenerateTextFromAudioAsync(prompt, audioData, mimeType, systemInstruction, retryCount: retryCount + 1);
+        }
+    }
+
     public async Task<T?> GenerateJsonAsync<T>(string prompt, Schema schema, string? systemInstruction = null, int retryCount = 0) where T : class
     {
         

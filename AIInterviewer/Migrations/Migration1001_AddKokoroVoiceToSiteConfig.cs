@@ -6,6 +6,7 @@ namespace AIInterviewer.Migrations;
 
 public class Migration1001_AddKokoroVoiceToSiteConfig : MigrationBase
 {
+    [Alias("siteconfig")]
     public class SiteConfig
     {
         [StringLength(255)]

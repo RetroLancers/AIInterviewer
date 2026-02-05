@@ -11,7 +11,8 @@ public static class SiteConfigExtensions
             Id = request.Id,
             GeminiApiKey = request.GeminiApiKey,
             InterviewModel = request.InterviewModel,
-            GlobalFallbackModel = request.GlobalFallbackModel
+            GlobalFallbackModel = request.GlobalFallbackModel,
+            KokoroVoice = request.KokoroVoice
         };
     }
 
@@ -22,7 +23,8 @@ public static class SiteConfigExtensions
             Id = table.Id,
             GeminiApiKey = table.GeminiApiKey,
             InterviewModel = table.InterviewModel,
-            GlobalFallbackModel = table.GlobalFallbackModel
+            GlobalFallbackModel = table.GlobalFallbackModel,
+            KokoroVoice = table.KokoroVoice
         };
     }
 

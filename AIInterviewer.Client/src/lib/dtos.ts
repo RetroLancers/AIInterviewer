@@ -1,5 +1,5 @@
 /* Options:
-Date: 2026-02-05 13:31:28
+Date: 2026-02-05 13:39:18
 Version: 10.04
 Tip: To override a DTO option, remove "//" prefix before updating
 BaseUrl: https://localhost:5001
@@ -637,6 +637,7 @@ export class SiteConfigResponse
     public geminiApiKey: string;
     public interviewModel: string;
     public globalFallbackModel?: string;
+    public kokoroVoice?: string;
 
     public constructor(init?: Partial<SiteConfigResponse>) { (Object as any).assign(this, init); }
 }
@@ -651,6 +652,13 @@ export class IdResponse
     public responseStatus?: ResponseStatus;
 
     public constructor(init?: Partial<IdResponse>) { (Object as any).assign(this, init); }
+}
+
+export class TranscribeAudioResponse
+{
+    public transcript: string;
+
+    public constructor(init?: Partial<TranscribeAudioResponse>) { (Object as any).assign(this, init); }
 }
 
 // @DataContract
@@ -748,6 +756,17 @@ export class AuthenticateResponse implements IHasSessionId, IHasBearerToken
     public meta?: { [index:string]: string; };
 
     public constructor(init?: Partial<AuthenticateResponse>) { (Object as any).assign(this, init); }
+}
+
+// @Route("/chat/tts", "POST")
+export class TextToSpeechRequest implements IReturn<Blob>
+{
+    public text: string;
+
+    public constructor(init?: Partial<TextToSpeechRequest>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'TextToSpeechRequest'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new Blob(); }
 }
 
 /** @description Sign Up */
@@ -884,11 +903,24 @@ export class UpdateSiteConfigRequest implements IReturn<IdResponse>
     public interviewModel: string;
 
     public globalFallbackModel?: string;
+    public kokoroVoice?: string;
 
     public constructor(init?: Partial<UpdateSiteConfigRequest>) { (Object as any).assign(this, init); }
     public getTypeName() { return 'UpdateSiteConfigRequest'; }
     public getMethod() { return 'PUT'; }
     public createResponse() { return new IdResponse(); }
+}
+
+// @Route("/chat/transcribe", "POST")
+export class TranscribeAudioRequest implements IReturn<TranscribeAudioResponse>
+{
+    public audioData: string;
+    public mimeType: string;
+
+    public constructor(init?: Partial<TranscribeAudioRequest>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'TranscribeAudioRequest'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new TranscribeAudioResponse(); }
 }
 
 /** @description Chat Completions API (OpenAI-Compatible) */
@@ -1061,4 +1093,3 @@ export class QueryUsers extends QueryDb<User> implements IReturn<QueryResponse<U
     public getMethod() { return 'GET'; }
     public createResponse() { return new QueryResponse<User>(); }
 }
-
