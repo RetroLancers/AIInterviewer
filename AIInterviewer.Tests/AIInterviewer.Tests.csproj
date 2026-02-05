@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <DebugType>portable</DebugType>
+        <OutputType>Library</OutputType>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\AIInterviewer.ServiceInterface\AIInterviewer.ServiceInterface.csproj" />
+        <ProjectReference Include="..\AIInterviewer.ServiceModel\AIInterviewer.ServiceModel.csproj" />
+        <ProjectReference Include="..\AIInterviewer\AIInterviewer.csproj" />
+
+        <PackageReference Include="NUnit" Version="4.*" />
+        <PackageReference Include="NUnit3TestAdapter" Version="5.*" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.*" />
+        <PackageReference Include="ServiceStack" Version="10.*" />
+        <PackageReference Include="ServiceStack.Kestrel" Version="10.*" />
+    </ItemGroup>
+
+</Project>

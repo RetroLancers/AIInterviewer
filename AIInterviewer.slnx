@@ -1,0 +1,10 @@
+<Solution>
+  <Project Path="AIInterviewer.Client/AIInterviewer.Client.esproj">
+    <BuildType Project="Debug" />
+    <Build />
+  </Project>
+  <Project Path="AIInterviewer.ServiceInterface/AIInterviewer.ServiceInterface.csproj" />
+  <Project Path="AIInterviewer.ServiceModel/AIInterviewer.ServiceModel.csproj" />
+  <Project Path="AIInterviewer.Tests/AIInterviewer.Tests.csproj" />
+  <Project Path="AIInterviewer/AIInterviewer.csproj" />
+</Solution>
