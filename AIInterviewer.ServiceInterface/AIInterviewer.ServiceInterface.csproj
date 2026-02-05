@@ -8,6 +8,11 @@
 
     <ItemGroup>
         <PackageReference Include="Google.GenAI" Version="0.15.0" />
+        <PackageReference Include="KokoroSharp" Version="0.6.4" />
+        <PackageReference Include="KokoroSharp.CPU" Version="0.6.4" />
+        <PackageReference Include="KokoroSharp.GPU" Version="0.6.4" />
+        <PackageReference Include="KokoroSharp.GPU.Linux" Version="0.6.4" />
+        <PackageReference Include="KokoroSharp.GPU.Windows" Version="0.6.4" />
         <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.*" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.*" />
         <PackageReference Include="ServiceStack" Version="10.*" />
