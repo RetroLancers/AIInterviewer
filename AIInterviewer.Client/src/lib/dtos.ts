@@ -1,5 +1,5 @@
 /* Options:
-Date: 2026-02-05 09:47:34
+Date: 2026-02-05 13:31:28
 Version: 10.04
 Tip: To override a DTO option, remove "//" prefix before updating
 BaseUrl: https://localhost:5001
@@ -229,6 +229,36 @@ export class ResponseStatus
     public meta?: { [index:string]: string; };
 
     public constructor(init?: Partial<ResponseStatus>) { (Object as any).assign(this, init); }
+}
+
+export class InterviewDto
+{
+    public id: number;
+    public prompt: string;
+    public createdDate: string;
+
+    public constructor(init?: Partial<InterviewDto>) { (Object as any).assign(this, init); }
+}
+
+export class InterviewChatHistoryDto
+{
+    public id: number;
+    public role: string;
+    public content: string;
+    public entryDate: string;
+
+    public constructor(init?: Partial<InterviewChatHistoryDto>) { (Object as any).assign(this, init); }
+}
+
+export class InterviewResultDto
+{
+    public id: number;
+    public interviewId: number;
+    public reportText?: string;
+    public score: number;
+    public createdDate: string;
+
+    public constructor(init?: Partial<InterviewResultDto>) { (Object as any).assign(this, init); }
 }
 
 /** @description Annotations for the message, when applicable, as when using the web search tool. */
@@ -564,6 +594,43 @@ export class RegisterResponse implements IHasSessionId, IHasBearerToken
     public constructor(init?: Partial<RegisterResponse>) { (Object as any).assign(this, init); }
 }
 
+export class GenerateInterviewPromptResponse
+{
+    public systemPrompt: string;
+
+    public constructor(init?: Partial<GenerateInterviewPromptResponse>) { (Object as any).assign(this, init); }
+}
+
+export class CreateInterviewResponse
+{
+    public id: number;
+
+    public constructor(init?: Partial<CreateInterviewResponse>) { (Object as any).assign(this, init); }
+}
+
+export class GetInterviewResponse
+{
+    public interview: InterviewDto;
+    public history: InterviewChatHistoryDto[] = [];
+    public result?: InterviewResultDto;
+
+    public constructor(init?: Partial<GetInterviewResponse>) { (Object as any).assign(this, init); }
+}
+
+export class AddChatMessageResponse
+{
+    public history: InterviewChatHistoryDto[] = [];
+
+    public constructor(init?: Partial<AddChatMessageResponse>) { (Object as any).assign(this, init); }
+}
+
+export class FinishInterviewResponse
+{
+    public result?: InterviewResultDto;
+
+    public constructor(init?: Partial<FinishInterviewResponse>) { (Object as any).assign(this, init); }
+}
+
 export class SiteConfigResponse
 {
     public id: number;
@@ -584,14 +651,6 @@ export class IdResponse
     public responseStatus?: ResponseStatus;
 
     public constructor(init?: Partial<IdResponse>) { (Object as any).assign(this, init); }
-}
-
-export class GenerateInterviewPromptResponse
-{
-    public prompt: string;
-    public responseStatus: ResponseStatus;
-
-    public constructor(init?: Partial<GenerateInterviewPromptResponse>) { (Object as any).assign(this, init); }
 }
 
 // @DataContract
@@ -745,6 +804,64 @@ export class ConfirmEmail implements IReturnVoid, IGet
     public createResponse() {}
 }
 
+// @Route("/interview/generate-prompt", "POST")
+export class GenerateInterviewPrompt implements IReturn<GenerateInterviewPromptResponse>
+{
+    public targetRole: string;
+    public context?: string;
+
+    public constructor(init?: Partial<GenerateInterviewPrompt>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'GenerateInterviewPrompt'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new GenerateInterviewPromptResponse(); }
+}
+
+// @Route("/interview", "POST")
+export class CreateInterview implements IReturn<CreateInterviewResponse>
+{
+    public systemPrompt: string;
+    public userId?: string;
+
+    public constructor(init?: Partial<CreateInterview>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'CreateInterview'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new CreateInterviewResponse(); }
+}
+
+// @Route("/interview/{Id}", "GET")
+export class GetInterview implements IReturn<GetInterviewResponse>
+{
+    public id: number;
+
+    public constructor(init?: Partial<GetInterview>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetInterview'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new GetInterviewResponse(); }
+}
+
+// @Route("/interview/{InterviewId}/chat", "POST")
+export class AddChatMessage implements IReturn<AddChatMessageResponse>
+{
+    public interviewId: number;
+    public message: string;
+
+    public constructor(init?: Partial<AddChatMessage>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'AddChatMessage'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new AddChatMessageResponse(); }
+}
+
+// @Route("/interviews/{Id}/finish", "POST")
+export class FinishInterview implements IReturn<FinishInterviewResponse>
+{
+    public id: number;
+
+    public constructor(init?: Partial<FinishInterview>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'FinishInterview'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new FinishInterviewResponse(); }
+}
+
 // @Route("/configuration/site-config/{Id}", "GET")
 export class GetSiteConfigRequest implements IReturn<SiteConfigResponse>
 {
@@ -772,17 +889,6 @@ export class UpdateSiteConfigRequest implements IReturn<IdResponse>
     public getTypeName() { return 'UpdateSiteConfigRequest'; }
     public getMethod() { return 'PUT'; }
     public createResponse() { return new IdResponse(); }
-}
-
-// @Route("/ai/generate-prompt", "POST")
-export class GenerateInterviewPrompt implements IReturn<GenerateInterviewPromptResponse>, IPost
-{
-    public context: string;
-
-    public constructor(init?: Partial<GenerateInterviewPrompt>) { (Object as any).assign(this, init); }
-    public getTypeName() { return 'GenerateInterviewPrompt'; }
-    public getMethod() { return 'POST'; }
-    public createResponse() { return new GenerateInterviewPromptResponse(); }
 }
 
 /** @description Chat Completions API (OpenAI-Compatible) */
