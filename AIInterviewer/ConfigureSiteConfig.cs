@@ -1,10 +1,10 @@
-﻿using ServiceStack.Data;
+﻿using AIInterviewer.ServiceModel.Tables.Configuration;
+using ServiceStack.Data;
 using ServiceStack.OrmLite;
-using TyphoonSharp.ServiceModel.Tables.Configuration;
 
-[assembly: HostingStartup(typeof(TyphoonSharp.ConfigureSiteConfig))]
+[assembly: HostingStartup(typeof(ConfigureSiteConfig))]
 
-namespace TyphoonSharp;
+namespace AIInterviewer;
 
 public class ConfigureSiteConfig : IHostingStartup
 {

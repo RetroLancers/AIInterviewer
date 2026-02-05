@@ -1,7 +1,7 @@
+using AIInterviewer.ServiceInterface.Data;
 using Microsoft.EntityFrameworkCore;
 using ServiceStack.Data;
 using ServiceStack.OrmLite;
-using AIInterviewer.Data;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
 [assembly: HostingStartup(typeof(AIInterviewer.ConfigureDb))]

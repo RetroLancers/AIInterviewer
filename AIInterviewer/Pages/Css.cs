@@ -1,4 +1,4 @@
-namespace AIInterviewer;
+namespace AIInterviewer.Pages;
 
 public static class Css
 {

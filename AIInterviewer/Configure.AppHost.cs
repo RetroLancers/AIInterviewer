@@ -1,4 +1,5 @@
 using AIInterviewer.ServiceInterface;
+using AIInterviewer.ServiceModel.Tables.Configuration;
 using ServiceStack.NativeTypes.TypeScript;
 
 [assembly: HostingStartup(typeof(AIInterviewer.AppHost))]
@@ -9,7 +10,8 @@ public class AppHost() : AppHostBase("AIInterviewer"), IHostingStartup
 {
     public void Configure(IWebHostBuilder builder) => builder
         .ConfigureServices((Action<WebHostBuilderContext, IServiceCollection>)((context, services) => {
-            // Configure ASP.NET Core IOC Dependencies
+            var siteConfigHolder = new SiteConfigHolder();
+            services.AddSingleton(siteConfigHolder);
             services.AddSingleton(context.Configuration.GetSection(nameof(AppConfig))?.Get<AppConfig>()
                 ?? new AppConfig {
                         BaseUrl = context.HostingEnvironment.IsDevelopment()

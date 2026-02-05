@@ -1,4 +1,4 @@
-﻿namespace TyphoonSharp.ServiceModel.Tables.Configuration;
+﻿namespace AIInterviewer.ServiceModel.Tables.Configuration;
 
 public class SiteConfigHolder
 {

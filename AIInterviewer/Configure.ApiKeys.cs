@@ -1,4 +1,3 @@
-using AIInterviewer.Data;
 using ServiceStack;
 using ServiceStack.Data;
 using ServiceStack.OrmLite;

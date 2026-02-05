@@ -1,5 +1,5 @@
+using AIInterviewer.ServiceInterface.Data;
 using ServiceStack.Auth;
-using AIInterviewer.Data;
 
 [assembly: HostingStartup(typeof(AIInterviewer.ConfigureAuth))]
 

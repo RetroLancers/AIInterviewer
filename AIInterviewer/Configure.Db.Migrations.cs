@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using AIInterviewer.Data;
 using AIInterviewer.Migrations;
+using AIInterviewer.ServiceInterface.Data;
 using ServiceStack;
 using ServiceStack.Data;
 using ServiceStack.OrmLite;

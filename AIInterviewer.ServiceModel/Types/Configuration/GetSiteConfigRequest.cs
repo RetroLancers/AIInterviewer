@@ -1,6 +1,6 @@
 using ServiceStack;
 
-namespace TyphoonSharp.ServiceModel.Types.Configuration;
+namespace AIInterviewer.ServiceModel.Types.Configuration;
 
 [Route("/configuration/site-config/{Id}", "GET")]
 public class GetSiteConfigRequest : IReturn<SiteConfigResponse>

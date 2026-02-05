@@ -4,12 +4,12 @@
 
 using System;
 using System.Threading.Tasks;
+using AIInterviewer.ServiceInterface.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
-using AIInterviewer.Data;
 
 namespace AIInterviewer.Areas.Identity.Pages.Account
 {

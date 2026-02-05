@@ -1,6 +1,4 @@
-using ServiceStack;
-
-namespace TyphoonSharp.ServiceModel.Types.Configuration;
+namespace AIInterviewer.ServiceModel.Types.Configuration;
 
 public class SiteConfigResponse
 {

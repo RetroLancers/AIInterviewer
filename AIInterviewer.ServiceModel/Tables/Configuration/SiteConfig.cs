@@ -1,6 +1,6 @@
 using ServiceStack.DataAnnotations;
-
-namespace TyphoonSharp.ServiceModel.Tables.Configuration;
+ 
+namespace AIInterviewer.ServiceModel.Tables.Configuration;
 
 [Alias("siteconfig")]
 public class SiteConfig
@@ -13,8 +13,7 @@ public class SiteConfig
     [StringLength(2096)]
     public string GeminiApiKey { get; set; }
 
-     
-
+  
     [Required]
     [StringLength(255)]
     public string InterviewModel { get; set; }

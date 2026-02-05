@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using ServiceStack.Jobs;
-using AIInterviewer.Data;
 using AIInterviewer.ServiceInterface;
+using AIInterviewer.ServiceInterface.Data;
 
 [assembly: HostingStartup(typeof(AIInterviewer.ConfigureBackgroundJobs))]
 

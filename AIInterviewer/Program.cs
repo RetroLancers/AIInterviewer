@@ -1,8 +1,8 @@
 using System.Net;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
-using AIInterviewer.Data;
 using AIInterviewer.ServiceInterface;
+using AIInterviewer.ServiceInterface.Data;
 
 AppHost.RegisterKey();
 
@@ -35,7 +35,7 @@ services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, AdditionalUserClaimsPrincipalFactory>();
 
 // Register all services
-services.AddServiceStack(typeof(MyServices).Assembly);
+services.AddServiceStack(typeof(SiteConfigService).Assembly);
 
 var app = builder.Build();
 var nodeProxy = new NodeProxy("http://127.0.0.1:5173") {

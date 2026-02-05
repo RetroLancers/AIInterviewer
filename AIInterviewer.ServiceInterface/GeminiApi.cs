@@ -1,9 +1,8 @@
-﻿namespace TyphoonSharp.ServiceInterface;
-
+﻿using Google.GenAI;
 using Google.GenAI.Types;
-using Google.GenAI;
 using Newtonsoft.Json;
- 
+
+namespace AIInterviewer.ServiceInterface;
 
 public class GeminiClient(string apiKey, string model, string fallbackModel = "gemini-2.5-flash")
 {

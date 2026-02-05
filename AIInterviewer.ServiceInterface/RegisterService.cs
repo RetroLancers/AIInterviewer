@@ -1,8 +1,8 @@
 using System.Text;
 using System.Text.Encodings.Web;
+using AIInterviewer.ServiceInterface.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
-using AIInterviewer.Data;
 using AIInterviewer.ServiceModel;
 using ServiceStack;
 using ServiceStack.Auth;

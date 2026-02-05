@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace AIInterviewer.Data;
+namespace AIInterviewer.ServiceInterface.Data;
 
 /* After modifying ApplicationUser, delete and recreate the initial EF Core migration with:
    rm Migrations/202*.cs Migrations/ApplicationDbContextModelSnapshot.cs

@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 using ServiceStack;
 using ServiceStack.Web;
 
-namespace AIInterviewer.Data;
+namespace AIInterviewer.ServiceInterface.Data;
 
 public class CustomUserSession : AuthUserSession
 {

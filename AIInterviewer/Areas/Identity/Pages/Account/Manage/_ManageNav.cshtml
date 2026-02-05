@@ -1,4 +1,6 @@
-@using AIInterviewer.Data
+@using AIInterviewer.Areas.Identity.Pages.Account.Manage
+@using AIInterviewer.ServiceInterface.Data
+@using Microsoft.AspNetCore.Identity
 @inject SignInManager<ApplicationUser> SignInManager
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();

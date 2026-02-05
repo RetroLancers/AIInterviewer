@@ -1,6 +1,6 @@
-using TyphoonSharp.ServiceModel.Tables.Configuration;
+using AIInterviewer.ServiceModel.Tables.Configuration;
 
-namespace TyphoonSharp.ServiceModel.Types.Configuration.ExtensionMethods;
+namespace AIInterviewer.ServiceModel.Types.Configuration.ExtensionMethods;
 
 public static class SiteConfigExtensions
 {

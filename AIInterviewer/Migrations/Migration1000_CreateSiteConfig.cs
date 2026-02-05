@@ -2,7 +2,7 @@ using ServiceStack;
 using ServiceStack.DataAnnotations;
 using ServiceStack.OrmLite;
 
-namespace TyphoonSharp.Migrations;
+namespace  AIInterviewer.Migrations;
 
 public class Migration1000_CreateSiteConfig : MigrationBase
 {
