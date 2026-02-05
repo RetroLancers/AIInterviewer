@@ -20,5 +20,8 @@ public class SiteConfig
 
     [StringLength(255)]
     public string? GlobalFallbackModel { get; set; }
+
+    [StringLength(255)]
+    public string? KokoroVoice { get; set; }
 }
 

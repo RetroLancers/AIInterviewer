@@ -6,16 +6,8 @@ $ErrorActionPreference = "Stop"
 
 # Use TLS 1.2/1.3 and ignore SSL certificates for local dev
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 -bor [Net.SecurityProtocolType]::Tls13
-add-type @"
-    using System.Net;
-    using System.Security.Cryptography.X509Certificates;
-    public class TrustAllCertsPolicy : ICertificatePolicy {
-        public bool CheckValidationResult(ServicePoint srvPoint, X509Certificate certificate, WebRequest request, int certificateProblem) {
-            return true;
-        }
-    }
-"@
-[Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
+# Trust all certificates (for local development)
+[System.Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }
 
 $baseUrl = "https://localhost:5001"
 $fallbackUrl = "http://localhost:5000"
@@ -81,10 +73,10 @@ else {
     Write-Host "Server is already running on $targetUrl." -ForegroundColor Green
 }
 
-function Stop-ServiceStackServer($pid) {
-    Write-Host "Stopping server process tree (PID: $pid)..." -ForegroundColor Cyan
+function Stop-ServiceStackServer($procId) {
+    Write-Host "Stopping server process tree (PID: $procId)..." -ForegroundColor Cyan
     # Use taskkill to kill the entire process tree (-T) forcefully (-F)
-    taskkill /F /T /PID $pid 2>$null
+    taskkill /F /T /PID $procId 2>$null
 }
 
 # 2. Update DTOs

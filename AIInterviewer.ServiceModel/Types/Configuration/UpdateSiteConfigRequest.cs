@@ -14,4 +14,6 @@ public class UpdateSiteConfigRequest : IReturn<IdResponse>
     public string InterviewModel { get; set; }
 
     public string? GlobalFallbackModel { get; set; }
+
+    public string? KokoroVoice { get; set; }
 }

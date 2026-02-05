@@ -1,0 +1,16 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AIInterviewer.ServiceModel -> C:\DevCurrent\AIInterviewer\AIInterviewer-interview-ui-vocal\AIInterviewer.ServiceModel\bin\Debug\net10.0\AIInterviewer.ServiceModel.dll
+C:\DevCurrent\AIInterviewer\AIInterviewer-interview-ui-vocal\AIInterviewer.ServiceInterface\Services\Chat\TtsService.cs(6,62): error CS0246: The type or namespace name 'Service' could not be found (are you missing a using directive or an assembly reference?) [C:\DevCurrent\AIInterviewer\AIInterviewer-interview-ui-vocal\AIInterviewer.ServiceInterface\AIInterviewer.ServiceInterface.csproj]
+C:\DevCurrent\AIInterviewer\AIInterviewer-interview-ui-vocal\AIInterviewer.ServiceInterface\Services\Chat\TtsService.cs(6,25): error CS0246: The type or namespace name 'SiteConfigHolder' could not be found (are you missing a using directive or an assembly reference?) [C:\DevCurrent\AIInterviewer\AIInterviewer-interview-ui-vocal\AIInterviewer.ServiceInterface\AIInterviewer.ServiceInterface.csproj]
+C:\DevCurrent\AIInterviewer\AIInterviewer-interview-ui-vocal\AIInterviewer.ServiceInterface\Services\Chat\TtsService.cs(29,36): error CS0246: The type or namespace name 'TextToSpeechRequest' could not be found (are you missing a using directive or an assembly reference?) [C:\DevCurrent\AIInterviewer\AIInterviewer-interview-ui-vocal\AIInterviewer.ServiceInterface\AIInterviewer.ServiceInterface.csproj]
+
+Build FAILED.
+
+C:\DevCurrent\AIInterviewer\AIInterviewer-interview-ui-vocal\AIInterviewer.ServiceInterface\Services\Chat\TtsService.cs(6,62): error CS0246: The type or namespace name 'Service' could not be found (are you missing a using directive or an assembly reference?) [C:\DevCurrent\AIInterviewer\AIInterviewer-interview-ui-vocal\AIInterviewer.ServiceInterface\AIInterviewer.ServiceInterface.csproj]
+C:\DevCurrent\AIInterviewer\AIInterviewer-interview-ui-vocal\AIInterviewer.ServiceInterface\Services\Chat\TtsService.cs(6,25): error CS0246: The type or namespace name 'SiteConfigHolder' could not be found (are you missing a using directive or an assembly reference?) [C:\DevCurrent\AIInterviewer\AIInterviewer-interview-ui-vocal\AIInterviewer.ServiceInterface\AIInterviewer.ServiceInterface.csproj]
+C:\DevCurrent\AIInterviewer\AIInterviewer-interview-ui-vocal\AIInterviewer.ServiceInterface\Services\Chat\TtsService.cs(29,36): error CS0246: The type or namespace name 'TextToSpeechRequest' could not be found (are you missing a using directive or an assembly reference?) [C:\DevCurrent\AIInterviewer\AIInterviewer-interview-ui-vocal\AIInterviewer.ServiceInterface\AIInterviewer.ServiceInterface.csproj]
+    0 Warning(s)
+    3 Error(s)
+
+Time Elapsed 00:00:00.80

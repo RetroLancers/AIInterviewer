@@ -6,4 +6,5 @@ public class SiteConfigResponse
     public string GeminiApiKey { get; set; }
     public string InterviewModel { get; set; }
     public string? GlobalFallbackModel { get; set; }
+    public string? KokoroVoice { get; set; }
 }
