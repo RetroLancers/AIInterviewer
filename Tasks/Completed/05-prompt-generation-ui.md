@@ -21,8 +21,8 @@ Work exists in `AIInterviewer.Client/src/pages/interviews/new.vue` but it needs 
 ## Checklist
 - [x] Create `interviews/new.vue`
 - [x] Implement UI design (modern, clean, AI-themed)
-- [ ] Fix `GenerateInterviewPrompt` request mapping (`targetRole` vs `context`)
-- [ ] Remove `try/catch` around `client.api` and handle `ApiResult` correctly
-- [ ] Add visible error state for API failures
-- [ ] Verify navigation flow
-- [x] Update clood files for Frontend domain
+- [x] Fix `GenerateInterviewPrompt` request mapping (`targetRole` vs `context`)
+- [x] Remove `try/catch` around `client.api` and handle `ApiResult` correctly
+- [x] Add visible error state for API failures
+- [x] Verify navigation flow
+- [x] Update clood files for Frontend and Interview domains
