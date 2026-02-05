@@ -9,6 +9,9 @@
         "AIInterviewer.ServiceModel/Types/Interview/FinishInterview.cs",
         "AIInterviewer.ServiceModel/Types/Interview/GetInterview.cs",
         "AIInterviewer.ServiceModel/Types/Interview/InterviewDtos.cs",
+        "AIInterviewer.ServiceModel/Types/Interview/GenerateInterviewPrompt.cs",
+        "AIInterviewer.ServiceModel/Types/Interview/CreateInterview.cs",
+        "AIInterviewer.ServiceModel/Types/Interview/ExtensionMethods/InterviewExtensions.cs",
         "AIInterviewer/Migrations/Migration1001_CreateInterviewTables.cs"
     ]
 }
