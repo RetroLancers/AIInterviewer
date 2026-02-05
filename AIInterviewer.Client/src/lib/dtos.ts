@@ -1,5 +1,5 @@
 /* Options:
-Date: 2026-02-05 13:39:18
+Date: 2026-02-05 17:11:46
 Version: 10.04
 Tip: To override a DTO option, remove "//" prefix before updating
 BaseUrl: https://localhost:5001
@@ -661,6 +661,14 @@ export class TranscribeAudioResponse
     public constructor(init?: Partial<TranscribeAudioResponse>) { (Object as any).assign(this, init); }
 }
 
+export class GetGeminiModelsResponse
+{
+    public models: string[] = [];
+    public responseStatus: ResponseStatus;
+
+    public constructor(init?: Partial<GetGeminiModelsResponse>) { (Object as any).assign(this, init); }
+}
+
 // @DataContract
 export class ChatResponse
 {
@@ -756,17 +764,6 @@ export class AuthenticateResponse implements IHasSessionId, IHasBearerToken
     public meta?: { [index:string]: string; };
 
     public constructor(init?: Partial<AuthenticateResponse>) { (Object as any).assign(this, init); }
-}
-
-// @Route("/chat/tts", "POST")
-export class TextToSpeechRequest implements IReturn<Blob>
-{
-    public text: string;
-
-    public constructor(init?: Partial<TextToSpeechRequest>) { (Object as any).assign(this, init); }
-    public getTypeName() { return 'TextToSpeechRequest'; }
-    public getMethod() { return 'POST'; }
-    public createResponse() { return new Blob(); }
 }
 
 /** @description Sign Up */
@@ -921,6 +918,27 @@ export class TranscribeAudioRequest implements IReturn<TranscribeAudioResponse>
     public getTypeName() { return 'TranscribeAudioRequest'; }
     public getMethod() { return 'POST'; }
     public createResponse() { return new TranscribeAudioResponse(); }
+}
+
+// @Route("/chat/tts", "POST")
+export class TextToSpeechRequest implements IReturn<Blob>
+{
+    public text: string;
+
+    public constructor(init?: Partial<TextToSpeechRequest>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'TextToSpeechRequest'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new Blob(); }
+}
+
+// @Route("/ai/models", "GET")
+export class GetGeminiModels implements IReturn<GetGeminiModelsResponse>
+{
+
+    public constructor(init?: Partial<GetGeminiModels>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetGeminiModels'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new GetGeminiModelsResponse(); }
 }
 
 /** @description Chat Completions API (OpenAI-Compatible) */
@@ -1093,3 +1111,4 @@ export class QueryUsers extends QueryDb<User> implements IReturn<QueryResponse<U
     public getMethod() { return 'GET'; }
     public createResponse() { return new QueryResponse<User>(); }
 }
+

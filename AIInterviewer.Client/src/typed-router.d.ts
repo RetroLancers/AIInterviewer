@@ -58,34 +58,6 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/blog': RouteRecordInfo<
-      '/blog',
-      '/blog',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/bookings-auto': RouteRecordInfo<
-      '/bookings-auto',
-      '/bookings-auto',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/bookings-data': RouteRecordInfo<
-      '/bookings-data',
-      '/bookings-data',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/counter': RouteRecordInfo<
-      '/counter',
-      '/counter',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
     '/error': RouteRecordInfo<
       '/error',
       '/error',
@@ -96,6 +68,27 @@ declare module 'vue-router/auto-routes' {
     '/forbidden': RouteRecordInfo<
       '/forbidden',
       '/forbidden',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/interviews/[id]/': RouteRecordInfo<
+      '/interviews/[id]/',
+      '/interviews/:id',
+      { id: ParamValue<true> },
+      { id: ParamValue<false> },
+      | never
+    >,
+    '/interviews/[id]/result': RouteRecordInfo<
+      '/interviews/[id]/result',
+      '/interviews/:id/result',
+      { id: ParamValue<true> },
+      { id: ParamValue<false> },
+      | never
+    >,
+    '/interviews/new': RouteRecordInfo<
+      '/interviews/new',
+      '/interviews/new',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -170,30 +163,9 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/todomvc': RouteRecordInfo<
-      '/todomvc',
-      '/todomvc',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/videos': RouteRecordInfo<
-      '/videos',
-      '/videos',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/weather': RouteRecordInfo<
-      '/weather',
-      '/weather',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/whatsnew': RouteRecordInfo<
-      '/whatsnew',
-      '/whatsnew',
+    '/SiteConfig': RouteRecordInfo<
+      '/SiteConfig',
+      '/SiteConfig',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -241,30 +213,6 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
-    'src/pages/blog.vue': {
-      routes:
-        | '/blog'
-      views:
-        | never
-    }
-    'src/pages/bookings-auto.vue': {
-      routes:
-        | '/bookings-auto'
-      views:
-        | never
-    }
-    'src/pages/bookings-data.vue': {
-      routes:
-        | '/bookings-data'
-      views:
-        | never
-    }
-    'src/pages/counter.vue': {
-      routes:
-        | '/counter'
-      views:
-        | never
-    }
     'src/pages/error.vue': {
       routes:
         | '/error'
@@ -274,6 +222,24 @@ declare module 'vue-router/auto-routes' {
     'src/pages/forbidden.vue': {
       routes:
         | '/forbidden'
+      views:
+        | never
+    }
+    'src/pages/interviews/[id]/index.vue': {
+      routes:
+        | '/interviews/[id]/'
+      views:
+        | never
+    }
+    'src/pages/interviews/[id]/result.vue': {
+      routes:
+        | '/interviews/[id]/result'
+      views:
+        | never
+    }
+    'src/pages/interviews/new.vue': {
+      routes:
+        | '/interviews/new'
       views:
         | never
     }
@@ -337,27 +303,9 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
-    'src/pages/todomvc.vue': {
+    'src/pages/SiteConfig.vue': {
       routes:
-        | '/todomvc'
-      views:
-        | never
-    }
-    'src/pages/videos.vue': {
-      routes:
-        | '/videos'
-      views:
-        | never
-    }
-    'src/pages/weather.vue': {
-      routes:
-        | '/weather'
-      views:
-        | never
-    }
-    'src/pages/whatsnew.vue': {
-      routes:
-        | '/whatsnew'
+        | '/SiteConfig'
       views:
         | never
     }
