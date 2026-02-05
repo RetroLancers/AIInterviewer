@@ -1,0 +1,12 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AIInterviewer.ServiceModel -> C:\DevCurrent\AIInterviewer\AIInterviewer.ServiceModel\bin\Debug\net10.0\AIInterviewer.ServiceModel.dll
+  AIInterviewer.ServiceInterface -> C:\DevCurrent\AIInterviewer\AIInterviewer.ServiceInterface\bin\Debug\net10.0\AIInterviewer.ServiceInterface.dll
+  AIInterviewer -> C:\DevCurrent\AIInterviewer\AIInterviewer\bin\Debug\net10.0\AIInterviewer.dll
+  AIInterviewer.Tests -> C:\DevCurrent\AIInterviewer\AIInterviewer.Tests\bin\Debug\net10.0\AIInterviewer.Tests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:02.57

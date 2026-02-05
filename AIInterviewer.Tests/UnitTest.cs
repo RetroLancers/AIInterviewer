@@ -2,6 +2,7 @@ using NUnit.Framework;
 using ServiceStack;
 using ServiceStack.Testing;
 using AIInterviewer.ServiceInterface;
+using AIInterviewer.ServiceInterface.Services.Configuration;
 using AIInterviewer.ServiceModel;
 
 namespace AIInterviewer.Tests;

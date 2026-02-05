@@ -4,8 +4,9 @@ using AIInterviewer.ServiceModel.Types.Configuration.ExtensionMethods;
 using ServiceStack;
 using ServiceStack.OrmLite;
 
-namespace AIInterviewer.ServiceInterface;
+namespace AIInterviewer.ServiceInterface.Services.Configuration;
 
+[ValidateHasRole("Admin")]
 public class SiteConfigService(SiteConfigHolder holder) : Service
 {
     public SiteConfigResponse Get(GetSiteConfigRequest request)

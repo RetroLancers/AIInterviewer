@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using AIInterviewer.ServiceInterface;
 using AIInterviewer.ServiceInterface.Data;
+using AIInterviewer.ServiceInterface.Services.Configuration;
 
 AppHost.RegisterKey();
 

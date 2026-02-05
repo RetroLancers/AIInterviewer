@@ -6,9 +6,12 @@ namespace AIInterviewer.ServiceModel.Types.Configuration;
 public class UpdateSiteConfigRequest : IReturn<IdResponse>
 {
     public int Id { get; set; }
+
+    [ValidateNotEmpty]
     public string GeminiApiKey { get; set; }
 
-     
+    [ValidateNotEmpty]
     public string InterviewModel { get; set; }
+
     public string? GlobalFallbackModel { get; set; }
 }
