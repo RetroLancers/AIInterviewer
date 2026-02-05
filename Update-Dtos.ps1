@@ -2,6 +2,10 @@
 # This script starts the backend server, waits for it to be ready, 
 # updates the TypeScript DTOs in the client project, and then shuts down the server.
 
+param(
+    [int]$TaskNumber = 1
+)
+
 $ErrorActionPreference = "Stop"
 
 # Use TLS 1.2/1.3 and ignore SSL certificates for local dev
@@ -9,11 +13,15 @@ $ErrorActionPreference = "Stop"
 # Trust all certificates (for local development)
 [System.Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }
 
-$baseUrl = "https://localhost:5001"
-$fallbackUrl = "http://localhost:5000"
+# Use task number for ports (e.g., Task 01 -> 5001, Task 12 -> 5101)
+$portSuffix = $TaskNumber.ToString("00")
+$baseUrl = "https://localhost:50$portSuffix"
+$fallbackUrl = "http://localhost:51$portSuffix"
+
 $metadataPath = "/metadata"
 $clientDir = Join-Path $PSScriptRoot "AIInterviewer.Client"
 $serverDir = Join-Path $PSScriptRoot "AIInterviewer"
+
 
 function Test-ServerReady($url) {
     try {
@@ -43,8 +51,8 @@ $serverProcess = $null
 
 if (-not $alreadyRunning) {
     Write-Host "Starting server in $serverDir..." -ForegroundColor Cyan
-    # Start dotnet run
-    $serverProcess = Start-Process dotnet -ArgumentList "run", "--project", "$serverDir" -NoNewWindow -PassThru
+    # Start dotnet run on specific ports
+    $serverProcess = Start-Process dotnet -ArgumentList "run", "--project", "$serverDir", "--urls", "$baseUrl;$fallbackUrl" -NoNewWindow -PassThru
     
     Write-Host "Waiting for server to start successfully..." -ForegroundColor Cyan
     $timeout = 60 # seconds
@@ -83,8 +91,8 @@ function Stop-ServiceStackServer($procId) {
 Write-Host "`nUpdating DTOs in $clientDir..." -ForegroundColor Cyan
 Push-Location $clientDir
 try {
-    # Run npm run dtos
-    npm run dtos
+    # Run npm run dtos with the specific URL
+    npm run dtos -- --urls $baseUrl
     Write-Host "DTOs updated successfully!" -ForegroundColor Green
 }
 catch {
