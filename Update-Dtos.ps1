@@ -6,16 +6,8 @@ $ErrorActionPreference = "Stop"
 
 # Use TLS 1.2/1.3 and ignore SSL certificates for local dev
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 -bor [Net.SecurityProtocolType]::Tls13
-add-type @"
-    using System.Net;
-    using System.Security.Cryptography.X509Certificates;
-    public class TrustAllCertsPolicy : ICertificatePolicy {
-        public bool CheckValidationResult(ServicePoint srvPoint, X509Certificate certificate, WebRequest request, int certificateProblem) {
-            return true;
-        }
-    }
-"@
-[Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
+# Trust all certificates for local dev
+[System.Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }
 
 $baseUrl = "https://localhost:5001"
 $fallbackUrl = "http://localhost:5000"

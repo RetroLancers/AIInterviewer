@@ -1,0 +1,9 @@
+{
+    "name": "Frontend",
+    "description": "Frontend pages and components for AI Interviewer",
+    "files": [
+        "AIInterviewer.Client/src/pages/interviews/new.vue",
+        "AIInterviewer.Client/src/pages/interviews/[id].vue",
+        "AIInterviewer.Client/src/components/InterviewChat.vue"
+    ]
+}

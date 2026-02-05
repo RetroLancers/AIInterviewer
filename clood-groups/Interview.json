@@ -1,0 +1,9 @@
+{
+    "name": "Interview",
+    "description": "Backend implementation for Interview services and DTOs",
+    "files": [
+        "AIInterviewer.ServiceModel/Types/AI/GenerateInterviewPrompt.cs",
+        "AIInterviewer.ServiceModel/Types/AI/GenerateInterviewPromptResponse.cs",
+        "AIInterviewer.ServiceInterface/Services/AI/InterviewService.cs"
+    ]
+}
