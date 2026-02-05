@@ -1,9 +1,10 @@
 {
     "name": "Interview",
-    "description": "Backend implementation for Interview services and DTOs",
+    "description": "Tables and services related to the interview process",
     "files": [
-        "AIInterviewer.ServiceModel/Types/AI/GenerateInterviewPrompt.cs",
-        "AIInterviewer.ServiceModel/Types/AI/GenerateInterviewPromptResponse.cs",
-        "AIInterviewer.ServiceInterface/Services/AI/InterviewService.cs"
+        "AIInterviewer.ServiceModel/Tables/Interview/Interview.cs",
+        "AIInterviewer.ServiceModel/Tables/Interview/InterviewChatHistory.cs",
+        "AIInterviewer.ServiceModel/Tables/Interview/InterviewResult.cs",
+        "AIInterviewer/Migrations/Migration1001_CreateInterviewTables.cs"
     ]
 }
