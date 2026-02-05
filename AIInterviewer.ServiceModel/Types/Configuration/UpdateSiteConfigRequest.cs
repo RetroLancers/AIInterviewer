@@ -16,4 +16,7 @@ public class UpdateSiteConfigRequest : IReturn<IdResponse>
     public string? GlobalFallbackModel { get; set; }
 
     public string? KokoroVoice { get; set; }
+
+    [ValidateNotEmpty]
+    public string TranscriptionProvider { get; set; }
 }

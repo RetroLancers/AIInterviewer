@@ -12,7 +12,8 @@ public static class SiteConfigExtensions
             GeminiApiKey = request.GeminiApiKey,
             InterviewModel = request.InterviewModel,
             GlobalFallbackModel = request.GlobalFallbackModel,
-            KokoroVoice = request.KokoroVoice
+            KokoroVoice = request.KokoroVoice,
+            TranscriptionProvider = request.TranscriptionProvider
         };
     }
 
@@ -24,7 +25,8 @@ public static class SiteConfigExtensions
             GeminiApiKey = table.GeminiApiKey,
             InterviewModel = table.InterviewModel,
             GlobalFallbackModel = table.GlobalFallbackModel,
-            KokoroVoice = table.KokoroVoice
+            KokoroVoice = table.KokoroVoice,
+            TranscriptionProvider = table.TranscriptionProvider
         };
     }
 

@@ -1,15 +1,21 @@
-using ServiceStack;
+using System;
+using System.Threading.Tasks;
 using AIInterviewer.ServiceModel.Tables.Configuration;
 using AIInterviewer.ServiceModel.Types.Chat;
-using System.Threading.Tasks;
-using System;
+using Microsoft.Extensions.Logging;
+using ServiceStack;
 
 namespace AIInterviewer.ServiceInterface.Services.Chat;
 
-public class ChatService(SiteConfigHolder siteConfigHolder) : Service
+public class ChatService(SiteConfigHolder siteConfigHolder, ILogger<ChatService> logger) : Service
 {
     public async Task<TranscribeAudioResponse> Post(TranscribeAudioRequest request)
     {
+        if (siteConfigHolder.SiteConfig?.TranscriptionProvider == "Browser")
+        {
+            logger.LogInformation("Server-side transcription requested while transcription provider is set to Browser.");
+        }
+
         var client = siteConfigHolder.GetGeminiClient();
 
         // The DTO expects AudioData as a Base64 string

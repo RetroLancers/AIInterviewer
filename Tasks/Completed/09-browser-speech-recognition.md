@@ -35,23 +35,23 @@ Update the application to support both Gemini (server-side) and Browser (client-
 ## Checklist
 
 ### Backend & Database
-- [ ] Add `TranscriptionProvider` to `SiteConfig` table
-- [ ] Create and run migration `1002`
-- [ ] Update SiteConfig DTOs and Extension methods
-- [ ] Update seeding logic in `ConfigureSiteConfig.cs`
+- [x] Add `TranscriptionProvider` to `SiteConfig` table
+- [x] Create and run migration `1002`
+- [x] Update SiteConfig DTOs and Extension methods
+- [x] Update seeding logic in `ConfigureSiteConfig.cs`
 
 ### Frontend Configuration
-- [ ] Update `useSiteConfig.ts` composable
-- [ ] Add Transcription Provider selection to `SiteConfigEditor.vue`
+- [x] Update `useSiteConfig.ts` composable
+- [x] Add Transcription Provider selection to `SiteConfigEditor.vue`
 
 ### Frontend Transcription Implementation
-- [ ] Install/Verify `@vueuse/core` dependency (already in package.json)
-- [ ] Integrate `useSpeechRecognition` in `interviews/[id]/index.vue`
-- [ ] Implement conditional transcription logic (Browser vs Gemini)
+- [x] Install/Verify `@vueuse/core` dependency (already in package.json)
+- [x] Integrate `useSpeechRecognition` in `interviews/[id]/index.vue`
+- [x] Implement conditional transcription logic (Browser vs Gemini)
 - [ ] Test Browser-based transcription (Web Speech API)
 - [ ] Test Gemini-based transcription (Server-side)
 
 ### Verification
 - [ ] Verify settings are persisted in the database
 - [ ] Ensure the UI correctly reflects the chosen transcription method
-- [ ] Update clood files for Database, Service Interface, and Frontend domains
+- [x] Update clood files for Database, Service Interface, and Frontend domains

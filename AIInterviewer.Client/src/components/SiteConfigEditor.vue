@@ -105,6 +105,24 @@
                 Used when the primary model fails or is overloaded.
               </p>
             </div>
+
+            <div>
+              <label for="transcription-provider" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Transcription Provider
+              </label>
+              <select
+                id="transcription-provider"
+                v-model="formData.transcriptionProvider"
+                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100"
+                required
+              >
+                <option value="Gemini">Gemini (Server-side)</option>
+                <option value="Browser">Browser (Client-side)</option>
+              </select>
+              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                Choose whether speech is transcribed on the server or directly in the browser.
+              </p>
+            </div>
           </div>
         </div>
 
@@ -170,7 +188,8 @@ const formData = ref({
   geminiApiKey: '',
   interviewModel: '',
   globalFallbackModel: '',
-  kokoroVoice: 'af_heart'
+  kokoroVoice: 'af_heart',
+  transcriptionProvider: 'Gemini'
 })
 
 // Show/hide API key toggle
@@ -183,6 +202,7 @@ watch(siteConfig, (newConfig) => {
     formData.value.interviewModel = newConfig.interviewModel || ''
     formData.value.globalFallbackModel = newConfig.globalFallbackModel || ''
     formData.value.kokoroVoice = newConfig.kokoroVoice || 'af_heart'
+    formData.value.transcriptionProvider = newConfig.transcriptionProvider || 'Gemini'
   }
 }, { immediate: true })
 
@@ -196,7 +216,8 @@ const handleSubmit = async () => {
     formData.value.geminiApiKey,
     formData.value.interviewModel,
     formData.value.globalFallbackModel || undefined,
-    formData.value.kokoroVoice
+    formData.value.kokoroVoice,
+    formData.value.transcriptionProvider
   )
 }
 </script>
