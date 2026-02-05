@@ -15,11 +15,15 @@ Implement the main interview chat interface with support for text and voice inte
     - Use Gemini to transcribe the audio (backend-side).
     - Update chat history with transcribed text.
 - Manual text input fallback.
+- **TTS Playback**:
+    - Automatically play synthesized audio for new Interviewer messages.
+    - Fetch audio from the `TextToSpeech` API.
 
 ## Checklist
 - [ ] Create `interviews/[id].vue`
 - [ ] Implement `useVocal.ts` composable for MediaRecorder handling
 - [ ] Implement backend endpoint for audio transcription using Gemini
+- [ ] Integrate TTS playback logic (fetch and play audio) for AI messages
 - [ ] Build responsive chat UI with scroll-to-bottom behavior
-- [ ] Verify voice-to-text flow
+- [ ] Verify voice-to-text and text-to-voice flow
 - [ ] Update clood files for Frontend and Service Interface domains
