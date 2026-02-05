@@ -92,3 +92,6 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+
+# Large Assets
+AIInterviewer/kokoro.onnx
