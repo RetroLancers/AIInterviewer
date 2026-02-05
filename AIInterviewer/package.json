@@ -1,7 +1,7 @@
 {
     "scripts": {
         "postinstall": "npm run migrate && node postinstall.js",
-        "dtos": "cd ../AIInterviewer.Client && npx get-dtos ts",
+        "dtos": "cd ../AIInterviewer.Client && npx get-dtos ts --urls",
         "dev": "dotnet watch",
         "ui:dev": "tailwindcss -i ./tailwind.input.css -o ./wwwroot/css/app.css --watch",
         "ui:build": "tailwindcss -i ./tailwind.input.css -o ./wwwroot/css/app.css --minify",

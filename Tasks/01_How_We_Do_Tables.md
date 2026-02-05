@@ -18,11 +18,13 @@ Tables are defined in **two locations** for every table.
 *   **Purpose**: Defines the schema snapshot *at the time of creation*. This ensures that future changes to the ServiceModel POCO do not break old migrations.
 *   **Structure**: The table POCO is defined **inside** the migration class.
 
-## 2. Implementation Rules
+2.  **Implementation Rules**
 
 1.  **Dual Maintenance**: When you add or modify a table, you must update both the ServiceModel POCO and the relevant Migration (or create a new migration for changes).
 2.  **Table Aliasing**: YOU MUST use `[Alias("table_name")]` on both classes to ensure they map to the same physical database table.
 3.  **Data Annotations**: Use ServiceStack attributes (`[AutoIncrement]`, `[PrimaryKey]`, `[Required]`, `[StringLength]`) in both definitions to define constraints.
+4.  **Applying Changes**: Always use **`npm run migrate`** from the `AIInterviewer/AIInterviewer` folder to apply your changes. NEVER start the full server just to run migrations; this keeps development clean and avoids port conflicts.
+
 
 ## 3. Example
 

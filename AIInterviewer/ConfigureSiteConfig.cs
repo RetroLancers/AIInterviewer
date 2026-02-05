@@ -1,4 +1,4 @@
-﻿using AIInterviewer.ServiceModel.Tables.Configuration;
+using AIInterviewer.ServiceModel.Tables.Configuration;
 using ServiceStack.Data;
 using ServiceStack.OrmLite;
 
@@ -15,22 +15,26 @@ public class ConfigureSiteConfig : IHostingStartup
     private void UpdateSiteConfigHolder(ServiceStackHost appHost)
     {
         using var db = appHost.Resolve<IDbConnectionFactory>().Open();
-        var siteConfigs = db.Select<SiteConfig>();
-        var siteConfigHolder = appHost.Resolve<SiteConfigHolder>();
-        if (siteConfigs is { Count: > 0 })
+        if (db.TableExists<SiteConfig>())
         {
-            siteConfigHolder.SiteConfig = siteConfigs[0];
-        }
-        else
-        {
-            var siteConfig = new SiteConfig()
+            var siteConfigs = db.Select<SiteConfig>();
+            var siteConfigHolder = appHost.Resolve<SiteConfigHolder>();
+            if (siteConfigs is { Count: > 0 })
             {
-                GeminiApiKey = "",
-                InterviewModel = "",
-                GlobalFallbackModel = ""
-            };
-            siteConfigHolder.SiteConfig = siteConfig;
-            siteConfig.Id = (int)db.Insert(siteConfig, true);
+                siteConfigHolder.SiteConfig = siteConfigs[0];
+            }
+            else
+            {
+                var siteConfig = new SiteConfig()
+                {
+                    GeminiApiKey = "",
+                    InterviewModel = "",
+                    GlobalFallbackModel = "",
+                    KokoroVoice = "af_heart"
+                };
+                siteConfigHolder.SiteConfig = siteConfig;
+                siteConfig.Id = (int)db.Insert(siteConfig, true);
+            }
         }
     }
 }

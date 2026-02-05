@@ -23,7 +23,21 @@ We follow a file-based task management system to keep track of our progress.
     *   Perform the work inside the newly created worktree directory (`../AIInterviewer-<task-name>`).
     *   As you work, check off items and add notes if the plan changes.
     *   Commit changes to the feature branch regularly from within the worktree.
+
+## Development Standards
+
+### Database & DTOs
+*   **Database Migrations**: Always use `npm run migrate` from the `AIInterviewer/AIInterviewer` project directory to apply database changes. Do NOT run the full server for migrations.
+*   **Running the Server**: Never start the server directly using `dotnet run` solely to update DTOs. 
+*   **Port Selection**: When working in a task-specific worktree, use a port number derived from the task number to avoid conflicts with other worktrees.
+    *   **Rule**: `50` + `<Task Number>`. (e.g., Task `01` uses port `5001`, Task `12` uses `5012`).
+    *   **Fallback Port**: `51` + `<Task Number>`.
+*   **Updating DTOs**: Use the `Update-Dtos.ps1` script at the root. It handles starting the server on the correct task port, updating the TypeScript definitions, and shutting the server down.
+    *   **Command**: `.\Update-Dtos.ps1 -TaskNumber <Number>`
+    *   Example: For task `04`, run `.\Update-Dtos.ps1 -TaskNumber 4`.
+
 4.  **Complete**: Once satisfied, move the file from `Tasks/in_progress/` to `Tasks/completed/` and commit the change in the main repository or the worktree.
+
 5.  **Merge & Cleanup**:
     *   Return to the main repository directory.
     *   Merge the feature branch: `git merge feature/<task-name>`.

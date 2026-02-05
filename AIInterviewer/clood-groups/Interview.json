@@ -1,0 +1,7 @@
+[
+    "AIInterviewer.ServiceModel/Types/Interview.cs",
+    "AIInterviewer.ServiceInterface/Services/TtsService.cs",
+    "AIInterviewer.ServiceModel/Tables/Configuration/SiteConfig.cs",
+    "AIInterviewer/Migrations/Migration1000_CreateSiteConfig.cs",
+    "AIInterviewer/Migrations/Migration1001_AddKokoroVoiceToSiteConfig.cs"
+]

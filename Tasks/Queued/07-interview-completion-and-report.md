@@ -3,6 +3,15 @@
 ## Objective
 Finalize the interview process by generating a comprehensive feedback report using Gemini.
 
+## Status
+Backend and UI exist but report rendering and API handling need fixes.
+
+## Issues Found
+- `interviews/[id]/result.vue` renders markdown as plain text; it should render markdown (e.g., via `markdown-it`).
+- `result.vue` uses `try/catch` around `client.api` (violates API usage rules).
+- `FinishInterview` uses a nested `EvaluationResponse` class; move it to its own file to follow the one-class-per-file rule.
+- Guard against null `Feedback` to avoid null `ReportText`.
+
 ## Requirements
 - "End Interview" button in the chat UI.
 - Backend service to:
@@ -13,9 +22,11 @@ Finalize the interview process by generating a comprehensive feedback report usi
 - Display report markdown and score.
 
 ## Checklist
-- [ ] Implement `FinishInterview` service logic
-- [ ] Create `interviews/[id]/result.vue` page
-- [ ] Add "End Interview" confirmation dialog
+- [x] Implement `FinishInterview` service logic
+- [x] Create `interviews/[id]/result.vue` page
+- [x] Add "End Interview" confirmation dialog
+- [ ] Render markdown for `reportText` (ensure runtime dependency)
+- [ ] Remove `try/catch` around `client.api` and handle `ApiResult`
+- [ ] Move `EvaluationResponse` to its own file (or justify exception)
 - [ ] Verify report generation quality
-- [ ] Update clood files for all domains
-- [ ] Move all interview-related tasks to `Completed`
+- [x] Update clood files for all domains

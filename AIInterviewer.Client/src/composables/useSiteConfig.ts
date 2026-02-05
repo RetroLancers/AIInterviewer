@@ -31,13 +31,9 @@ export function useSiteConfig() {
 
     const saveSiteConfig = async (
         geminiApiKey: string,
-        researchModel: string,
-        claimExtractionModel: string,
-        evidenceCollectionModel: string,
-        claimRatingModel: string,
-        userIntentModel: string,
-        severityAssessmentModel: string,
-        globalFallbackModel?: string
+        interviewModel: string,
+        globalFallbackModel?: string,
+        kokoroVoice?: string
     ) => {
         if (!siteConfig.value) {
             error.value = 'No configuration loaded'
@@ -52,13 +48,9 @@ export function useSiteConfig() {
             const response = await client.api(new UpdateSiteConfigRequest({
                 id: siteConfig.value.id,
                 geminiApiKey,
-                researchModel,
-                claimExtractionModel,
-                evidenceCollectionModel,
-                claimRatingModel,
-                userIntentModel,
-                severityAssessmentModel,
-                globalFallbackModel: globalFallbackModel || undefined
+                interviewModel,
+                globalFallbackModel: globalFallbackModel || undefined,
+                kokoroVoice: kokoroVoice || undefined
             }))
 
             if (response.succeeded) {

@@ -9,11 +9,13 @@ using AIInterviewer.ServiceModel.Types.Chat;
 
 namespace AIInterviewer.ServiceInterface.Services.Chat;
  
+
 public class TtsService(SiteConfigHolder siteConfigHolder) : Service
 {
     private static KokoroTTS _tts;
     private static readonly object _lock = new();
  
+
     private KokoroTTS GetTts()
     {
         lock (_lock)

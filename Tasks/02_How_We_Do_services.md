@@ -10,6 +10,13 @@
     *   Example: `AIInterviewer.ServiceModel\Types\Chat\ChatRequest.cs`
     *   These should be updated in clood as well.
 
+## DTO Synchronization
+*   **Updating DTOs**: Never start the server manually to run a DTO update. Instead, use the automated script from the root of the repository:
+    *   `.\Update-Dtos.ps1 -TaskNumber [TaskNumber]`
+*   **Port Mapping**: The script automatically maps your task number to a port (e.g., Task 01 -> Port 5001) to ensure separate worktrees don't conflict.
+*   **Manual Update**: If for some reason you must update manually, use the `--urls` flag with the port matching your task:
+    *   `npm run dtos -- --urls https://localhost:50[TaskNumber]`
+
 ## Service Placement
 *   **Location**: `AIInterviewer.ServiceInterface\Services`
 *   **Organization**:

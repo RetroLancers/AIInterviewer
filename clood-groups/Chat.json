@@ -1,13 +1,15 @@
 {
-    "name": "Chat",
-    "description": "Chat, Vocal, and TTS services",
-    "files": [
-        "AIInterviewer.ServiceModel/Types/Chat/TranscribeAudioRequest.cs",
-        "AIInterviewer.ServiceModel/Types/Chat/TranscribeAudioResponse.cs",
-        "AIInterviewer.ServiceModel/Types/Chat/TextToSpeechRequest.cs",
-        "AIInterviewer.ServiceInterface/Services/Chat/ChatService.cs",
-        "AIInterviewer.ServiceInterface/Services/Chat/TtsService.cs",
-        "AIInterviewer/Configure.AI.Chat.cs",
-        "AIInterviewer.ServiceInterface/GeminiApi.cs"
-    ]
+        "name": "Chat",
+        "description": "Chat, Vocal, and TTS services",
+        "files": [
+                "AIInterviewer.ServiceModel/Types/Chat/TranscribeAudioRequest.cs",
+                "AIInterviewer.ServiceModel/Types/Chat/TranscribeAudioResponse.cs",
+                "AIInterviewer.ServiceModel/Types/Chat/TextToSpeechRequest.cs",
+                "AIInterviewer.ServiceInterface/Services/Chat/ChatService.cs",
+                "AIInterviewer.ServiceInterface/Services/Chat/TtsService.cs",
+                "AIInterviewer/Configure.AI.Chat.cs",
+                "AIInterviewer.ServiceInterface/GeminiApi.cs",
+                "AIInterviewer.ServiceInterface/SiteConfigHolderExtensions.cs",
+                "AIInterviewer.ServiceInterface/Services/AI/GeminiModelsService.cs"
+        ]
 }
