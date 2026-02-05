@@ -5,6 +5,10 @@
         "AIInterviewer.ServiceModel/Tables/Interview/Interview.cs",
         "AIInterviewer.ServiceModel/Tables/Interview/InterviewChatHistory.cs",
         "AIInterviewer.ServiceModel/Tables/Interview/InterviewResult.cs",
+        "AIInterviewer.ServiceInterface/Services/Interview/InterviewService.cs",
+        "AIInterviewer.ServiceModel/Types/Interview/FinishInterview.cs",
+        "AIInterviewer.ServiceModel/Types/Interview/GetInterview.cs",
+        "AIInterviewer.ServiceModel/Types/Interview/InterviewDtos.cs",
         "AIInterviewer/Migrations/Migration1001_CreateInterviewTables.cs"
     ]
 }
