@@ -10,6 +10,8 @@
         "AIInterviewer.ServiceModel/Types/Configuration/UpdateSiteConfigRequest.cs",
         "AIInterviewer.ServiceModel/Types/Configuration/SiteConfigResponse.cs",
         "AIInterviewer.ServiceInterface/Services/Configuration/SiteConfigService.cs",
-        "AIInterviewer/ConfigureSiteConfig.cs"
+        "AIInterviewer/ConfigureSiteConfig.cs",
+        "AIInterviewer/Migrations/Migration1001_AddKokoroVoiceToSiteConfig.cs",
+        "AIInterviewer.Client/src/components/SiteConfigEditor.vue"
     ]
 }

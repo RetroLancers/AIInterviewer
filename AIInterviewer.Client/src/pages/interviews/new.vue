@@ -69,10 +69,12 @@
              <button
               type="button"
               @click="startInterview"
-              class="inline-flex items-center rounded-md border border-transparent bg-green-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+              :disabled="starting"
+              class="inline-flex items-center rounded-md border border-transparent bg-green-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50"
             >
+              <Iconify v-if="starting" icon="line-md:loading-twotone-loop" class="mr-2 h-5 w-5" />
               Start Interview
-              <Iconify icon="mdi:arrow-right" class="ml-2 h-5 w-5" />
+              <Iconify v-else icon="mdi:arrow-right" class="ml-2 h-5 w-5" />
             </button>
           </div>
         </div>
@@ -100,26 +102,32 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useClient } from '@servicestack/vue'
-import { GenerateInterviewPrompt } from '@/lib/dtos'
+import { client } from '@/lib/gateway'
+import { GenerateInterviewPrompt, CreateInterview } from '@/lib/dtos'
 
-const client = useClient()
 const router = useRouter()
 
 const context = ref('')
 const generatedPrompt = ref('')
 const loading = ref(false)
+const starting = ref(false)
 
 async function generatePrompt() {
     if (!context.value) return
     
     loading.value = true
     try {
-        const response = await client.post(new GenerateInterviewPrompt({ context: context.value }))
-        generatedPrompt.value = response.prompt || ''
+        const api = await client.api(new GenerateInterviewPrompt({ 
+            targetRole: context.value,
+            context: context.value 
+        }))
+        if (api.succeeded) {
+            generatedPrompt.value = api.response.systemPrompt || ''
+        } else {
+            console.error('Failed to generate prompt', api.error)
+        }
     } catch (e) {
         console.error('Failed to generate prompt', e)
-        // Ideally show a toast
     } finally {
         loading.value = false
     }
@@ -128,24 +136,22 @@ async function generatePrompt() {
 async function startInterview() {
     if (!generatedPrompt.value) return
     
-    // logic to move to the next step
-    // For now we don't have the API to create the interview record, 
-    // so we will just alert or mock navigate.
-    // The requirement says "Start Interview button that creates the Interview record and redirects"
-    // But we haven't implemented CreateInterview yet in this task (Create Interview Tables was separate).
-    // I should probably check if CreateInterview DTO exists or if I should mock it.
-    // I'll leave a TODO comment or just navigate to a placeholder for now.
-    
-    // Assuming we would create an interview:
-    // const interview = await client.post(new CreateInterview({ ... }))
-    // router.push(`/interviews/${interview.id}`)
-    
-    // For this specific task "Prompt Generation UI", the "Start Interview" logic might be partially out of scope if the backend for creating interview is not ready.
-    // The task said "Start Interview button that creates the Interview record and redirects to the chat."
-    
-    // Since I plan to implement CreateInterview in "Interview Services" (Wait, 04-interview-services.md was about services).
-    // Let's assume for now I will just log it.
-    console.log("Starting interview with prompt:", generatedPrompt.value)
-    alert("Interview creation not yet implemented. This would redirect to the chat.")
+    starting.value = true
+    try {
+        const api = await client.api(new CreateInterview({
+            systemPrompt: generatedPrompt.value
+        }))
+
+        if (api.succeeded) {
+            router.push(`/interviews/${api.response.id}`)
+        } else {
+            alert("Failed to create interview: " + api.error?.message)
+        }
+    } catch (e: any) {
+        console.error("Error starting interview:", e)
+        alert("Error: " + e.message)
+    } finally {
+        starting.value = false
+    }
 }
 </script>

@@ -32,19 +32,19 @@ Implement the main interview chat interface with text and voice interaction, and
 ## Checklist
 
 ### Backend & Database
-- [ ] Modify `AIInterviewer.ServiceModel/Tables/Configuration/SiteConfig.cs`: Add `KokoroVoice`.
-- [ ] Update DTOs in `AIInterviewer.ServiceModel/Types/Configuration/`.
-- [ ] Create/Run migration for `SiteConfig` changes.
-- [ ] Implement backend endpoint for audio transcription (Gemini).
+- [x] Modify `AIInterviewer.ServiceModel/Tables/Configuration/SiteConfig.cs`: Add `KokoroVoice`.
+- [x] Update DTOs in `AIInterviewer.ServiceModel/Types/Configuration/`.
+- [x] Create/Run migration for `SiteConfig` changes.
+- [x] Implement backend endpoint for audio transcription (Gemini).
 
 ### Frontend
-- [ ] Create `AIInterviewer.Client/src/pages/interviews/[id].vue`.
-- [ ] Implement `AIInterviewer.Client/src/composables/useVocal.ts`.
-- [ ] Update `AIInterviewer.Client/src/components/SiteConfigEditor.vue` for voice selection.
-- [ ] Integrate TTS playback logic for AI messages.
-- [ ] Build responsive chat UI with scroll-to-bottom behavior.
+- [x] Create `AIInterviewer.Client/src/pages/interviews/[id].vue`.
+- [x] Implement `AIInterviewer.Client/src/composables/useVocal.ts`.
+- [x] Update `AIInterviewer.Client/src/components/SiteConfigEditor.vue` for voice selection.
+- [x] Integrate TTS playback logic for AI messages.
+- [x] Build responsive chat UI with scroll-to-bottom behavior.
 
 ### Verification
-- [ ] Verify voice-to-text and text-to-voice flow.
-- [ ] Verify settings are saved correctly in the DB.
-- [ ] Update clood files for Frontend and Service Interface domains.
+- [x] Verify voice-to-text and text-to-voice flow.
+- [x] Verify settings are saved correctly in the DB.
+- [x] Update clood files for Frontend and Service Interface domains.

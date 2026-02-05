@@ -3,18 +3,19 @@ using ServiceStack.OrmLite;
 using AIInterviewer.ServiceModel.Types.Interview;
 using AIInterviewer.ServiceModel.Tables.Interview;
 using AIInterviewer.ServiceModel.Types.Interview.ExtensionMethods;
+using AIInterviewer.ServiceModel.Tables.Configuration;
 using System;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace AIInterviewer.ServiceInterface.Services.Interview;
 
-public class InterviewService : Service
+public class InterviewService(SiteConfigHolder siteConfigHolder) : Service
 {
-    public GeminiClient Gemini { get; set; }
-
     public async Task<GenerateInterviewPromptResponse> Post(GenerateInterviewPrompt request)
     {
+        var client = siteConfigHolder.GetGeminiClient();
         var prompt = $"Create a system prompt for an AI interviewer interviewing a candidate for the role of '{request.TargetRole}'.";
         if (!string.IsNullOrEmpty(request.Context))
         {
@@ -22,7 +23,7 @@ public class InterviewService : Service
         }
         prompt += " The output should be the raw system prompt text that defines the persona and rules for the AI. Do not include markdown code blocks.";
 
-        var result = await Gemini.GenerateTextAsync(prompt);
+        var result = await client.GenerateTextAsync(prompt);
         return new GenerateInterviewPromptResponse { SystemPrompt = result?.Trim() ?? "Failed to generate prompt." };
     }
 
@@ -77,7 +78,8 @@ public class InterviewService : Service
         var historyText = string.Join("\n", history.OrderBy(x => x.EntryDate).Select(h => $"{h.Role}: {h.Content}"));
         var fullPrompt = historyText + "\nModel:"; 
         
-        var aiResponse = await Gemini.GenerateTextAsync(
+        var client = siteConfigHolder.GetGeminiClient();
+        var aiResponse = await client.GenerateTextAsync(
             prompt: fullPrompt, 
             systemInstruction: interview.Prompt 
         );
@@ -136,7 +138,8 @@ Provide a JSON output with the following schema:
             Required = new List<string> { "Score", "Feedback" }
         };
 
-        var evaluation = await Gemini.GenerateJsonAsync<EvaluationResponse>(evaluationPrompt, schema);
+        var client = siteConfigHolder.GetGeminiClient();
+        var evaluation = await client.GenerateJsonAsync<EvaluationResponse>(evaluationPrompt, schema);
 
         if (evaluation == null) throw new Exception("Failed to generate evaluation");
 

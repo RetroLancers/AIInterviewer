@@ -15,5 +15,5 @@ Create the backend services to handle interview prompt generation and chat histo
 - [x] Define Request/Response DTOs in `AIInterviewer.ServiceModel/Types/Interview.cs`
 - [x] Implement `InterviewService.cs`
 - [x] Add logic to `GeminiClient` or a helper to craft the initial "Interviewer" prompt
-- [ ] Test services using `api.ts` or Swagger
+- [x] Test services using `api.ts` or Swagger
 - [x] Update clood files for Service Interface domain

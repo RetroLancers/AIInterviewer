@@ -1,6 +1,8 @@
 using ServiceStack;
 using AIInterviewer.ServiceModel.Tables.Configuration;
 using AIInterviewer.ServiceModel.Types.Chat;
+using System.Threading.Tasks;
+using System;
 
 namespace AIInterviewer.ServiceInterface.Services.Chat;
 
@@ -8,11 +10,7 @@ public class ChatService(SiteConfigHolder siteConfigHolder) : Service
 {
     public async Task<object> Post(TranscribeAudioRequest request)
     {
-        var config = siteConfigHolder.SiteConfig;
-        if (config == null || string.IsNullOrEmpty(config.GeminiApiKey))
-            throw new HttpError(400, "ConfigurationError", "Site configuration is missing or API Key is not set.");
-
-        var client = new GeminiClient(config.GeminiApiKey, config.InterviewModel ?? "gemini-2.5-flash");
+        var client = siteConfigHolder.GetGeminiClient();
 
         // The DTO expects AudioData as a Base64 string
         if (string.IsNullOrEmpty(request.AudioData))

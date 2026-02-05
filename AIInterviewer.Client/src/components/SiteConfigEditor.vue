@@ -48,9 +48,6 @@
               </svg>
             </button>
           </div>
-          <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-            Your Gemini API key is required to fetch available models and use AI features.
-          </p>
         </div>
 
         <!-- Loading/Error states for models -->
@@ -63,28 +60,18 @@
           {{ modelsError }}
         </div>
 
-        <div v-if="!formData.geminiApiKey || formData.geminiApiKey.trim() === ''" class="mb-2 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded">
-          <p class="text-sm text-blue-800 dark:text-blue-200">
-            Please enter a Gemini API key above to load available models.
-          </p>
-        </div>
-
-        <!-- Per-Service Model Configuration -->
+        <!-- Interview Model Configuration -->
         <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
-          <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Per-Service Model Configuration</h3>
-          <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
-            Configure which Gemini model to use for each service. This allows you to optimize cost and performance for different operations.
-          </p>
-
+          <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">AI Interview Configuration</h3>
+          
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Claim Research Model -->
             <div>
-              <label for="research-model" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Claim Research Model
+              <label for="interview-model" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Interview Model
               </label>
               <select
-                id="research-model"
-                v-model="formData.researchModel"
+                id="interview-model"
+                v-model="formData.interviewModel"
                 :disabled="!availableModels || availableModels.length === 0"
                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100 disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:cursor-not-allowed"
                 required
@@ -95,143 +82,59 @@
                 </option>
               </select>
               <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                Used for researching and finding evidence for claims
+                The primary model used for conducting interviews.
               </p>
             </div>
 
-            <!-- Claim Extraction Model -->
             <div>
-              <label for="claim-extraction-model" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Claim Extraction Model
+              <label for="global-fallback-model" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Global Fallback Model
               </label>
               <select
-                id="claim-extraction-model"
-                v-model="formData.claimExtractionModel"
+                id="global-fallback-model"
+                v-model="formData.globalFallbackModel"
                 :disabled="!availableModels || availableModels.length === 0"
                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100 disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:cursor-not-allowed"
-                required
               >
-                <option value="">Select a model</option>
+                <option value="">Select a fallback model (optional)</option>
                 <option v-for="model in availableModels" :key="model" :value="model">
                   {{ model }}
                 </option>
               </select>
               <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                Used for extracting factual claims
-              </p>
-            </div>
-
-            <!-- Evidence Collection Model -->
-            <div>
-              <label for="evidence-collection-model" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Evidence Collection Model
-              </label>
-              <select
-                id="evidence-collection-model"
-                v-model="formData.evidenceCollectionModel"
-                :disabled="!availableModels || availableModels.length === 0"
-                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100 disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:cursor-not-allowed"
-                required
-              >
-                <option value="">Select a model</option>
-                <option v-for="model in availableModels" :key="model" :value="model">
-                  {{ model }}
-                </option>
-              </select>
-              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                Used for grounded search and evidence gathering
-              </p>
-            </div>
-
-            <!-- Claim Rating Model -->
-            <div>
-              <label for="claim-rating-model" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Claim Rating Model
-              </label>
-              <select
-                id="claim-rating-model"
-                v-model="formData.claimRatingModel"
-                :disabled="!availableModels || availableModels.length === 0"
-                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100 disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:cursor-not-allowed"
-                required
-              >
-                <option value="">Select a model</option>
-                <option v-for="model in availableModels" :key="model" :value="model">
-                  {{ model }}
-                </option>
-              </select>
-              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                Used for rating individual claims
-              </p>
-            </div>
-
-            <!-- User Intent Model -->
-            <div>
-              <label for="user-intent-model" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                User Intent Model
-              </label>
-              <select
-                id="user-intent-model"
-                v-model="formData.userIntentModel"
-                :disabled="!availableModels || availableModels.length === 0"
-                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100 disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:cursor-not-allowed"
-                required
-              >
-                <option value="">Select a model</option>
-                <option v-for="model in availableModels" :key="model" :value="model">
-                  {{ model }}
-                </option>
-              </select>
-              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                Used for analyzing user intent
-              </p>
-            </div>
-
-            <!-- Severity Assessment Model -->
-            <div>
-              <label for="severity-assessment-model" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Severity Assessment Model
-              </label>
-              <select
-                id="severity-assessment-model"
-                v-model="formData.severityAssessmentModel"
-                :disabled="!availableModels || availableModels.length === 0"
-                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100 disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:cursor-not-allowed"
-                required
-              >
-                <option value="">Select a model</option>
-                <option v-for="model in availableModels" :key="model" :value="model">
-                  {{ model }}
-                </option>
-              </select>
-              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                Used for assessing severity of inaccuracies
+                Used when the primary model fails or is overloaded.
               </p>
             </div>
           </div>
         </div>
 
-        <!-- Global Fallback Model -->
+        <!-- Voice Configuration -->
         <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
-          <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Fallback Configuration</h3>
+          <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Voice Configuration (Kokoro TTS)</h3>
           
           <div>
-            <label for="global-fallback-model" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Global Fallback Model
+            <label for="kokoro-voice" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Default Interviewer Voice
             </label>
             <select
-              id="global-fallback-model"
-              v-model="formData.globalFallbackModel"
-              :disabled="!availableModels || availableModels.length === 0"
-              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100 disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:cursor-not-allowed"
+              id="kokoro-voice"
+              v-model="formData.kokoroVoice"
+              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100"
             >
-              <option value="">Select a fallback model (optional)</option>
-              <option v-for="model in availableModels" :key="model" :value="model">
-                {{ model }}
-              </option>
+              <option value="af_heart">af_heart (Default)</option>
+              <option value="af_bella">af_bella</option>
+              <option value="af_nicole">af_nicole</option>
+              <option value="af_sarah">af_sarah</option>
+              <option value="af_sky">af_sky</option>
+              <option value="am_adam">am_adam</option>
+              <option value="am_michael">am_michael</option>
+              <option value="bf_emma">bf_emma</option>
+              <option value="bf_isabella">bf_isabella</option>
+              <option value="bm_george">bm_george</option>
+              <option value="bm_lewis">bm_lewis</option>
             </select>
             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-              Used when any specific model fails or is overloaded. Recommended: use a reliable, fast model.
+              Select the default voice for the AI interviewer.
             </p>
           </div>
         </div>
@@ -265,13 +168,9 @@ const { siteConfig, isLoading, isSaving, error, saveSuccess, saveSiteConfig } = 
 // Form data
 const formData = ref({
   geminiApiKey: '',
-  researchModel: '',
-  claimExtractionModel: '',
-  evidenceCollectionModel: '',
-  claimRatingModel: '',
-  userIntentModel: '',
-  severityAssessmentModel: '',
-  globalFallbackModel: ''
+  interviewModel: '',
+  globalFallbackModel: '',
+  kokoroVoice: 'af_heart'
 })
 
 // Show/hide API key toggle
@@ -281,13 +180,9 @@ const showApiKey = ref(false)
 watch(siteConfig, (newConfig) => {
   if (newConfig) {
     formData.value.geminiApiKey = newConfig.geminiApiKey || ''
-    formData.value.researchModel = newConfig.researchModel || ''
-    formData.value.claimExtractionModel = newConfig.claimExtractionModel || ''
-    formData.value.evidenceCollectionModel = newConfig.evidenceCollectionModel || ''
-    formData.value.claimRatingModel = newConfig.claimRatingModel || ''
-    formData.value.userIntentModel = newConfig.userIntentModel || ''
-    formData.value.severityAssessmentModel = newConfig.severityAssessmentModel || ''
+    formData.value.interviewModel = newConfig.interviewModel || ''
     formData.value.globalFallbackModel = newConfig.globalFallbackModel || ''
+    formData.value.kokoroVoice = newConfig.kokoroVoice || 'af_heart'
   }
 }, { immediate: true })
 
@@ -299,13 +194,9 @@ const { models: availableModels, isLoading: modelsLoading, error: modelsError } 
 const handleSubmit = async () => {
   await saveSiteConfig(
     formData.value.geminiApiKey,
-    formData.value.researchModel,
-    formData.value.claimExtractionModel,
-    formData.value.evidenceCollectionModel,
-    formData.value.claimRatingModel,
-    formData.value.userIntentModel,
-    formData.value.severityAssessmentModel,
-    formData.value.globalFallbackModel || undefined
+    formData.value.interviewModel,
+    formData.value.globalFallbackModel || undefined,
+    formData.value.kokoroVoice
   )
 }
 </script>
