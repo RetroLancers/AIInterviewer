@@ -8,23 +8,53 @@
         </h1>
 
         <div class="space-y-6">
-          <!-- Step 1: Context Input -->
-          <div>
-            <label for="context" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Role / Context
-            </label>
-            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              Describe the role you want to interview for (e.g., "Senior React Developer at a startup", "Junior Accountant").
-            </p>
-            <div class="mt-2">
-              <input
-                type="text"
-                id="context"
-                v-model="context"
-                placeholder="e.g. Fullstack Developer using .NET and Vue"
-                class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm p-3 border"
-                @keyup.enter="generatePrompt"
-              />
+          <!-- Error State -->
+          <div v-if="error" class="p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-md">
+            <div class="flex">
+              <Iconify icon="mdi:alert-circle" class="h-5 w-5 text-red-400" />
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-red-800 dark:text-red-300">Error</h3>
+                <div class="mt-1 text-sm text-red-700 dark:text-red-400">
+                  {{ error }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 1: Inputs -->
+          <div class="grid grid-cols-1 gap-6">
+            <div>
+              <label for="targetRole" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Target Role
+              </label>
+              <div class="mt-1">
+                <input
+                  type="text"
+                  id="targetRole"
+                  v-model="targetRole"
+                  placeholder="e.g. Senior Fullstack Developer"
+                  class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm p-3 border"
+                  @keyup.enter="generatePrompt"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label for="context" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Additional Context (Optional)
+              </label>
+              <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                Mention specific technologies, company culture, or scenario details.
+              </p>
+              <div class="mt-1">
+                <textarea
+                  id="context"
+                  rows="3"
+                  v-model="context"
+                  placeholder="e.g. Focus on Vue 3, TypeScript, and AWS architecture. The company is a mid-stage fintech startup."
+                  class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm p-3 border"
+                ></textarea>
+              </div>
             </div>
           </div>
 
@@ -33,8 +63,8 @@
             <button
               type="button"
               @click="generatePrompt"
-              :disabled="loading || !context"
-              class="inline-flex items-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              :disabled="loading || !targetRole"
+              class="inline-flex items-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <Iconify v-if="loading" icon="line-md:loading-twotone-loop" class="mr-2 h-5 w-5" />
               <Iconify v-else icon="mdi:magic-staff" class="mr-2 h-5 w-5" />
@@ -43,9 +73,10 @@
           </div>
 
           <!-- Step 2: Generated Prompt Review -->
-          <div v-if="generatedPrompt || loading" class="relative">
-            <div v-if="loading" class="absolute inset-0 bg-white/50 dark:bg-gray-800/50 flex items-center justify-center z-10 rounded-md">
-                <!-- Overlay while loading -->
+          <div v-if="generatedPrompt || loading" class="relative pt-6 border-t border-gray-200 dark:border-gray-700">
+            <div v-if="loading" class="absolute inset-0 bg-white/50 dark:bg-gray-800/50 flex flex-col items-center justify-center z-10 rounded-md">
+                 <Iconify icon="line-md:loading-twotone-loop" class="h-12 w-12 text-blue-500 mb-2" />
+                 <span class="text-sm font-medium text-gray-700 dark:text-gray-300">AI is crafting your interview...</span>
             </div>
             
             <label for="prompt" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -70,7 +101,7 @@
               type="button"
               @click="startInterview"
               :disabled="starting"
-              class="inline-flex items-center rounded-md border border-transparent bg-green-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50"
+              class="inline-flex items-center rounded-md border border-transparent bg-green-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 transition-colors"
             >
               <Iconify v-if="starting" icon="line-md:loading-twotone-loop" class="mr-2 h-5 w-5" />
               Start Interview
@@ -107,51 +138,49 @@ import { GenerateInterviewPrompt, CreateInterview } from '@/lib/dtos'
 
 const router = useRouter()
 
+const targetRole = ref('')
 const context = ref('')
 const generatedPrompt = ref('')
 const loading = ref(false)
 const starting = ref(false)
+const error = ref<string | null>(null)
 
 async function generatePrompt() {
-    if (!context.value) return
+    if (!targetRole.value) return
     
     loading.value = true
-    try {
-        const api = await client.api(new GenerateInterviewPrompt({ 
-            targetRole: context.value,
-            context: context.value 
-        }))
-        if (api.succeeded) {
-            generatedPrompt.value = api.response.systemPrompt || ''
-        } else {
-            console.error('Failed to generate prompt', api.error)
-        }
-    } catch (e) {
-        console.error('Failed to generate prompt', e)
-    } finally {
-        loading.value = false
+    error.value = null
+    
+    const api = await client.api(new GenerateInterviewPrompt({ 
+        targetRole: targetRole.value,
+        context: context.value 
+    }))
+
+    if (api.succeeded) {
+        generatedPrompt.value = api.response.systemPrompt || ''
+    } else {
+        error.value = api.error?.message || 'Failed to generate prompt. Please try again.'
     }
+    
+    loading.value = false
 }
 
 async function startInterview() {
     if (!generatedPrompt.value) return
     
     starting.value = true
-    try {
-        const api = await client.api(new CreateInterview({
-            systemPrompt: generatedPrompt.value
-        }))
+    error.value = null
 
-        if (api.succeeded) {
-            router.push(`/interviews/${api.response.id}`)
-        } else {
-            alert("Failed to create interview: " + api.error?.message)
-        }
-    } catch (e: any) {
-        console.error("Error starting interview:", e)
-        alert("Error: " + e.message)
-    } finally {
-        starting.value = false
+    const api = await client.api(new CreateInterview({
+        systemPrompt: generatedPrompt.value
+    }))
+
+    if (api.succeeded) {
+        router.push(`/interviews/${api.response.id}`)
+    } else {
+        error.value = api.error?.message || 'Failed to create interview. Please try again.'
     }
+
+    starting.value = false
 }
 </script>
