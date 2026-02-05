@@ -13,9 +13,9 @@ Finalize the interview process by generating a comprehensive feedback report usi
 - Display report markdown and score.
 
 ## Checklist
-- [ ] Implement `FinishInterview` service logic
-- [ ] Create `interviews/[id]/result.vue` page
-- [ ] Add "End Interview" confirmation dialog
-- [ ] Verify report generation quality
-- [ ] Update clood files for all domains
-- [ ] Move all interview-related tasks to `Completed`
+- [x] Implement `FinishInterview` service logic
+- [x] Create `interviews/[id]/result.vue` page
+- [x] Add "End Interview" confirmation dialog
+- [x] Verify report generation quality
+- [x] Update clood files for all domains
+- [x] Move all interview-related tasks to `Completed`

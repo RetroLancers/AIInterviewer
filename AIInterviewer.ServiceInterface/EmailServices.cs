@@ -61,6 +61,8 @@ public class SendEmailCommand(ILogger<SendEmailCommand> logger, IBackgroundJobs 
     private static long count = 0;
     protected override void Run(SendEmail request)
     {
+ 
+// Note: Language detection is automated based on what the loaded voice supports.
         Interlocked.Increment(ref count);
         var log = Request.CreateJobLogger(jobs, logger);
         log.LogInformation("Sending {Count} email to {Email} with subject {Subject}", 
