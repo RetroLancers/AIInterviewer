@@ -4,10 +4,8 @@ using AIInterviewer.ServiceModel.Types.Interview;
 using AIInterviewer.ServiceModel.Tables.Interview;
 using AIInterviewer.ServiceModel.Types.Interview.ExtensionMethods;
 using AIInterviewer.ServiceModel.Tables.Configuration;
-using System;
-using System.Threading.Tasks;
-using System.Linq;
-using System.Collections.Generic;
+ 
+using Google.GenAI.Types;
 
 namespace AIInterviewer.ServiceInterface.Services.Interview;
 
@@ -98,10 +96,10 @@ public class InterviewService(SiteConfigHolder siteConfigHolder) : Service
         var history = await Db.SelectAsync<InterviewChatHistory>(x => x.InterviewId == request.InterviewId);
         
         var orderedHistory = history.OrderBy(x => x.EntryDate).ToList();
-        var contents = orderedHistory.Select(entry => new Google.GenAI.Types.Content
+        var contents = orderedHistory.Select(entry => new Content
         {
             Role = entry.Role == "Interviewer" ? "model" : "user",
-            Parts = new List<Google.GenAI.Types.Part> { new() { Text = entry.Content } }
+            Parts = [new Part { Text = entry.Content }]
         }).ToList();
 
         var client = siteConfigHolder.GetGeminiClient();
@@ -153,15 +151,15 @@ Provide a JSON output with the following schema:
 }}
 ";
         
-        var schema = new Google.GenAI.Types.Schema
+        var schema = new Schema
         {
             Type = Google.GenAI.Types.Type.OBJECT,
-            Properties = new Dictionary<string, Google.GenAI.Types.Schema>
+            Properties = new Dictionary<string, Schema>
             {
                 ["Score"] = new() { Type = Google.GenAI.Types.Type.INTEGER },
                 ["Feedback"] = new() { Type = Google.GenAI.Types.Type.STRING }
             },
-            Required = new List<string> { "Score", "Feedback" }
+            Required = ["Score", "Feedback"]
         };
 
         var client = siteConfigHolder.GetGeminiClient();
