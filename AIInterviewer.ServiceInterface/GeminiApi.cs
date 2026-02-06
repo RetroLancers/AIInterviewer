@@ -96,6 +96,61 @@ public class GeminiClient(string apiKey, string model, string fallbackModel = "g
         }
     }
 
+    public async Task<string?> GenerateTextAsync(IEnumerable<Content> contents, string? systemInstruction = null, double? temperature = null, int? maxOutputTokens = null, int retryCount = 0)
+    {
+        if (retryCount == 0 && _model == _fallbackModel)
+        {
+            _model = _primaryModel;
+        }
+
+        try
+        {
+            var config = new GenerateContentConfig();
+            var hasConfig = false;
+
+            if (systemInstruction != null)
+            {
+                config.SystemInstruction = new Content
+                {
+                    Parts = new List<Part> { new Part { Text = systemInstruction } }
+                };
+                hasConfig = true;
+            }
+            if (temperature.HasValue)
+            {
+                config.Temperature = temperature.Value;
+                hasConfig = true;
+            }
+            if (maxOutputTokens.HasValue)
+            {
+                config.MaxOutputTokens = maxOutputTokens.Value;
+                hasConfig = true;
+            }
+
+            var response = await _client.Models.GenerateContentAsync(
+                model: _model,
+                contents: contents.ToList(),
+                config: hasConfig ? config : null
+            );
+
+            if (response.Candidates != null && response.Candidates.Any())
+            {
+                var candidate = response.Candidates[0];
+                if (candidate.Content != null && candidate.Content.Parts != null && candidate.Content.Parts.Any())
+                {
+                    return candidate.Content.Parts[0].Text;
+                }
+            }
+            return null;
+        }
+        catch (Google.GenAI.ServerError e) when (e.Message.Contains("overloaded"))
+        {
+            if (retryCount >= 3) throw;
+            ChangeModel(_fallbackModel);
+            return await GenerateTextAsync(contents, systemInstruction, temperature, maxOutputTokens, retryCount: retryCount + 1);
+        }
+    }
+
     public async Task<string?> GenerateTextFromAudioAsync(string prompt, byte[] audioData, string mimeType, string? systemInstruction = null, int retryCount = 0)
     {
         if (retryCount == 0 && _model == _fallbackModel)
