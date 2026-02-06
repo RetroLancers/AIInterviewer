@@ -24,6 +24,7 @@ public class Migration1001_CreateInterviewTables : MigrationBase
         public string? UserId { get; set; }
     }
 
+
     [Alias("interview_chat_history")]
     public class InterviewChatHistory
     {
@@ -33,6 +34,9 @@ public class Migration1001_CreateInterviewTables : MigrationBase
 
         [ForeignKey(typeof(Interview), OnDelete = "Cascade")]
         public int InterviewId { get; set; }
+
+        [References(typeof(Interview))] 
+        public Interview Interview { get; set; }
 
         [Required]
         public DateTime EntryDate { get; set; }
