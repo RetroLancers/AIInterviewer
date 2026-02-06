@@ -21,8 +21,38 @@
             </div>
           </div>
 
-          <!-- Step 1: Inputs -->
-          <div class="grid grid-cols-1 gap-6">
+          <!-- Step 1: Prompt Source -->
+          <div class="space-y-3">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Prompt Source
+            </label>
+            <div class="flex flex-col gap-3 sm:flex-row">
+              <label class="flex items-center gap-2 rounded-md border border-gray-200 dark:border-gray-700 px-3 py-2 text-sm text-gray-700 dark:text-gray-300">
+                <input
+                  v-model="promptSource"
+                  type="radio"
+                  value="generate"
+                  class="text-blue-600 focus:ring-blue-500"
+                />
+                Generate a prompt with AI
+              </label>
+              <label class="flex items-center gap-2 rounded-md border border-gray-200 dark:border-gray-700 px-3 py-2 text-sm text-gray-700 dark:text-gray-300">
+                <input
+                  v-model="promptSource"
+                  type="radio"
+                  value="custom"
+                  class="text-blue-600 focus:ring-blue-500"
+                />
+                Paste your own prompt
+              </label>
+            </div>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+              Choose whether to generate a prompt or supply your own system prompt directly.
+            </p>
+          </div>
+
+          <!-- Step 2: Inputs -->
+          <div v-if="promptSource === 'generate'" class="grid grid-cols-1 gap-6">
             <div>
               <label for="targetRole" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Target Role
@@ -59,7 +89,7 @@
           </div>
 
           <!-- Generate Button -->
-          <div class="flex justify-end">
+          <div v-if="promptSource === 'generate'" class="flex justify-end">
             <button
               type="button"
               @click="generatePrompt"
@@ -73,7 +103,7 @@
           </div>
 
           <!-- Step 2: Generated Prompt Review -->
-          <div v-if="generatedPrompt || loading" class="relative pt-6 border-t border-gray-200 dark:border-gray-700">
+          <div v-if="promptSource === 'custom' || systemPrompt || loading" class="relative pt-6 border-t border-gray-200 dark:border-gray-700">
             <div v-if="loading" class="absolute inset-0 bg-white/50 dark:bg-gray-800/50 flex flex-col items-center justify-center z-10 rounded-md">
                  <Iconify icon="line-md:loading-twotone-loop" class="h-12 w-12 text-blue-500 mb-2" />
                  <span class="text-sm font-medium text-gray-700 dark:text-gray-300">AI is crafting your interview...</span>
@@ -83,20 +113,20 @@
               Interview System Prompt
             </label>
             <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              Review and edit the system prompt that will guide the AI interviewer.
+              {{ promptSource === 'custom' ? 'Paste your system prompt below or write your own from scratch.' : 'Review and edit the system prompt that will guide the AI interviewer.' }}
             </p>
             <div class="mt-2">
               <textarea
                 id="prompt"
                 rows="10"
-                v-model="generatedPrompt"
+                v-model="systemPrompt"
                 class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm p-3 font-mono text-xs border"
               ></textarea>
             </div>
           </div>
 
           <!-- Start Interview Action -->
-          <div v-if="generatedPrompt" class="border-t border-gray-200 dark:border-gray-700 pt-6 flex justify-end">
+          <div v-if="systemPrompt" class="border-t border-gray-200 dark:border-gray-700 pt-6 flex justify-end">
              <button
               type="button"
               @click="startInterview"
@@ -140,7 +170,8 @@ const router = useRouter()
 
 const targetRole = ref('')
 const context = ref('')
-const generatedPrompt = ref('')
+const promptSource = ref<'generate' | 'custom'>('generate')
+const systemPrompt = ref('')
 const loading = ref(false)
 const starting = ref(false)
 const error = ref<string | null>(null)
@@ -157,7 +188,7 @@ async function generatePrompt() {
     }))
 
     if (api.succeeded && api.response) {
-        generatedPrompt.value = api.response.systemPrompt || ''
+        systemPrompt.value = api.response.systemPrompt || ''
     } else {
         error.value = api.error?.message || 'Failed to generate prompt. Please try again.'
     }
@@ -166,13 +197,13 @@ async function generatePrompt() {
 }
 
 async function startInterview() {
-    if (!generatedPrompt.value) return
+    if (!systemPrompt.value) return
     
     starting.value = true
     error.value = null
 
     const api = await client.api(new CreateInterview({
-        systemPrompt: generatedPrompt.value
+        systemPrompt: systemPrompt.value
     }))
 
     if (api.succeeded && api.response) {
