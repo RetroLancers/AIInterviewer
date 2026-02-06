@@ -333,8 +333,8 @@ watch(isListening, (listening) => {
 
 watch(speechResult, async (value) => {
     if (!useBrowserTranscription.value) return
-    // In manual mode, we wait for the user to stop
-    if (manualMode.value) return
+   
+  
     
     const transcript = value?.trim()
     if (!transcript || transcript === lastTranscript.value) return
