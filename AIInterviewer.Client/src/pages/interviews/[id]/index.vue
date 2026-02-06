@@ -36,12 +36,12 @@
 
         <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
             <div class="flex items-center gap-4">
-               <input 
-                  type="text" 
-                  v-model="textInput" 
-                  @keyup.enter="sendText"
-                  placeholder="Type your response..." 
-                  class="flex-grow p-3 border dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition"
+               <textarea
+                  v-model="textInput"
+                  @keyup.enter.exact.prevent="sendText"
+                  placeholder="Type your response..."
+                  rows="3"
+                  class="flex-grow p-3 border dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition resize-none"
                   :disabled="isActiveRecording || processingAi"
                />
                
@@ -190,7 +190,7 @@ const toggleRecording = async () => {
             if (manualMode.value && speechResult.value) {
                 const transcript = speechResult.value.trim()
                 if (transcript) {
-                    await handleTranscript(transcript)
+                    applyTranscriptToTextbox(transcript)
                 }
             }
         } else {
@@ -214,12 +214,15 @@ const toggleRecording = async () => {
     }
 }
 
+const applyTranscriptToTextbox = (text: string) => {
+    textInput.value = textInput.value
+        ? `${textInput.value} ${text}`
+        : text
+}
+
 const handleTranscript = async (text: string) => {
     if (reviewMode.value) {
-        // Append to existing text with a space if needed
-        textInput.value = textInput.value 
-            ? `${textInput.value} ${text}`
-            : text
+        applyTranscriptToTextbox(text)
     } else {
         await sendMessage(text)
     }
@@ -324,7 +327,7 @@ watch(speechResult, async (value) => {
     const transcript = value?.trim()
     if (!transcript || transcript === lastTranscript.value) return
     lastTranscript.value = transcript
-    await handleTranscript(transcript)
+    applyTranscriptToTextbox(transcript)
 })
 </script>
 
