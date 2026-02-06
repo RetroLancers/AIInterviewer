@@ -96,9 +96,9 @@ import {
 import { useVocal } from '@/composables/useVocal'
 import { useSiteConfig } from '@/composables/useSiteConfig'
 
-const route = useRoute()
+const route = useRoute('/interviews/[id]/')
 const router = useRouter()
-const id = parseInt(route.params.id as string)
+const id = computed(() => Number(route.params.id))
 const history = ref<InterviewChatHistoryDto[]>([])
 const processing = ref(false)
 const processingAi = ref(false)
@@ -137,11 +137,11 @@ const scrollToBottom = async () => {
 }
 
 const loadInterview = async () => {
-    const api = await client.api(new GetInterview({ id }))
-    if (api.succeeded) {
-        history.value = api.response.history
+    const api = await client.api(new GetInterview({ id: id.value }))
+    if (api.succeeded && api.response) {
+        history.value = api.response.history ?? []
         if (api.response.result) {
-            router.push(`/interviews/${id}/result`)
+            router.push(`/interviews/${id.value}/result`)
         }
         scrollToBottom()
     }
@@ -187,8 +187,9 @@ const processAudioResponse = async (blob: Blob, mimeType: string) => {
         mimeType: mimeType
     }))
 
-    if (transcribeApi.succeeded && transcribeApi.response.transcript) {
-        await sendMessage(transcribeApi.response.transcript)
+    const transcript = transcribeApi.response?.transcript
+    if (transcribeApi.succeeded && transcript) {
+        await sendMessage(transcript)
     } else {
         console.error('Transcription failed', transcribeApi.error)
     }
@@ -205,12 +206,12 @@ const sendText = async () => {
 const sendMessage = async (message: string) => {
     processingAi.value = true
     const api = await client.api(new AddChatMessage({
-        interviewId: id,
+        interviewId: id.value,
         message: message
     }))
 
-    if (api.succeeded) {
-        history.value = api.response.history
+    if (api.succeeded && api.response) {
+        history.value = api.response.history ?? []
         scrollToBottom()
         
         // Play TTS for the last AI message
@@ -225,7 +226,7 @@ const sendMessage = async (message: string) => {
 const playAiResponse = async (text: string) => {
     // TextToSpeechRequest returns a Blob (WAV)
     const api = await client.api(new TextToSpeechRequest({ text }))
-    if (api.succeeded) {
+    if (api.succeeded && api.response) {
         const url = URL.createObjectURL(api.response)
         const audio = new Audio(url)
         await audio.play()
@@ -238,9 +239,9 @@ const endInterview = async () => {
     if (!confirm('Are you sure you want to end the interview? This will generate your feedback report.')) return;
     
     processing.value = true
-    const api = await client.api(new FinishInterview({ id }))
+    const api = await client.api(new FinishInterview({ id: id.value }))
     if (api.succeeded) {
-        router.push(`/interviews/${id}/result`)
+        router.push(`/interviews/${id.value}/result`)
     } else {
         alert('Failed to end interview: ' + api.error?.message)
     }

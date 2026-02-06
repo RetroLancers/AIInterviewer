@@ -44,8 +44,8 @@ import { client } from '@/lib/gateway'
 import { GetInterview, type InterviewResultDto } from '@/lib/dtos'
 import MarkdownIt from 'markdown-it'
 
-const route = useRoute()
-const id = parseInt(route.params.id as string)
+const route = useRoute('/interviews/[id]/result')
+const id = computed(() => Number(route.params.id))
 
 const result = ref<InterviewResultDto | null>(null)
 const loading = ref(true)
@@ -62,7 +62,7 @@ const renderedReport = computed(() => {
 const fetchResult = async () => {
   loading.value = true
   error.value = ''
-  const api = await client.api(new GetInterview({ id }))
+  const api = await client.api(new GetInterview({ id: id.value }))
   if (api.succeeded) {
     if (api.response?.result) {
       result.value = api.response.result
