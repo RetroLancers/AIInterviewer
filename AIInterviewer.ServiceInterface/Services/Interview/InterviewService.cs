@@ -57,6 +57,29 @@ public class InterviewService(SiteConfigHolder siteConfigHolder) : Service
         };
     }
 
+    public async Task<GetInterviewHistoryResponse> Get(GetInterviewHistory request)
+    {
+        var query = Db.From<AIInterviewer.ServiceModel.Tables.Interview.Interview>()
+            .OrderByDescending(x => x.CreatedDate);
+
+        if (request.Offset.HasValue)
+        {
+            query.Skip(request.Offset.Value);
+        }
+
+        if (request.Limit.HasValue)
+        {
+            query.Take(request.Limit.Value);
+        }
+
+        var interviews = await Db.SelectAsync(query);
+
+        return new GetInterviewHistoryResponse
+        {
+            Interviews = interviews.Select(interview => interview.ToDto()).ToList()
+        };
+    }
+
     public async Task<AddChatMessageResponse> Post(AddChatMessage request)
     {
         var interview = await Db.SingleByIdAsync<AIInterviewer.ServiceModel.Tables.Interview.Interview>(request.InterviewId);
