@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using AIInterviewer.ServiceModel.Tables.Configuration;
 using System.Collections.Generic;
-
 using AIInterviewer.ServiceInterface;
 
 namespace AIInterviewer.ServiceInterface.Services.AI;
@@ -14,10 +13,10 @@ public class GeminiModelsService(SiteConfigHolder siteConfigHolder) : Service
     public async Task<GetGeminiModelsResponse> Get(GetGeminiModels request)
     {
         GeminiClient client;
-        
+
         if (!string.IsNullOrEmpty(request.ApiKey))
         {
-             client = new GeminiClient(request.ApiKey, "gemini-2.5-flash");
+            client = new GeminiClient(request.ApiKey, "gemini-2.5-flash");
         }
         else
         {
@@ -26,11 +25,13 @@ public class GeminiModelsService(SiteConfigHolder siteConfigHolder) : Service
 
         var modelsPager = await client.GetModels(null);
         var models = new List<string>();
-        
+
         await foreach (var model in modelsPager)
         {
-            if (model.Name != null)
-                models.Add(model.Name);
+            if (model.Name != null && model.Name.StartsWith("models/gemini"))
+            {
+                models.Add(model.Name.Replace("models/", ""));
+            }
         }
 
         return new GetGeminiModelsResponse
