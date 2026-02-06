@@ -104,8 +104,8 @@
               class="inline-flex items-center rounded-md border border-transparent bg-green-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 transition-colors"
             >
               <Iconify v-if="starting" icon="line-md:loading-twotone-loop" class="mr-2 h-5 w-5" />
-              Start Interview
-              <Iconify v-else icon="mdi:arrow-right" class="ml-2 h-5 w-5" />
+              <span>Start Interview</span>
+              <Iconify v-if="!starting" icon="mdi:arrow-right" class="ml-2 h-5 w-5" />
             </button>
           </div>
         </div>
@@ -156,7 +156,7 @@ async function generatePrompt() {
         context: context.value 
     }))
 
-    if (api.succeeded) {
+    if (api.succeeded && api.response) {
         generatedPrompt.value = api.response.systemPrompt || ''
     } else {
         error.value = api.error?.message || 'Failed to generate prompt. Please try again.'
@@ -175,7 +175,7 @@ async function startInterview() {
         systemPrompt: generatedPrompt.value
     }))
 
-    if (api.succeeded) {
+    if (api.succeeded && api.response) {
         router.push(`/interviews/${api.response.id}`)
     } else {
         error.value = api.error?.message || 'Failed to create interview. Please try again.'
