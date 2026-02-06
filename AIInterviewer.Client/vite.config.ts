@@ -34,6 +34,7 @@ export default defineConfig({
             extensions: ['.vue', '.md'],
             dts: 'src/typed-router.d.ts'
         }),
+        Markdown({}),
         Vue({
             include: [/\.vue$/, /\.md$/],
         }),
