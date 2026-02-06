@@ -18,9 +18,9 @@ Not started.
 - Persist user preferences (per session or saved settings) so toggles remain consistent while chatting.
 
 ## Checklist
-- [ ] Add UI toggles for manual recording mode and transcript-to-textbox mode.
-- [ ] Update speech recording logic to respect manual start/stop behavior.
-- [ ] Update mic button styling to reflect recording state.
-- [ ] Route speech transcript to textbox when review toggle is enabled.
-- [ ] Confirm UX: manual mode overrides auto-stop; review mode prevents auto-send.
-- [ ] Update relevant clood file(s) after implementation.
+- [x] Add UI toggles for manual recording mode and transcript-to-textbox mode.
+- [x] Update speech recording logic to respect manual start/stop behavior.
+- [x] Update mic button styling to reflect recording state.
+- [x] Route speech transcript to textbox when review toggle is enabled.
+- [x] Confirm UX: manual mode overrides auto-stop; review mode prevents auto-send.
+- [x] Update relevant clood file(s) after implementation.

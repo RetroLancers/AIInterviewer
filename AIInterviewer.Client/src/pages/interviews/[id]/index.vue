@@ -77,13 +77,26 @@
                 Recording... {{ recordingDuration }}s
             </div>
         </div>
+        </div>
+            <div class="mt-4 flex items-center gap-6 text-sm text-gray-600 dark:text-gray-300 justify-center">
+                <label class="flex items-center gap-2 cursor-pointer select-none">
+                    <input type="checkbox" v-model="manualMode" class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                    <span>Manual Recording Mode</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer select-none">
+                    <input type="checkbox" v-model="reviewMode" class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                    <span>Review Transcript</span>
+                </label>
+            </div>
     </div>
 </template>
 
 <script setup lang="ts">
 import { computed, ref, onMounted, nextTick, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useSpeechRecognition } from '@vueuse/core'
+import { computed, ref, onMounted, nextTick, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useSpeechRecognition, useStorage } from '@vueuse/core'
 import { client } from '@/lib/gateway'
 import { 
     GetInterview, 
@@ -111,6 +124,10 @@ const recordingDuration = ref(0)
 let durationInterval: any = null
 const lastTranscript = ref('')
 
+// User Preferences
+const manualMode = useStorage('interview-manual-mode', false)
+const reviewMode = useStorage('interview-review-mode', false)
+
 const transcriptionProvider = computed(() => siteConfig.value?.transcriptionProvider || 'Gemini')
 const useBrowserTranscription = computed(() => transcriptionProvider.value === 'Browser')
 
@@ -121,7 +138,7 @@ const {
     start: startListening,
     stop: stopListening
 } = useSpeechRecognition({
-    continuous: false,
+    continuous: manualMode,
     interimResults: false
 })
 
@@ -157,8 +174,17 @@ const toggleRecording = async () => {
         if (isListening.value) {
             clearInterval(durationInterval)
             stopListening()
+            
+            // In manual mode, we process the result when stopping
+            if (manualMode.value && speechResult.value) {
+                const transcript = speechResult.value.trim()
+                if (transcript) {
+                    await handleTranscript(transcript)
+                }
+            }
         } else {
             lastTranscript.value = ''
+            speechResult.value = ''
             recordingDuration.value = 0
             durationInterval = setInterval(() => recordingDuration.value++, 1000)
             startListening()
@@ -177,6 +203,17 @@ const toggleRecording = async () => {
     }
 }
 
+const handleTranscript = async (text: string) => {
+    if (reviewMode.value) {
+        // Append to existing text with a space if needed
+        textInput.value = textInput.value 
+            ? `${textInput.value} ${text}`
+            : text
+    } else {
+        await sendMessage(text)
+    }
+}
+
 const processAudioResponse = async (blob: Blob, mimeType: string) => {
     if (blob.size === 0) return
 
@@ -189,7 +226,7 @@ const processAudioResponse = async (blob: Blob, mimeType: string) => {
 
     const transcript = transcribeApi.response?.transcript
     if (transcribeApi.succeeded && transcript) {
-        await sendMessage(transcript)
+        await handleTranscript(transcript)
     } else {
         console.error('Transcription failed', transcribeApi.error)
     }
@@ -264,10 +301,13 @@ watch(isListening, (listening) => {
 
 watch(speechResult, async (value) => {
     if (!useBrowserTranscription.value) return
+    // In manual mode, we wait for the user to stop
+    if (manualMode.value) return
+    
     const transcript = value?.trim()
     if (!transcript || transcript === lastTranscript.value) return
     lastTranscript.value = transcript
-    await sendMessage(transcript)
+    await handleTranscript(transcript)
 })
 </script>
 
