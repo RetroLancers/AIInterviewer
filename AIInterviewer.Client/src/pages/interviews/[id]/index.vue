@@ -37,12 +37,13 @@
         <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
             <div class="flex items-center gap-4">
                <textarea
-                  v-model="textInput"
+                  v-model="textEntryValue"
                   @keyup.enter.exact.prevent="sendText"
+                  @blur="markUserFinished"
                   placeholder="Type your response..."
                   rows="3"
                   class="flex-grow p-3 border dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition resize-none"
-                  :disabled="isActiveRecording || processingAi"
+                  :disabled="isActiveRecording || processingAi || isTransmitting"
                />
                
                <button 
@@ -65,7 +66,7 @@
 
                <button 
                   @click="sendText"
-                  :disabled="!textInput.trim() || isActiveRecording || processingAi"
+                  :disabled="!textEntryValue.trim() || isActiveRecording || processingAi || isTransmitting"
                   class="bg-green-600 text-white p-4 rounded-full hover:bg-green-700 transition disabled:opacity-50 shadow-md"
                >
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -86,6 +87,9 @@
             </div>
             <div v-if="isActiveRecording" class="text-center mt-2 text-red-600 text-sm font-bold animate-pulse">
                 Recording... {{ recordingDuration }}s
+            </div>
+            <div v-if="textEntry.errorMessage" class="mt-2 text-sm text-red-600 dark:text-red-400">
+                {{ textEntry.errorMessage }}
             </div>
         </div>
         </div>
@@ -125,7 +129,6 @@ const id = computed(() => Number(route.params.id))
 const history = ref<InterviewChatHistoryDto[]>([])
 const processing = ref(false)
 const processingAi = ref(false)
-const textInput = ref('')
 const chatContainer = ref<HTMLDivElement | null>(null)
 const skipVoicePlayback = ref(false)
 
@@ -138,6 +141,35 @@ const lastTranscript = ref('')
 // User Preferences
 const manualMode = useStorage('interview-manual-mode', false)
 const reviewMode = useStorage('interview-review-mode', false)
+
+enum TextEntryStatus {
+    Idle = 'Idle',
+    UserTalking = 'UserTalking',
+    UserFinished = 'UserFinished',
+    Transmitting = 'Transmitting',
+    TransmissionError = 'TransmissionError'
+}
+
+const textEntry = ref({
+    status: TextEntryStatus.Idle,
+    value: '',
+    errorMessage: ''
+})
+
+const textEntryValue = computed({
+    get: () => textEntry.value.value,
+    set: (value: string) => {
+        textEntry.value.value = value
+        textEntry.value.errorMessage = ''
+        if (value.trim()) {
+            textEntry.value.status = TextEntryStatus.UserTalking
+        } else if (textEntry.value.status !== TextEntryStatus.Transmitting) {
+            textEntry.value.status = TextEntryStatus.Idle
+        }
+    }
+})
+
+const isTransmitting = computed(() => textEntry.value.status === TextEntryStatus.Transmitting)
 
 const transcriptionProvider = computed(() => siteConfig.value?.transcriptionProvider || 'Gemini')
 const useBrowserTranscription = computed(() => transcriptionProvider.value === 'Browser')
@@ -185,6 +217,7 @@ const toggleRecording = async () => {
         if (isListening.value) {
             clearInterval(durationInterval)
             stopListening()
+            textEntry.value.status = TextEntryStatus.UserFinished
             
             // In manual mode, we process the result when stopping
             if (manualMode.value && speechResult.value) {
@@ -198,6 +231,7 @@ const toggleRecording = async () => {
             speechResult.value = ''
             recordingDuration.value = 0
             durationInterval = setInterval(() => recordingDuration.value++, 1000)
+            textEntry.value.status = TextEntryStatus.UserTalking
             startListening()
         }
         return
@@ -207,16 +241,18 @@ const toggleRecording = async () => {
         clearInterval(durationInterval)
         const { blob, mimeType } = await stopRecording()
         await processAudioResponse(blob, mimeType)
+        textEntry.value.status = TextEntryStatus.UserFinished
     } else {
         recordingDuration.value = 0
         durationInterval = setInterval(() => recordingDuration.value++, 1000)
+        textEntry.value.status = TextEntryStatus.UserTalking
         await startRecording()
     }
 }
 
 const applyTranscriptToTextbox = (text: string) => {
-    textInput.value = textInput.value
-        ? `${textInput.value} ${text}`
+    textEntryValue.value = textEntryValue.value
+        ? `${textEntryValue.value} ${text}`
         : text
 }
 
@@ -260,13 +296,23 @@ const processAudioResponse = async (blob: Blob, mimeType: string) => {
 }
 
 const sendText = async () => {
-    const text = textInput.value.trim()
+    const text = textEntryValue.value.trim()
     if (!text) return
-    textInput.value = ''
     await sendMessage(text)
 }
 
 const sendMessage = async (message: string) => {
+    const optimisticEntry = {
+        id: Date.now(),
+        role: 'User',
+        content: message,
+        entryDate: new Date().toISOString()
+    }
+
+    textEntry.value.status = TextEntryStatus.Transmitting
+    textEntry.value.errorMessage = ''
+    history.value = [...history.value, optimisticEntry]
+    scrollToBottom()
     processingAi.value = true
     const api = await client.api(new AddChatMessage({
         interviewId: id.value,
@@ -275,6 +321,8 @@ const sendMessage = async (message: string) => {
 
     if (api.succeeded && api.response) {
         history.value = api.response.history ?? []
+        textEntry.value.value = ''
+        textEntry.value.status = TextEntryStatus.Idle
         scrollToBottom()
         
         // Play TTS for the last AI message
@@ -282,6 +330,10 @@ const sendMessage = async (message: string) => {
         if (lastMsg && lastMsg.role === 'Interviewer') {
             await playAiResponse(lastMsg.content)
         }
+    } else {
+        history.value = history.value.filter((entry) => entry.id !== optimisticEntry.id)
+        textEntry.value.errorMessage = api.error?.message || 'Failed to send message. Please try again.'
+        textEntry.value.status = TextEntryStatus.TransmissionError
     }
     processingAi.value = false
 }
@@ -330,6 +382,12 @@ watch(isListening, (listening) => {
         clearInterval(durationInterval)
     }
 })
+
+const markUserFinished = () => {
+    if (textEntry.value.value.trim()) {
+        textEntry.value.status = TextEntryStatus.UserFinished
+    }
+}
 
 watch(speechResult, async (value) => {
     if (!useBrowserTranscription.value) return
