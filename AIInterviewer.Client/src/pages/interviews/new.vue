@@ -234,7 +234,7 @@ async function startInterview() {
 
 const applyPrefilledPrompt = () => {
     if (prefilledPrompt.value) {
-        generatedPrompt.value = prefilledPrompt.value
+        systemPrompt.value = prefilledPrompt.value
     }
 }
 
