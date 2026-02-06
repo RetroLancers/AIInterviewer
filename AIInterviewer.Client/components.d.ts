@@ -30,6 +30,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ShellCommand: typeof import('./src/components/ShellCommand.vue')['default']
+    SiteConfigEditor: typeof import('./src/components/SiteConfigEditor.vue')['default']
     SrcLink: typeof import('./src/components/SrcLink.vue')['default']
     SrcPage: typeof import('./src/components/SrcPage.vue')['default']
     VideoGroup: typeof import('./src/components/VideoGroup.vue')['default']
