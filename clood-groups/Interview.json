@@ -17,6 +17,7 @@
         "AIInterviewer/Migrations/Migration1001_CreateInterviewTables.cs",
         "AIInterviewer.Client/src/pages/interviews/new.vue",
         "AIInterviewer.Client/src/pages/interviews/[id]/result.vue",
-        "AIInterviewer.Client/src/pages/interviews/[id]/index.vue"
+        "AIInterviewer.Client/src/pages/interviews/[id]/index.vue",
+        "Tasks/Queued/12-update-interview-rules-analysis.md"
     ]
 }
