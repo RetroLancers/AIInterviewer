@@ -1,6 +1,8 @@
 using System.Diagnostics;
-using ServiceStack;
 using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
+using ServiceStack;
 using KokoroSharp;
 using KokoroSharp.Core;
 using KokoroSharp.Processing;
@@ -14,6 +16,7 @@ public class TtsService(SiteConfigHolder siteConfigHolder) : Service
 {
     private static KokoroTTS _tts;
     private static readonly object _lock = new();
+    private const int MaxChunkLength = 600;
  
 
     private KokoroTTS GetTts()
@@ -39,6 +42,10 @@ public class TtsService(SiteConfigHolder siteConfigHolder) : Service
         if (string.IsNullOrEmpty(request.Text))
             throw new HttpError(400, "ValidationError", "Text is required.");
 
+        var sanitizedText = SanitizeForSpeech(request.Text);
+        if (string.IsNullOrWhiteSpace(sanitizedText))
+            return new HttpResult { StatusCode = System.Net.HttpStatusCode.NoContent };
+
         var voiceName = siteConfigHolder.SiteConfig?.KokoroVoice ?? "af_heart";
 
         var tts = GetTts();
@@ -61,37 +68,12 @@ public class TtsService(SiteConfigHolder siteConfigHolder) : Service
 
         try 
         {
-            var tokens = Tokenizer.Tokenize(request.Text);
-            
             var audioData = new List<float>(); // Flattened
-            
-            // Callback for each segment
-            Action<float[]> onAudioConfig = (samples) => {
-                lock(audioData) {
-                    audioData.AddRange(samples);
-                }
-            };
 
-            var job = KokoroJob.Create(tokens, voice, 1.0f, onAudioConfig);
-            
-            tts.EnqueueJob(job);
-
-            // Wait for completion
-            // Job is run on background thread. We poll for completion.
-            // Timeout after 30 seconds to be safe.
-            var sw = Stopwatch.StartNew();
-            while (!job.isDone && sw.Elapsed.TotalSeconds < 30)
+            foreach (var chunk in SplitIntoChunks(sanitizedText, MaxChunkLength))
             {
-                await Task.Delay(50);
-            }
-
-            if (!job.isDone)
-            {
-                // Cleanup if possible? job.Cancel()?
-                // job.Cancel(); // Private/Internal? 
-                // Inspector said Cancel is public method on KokoroJob!
-                job.Cancel();
-                throw new HttpError(504, "Timeout", "TTS generation timed out.");
+                var chunkSamples = await GenerateAudioSamples(tts, voice, chunk);
+                audioData.AddRange(chunkSamples);
             }
 
             var allSamples = audioData.ToArray();
@@ -127,5 +109,82 @@ public class TtsService(SiteConfigHolder siteConfigHolder) : Service
         writer.Write(pcmData);
         
         return stream.ToArray();
+    }
+
+    private static string SanitizeForSpeech(string text)
+    {
+        var withoutCodeBlocks = Regex.Replace(text, "```[\\s\\S]*?```", " ");
+        return Regex.Replace(withoutCodeBlocks, "\\s+", " ").Trim();
+    }
+
+    private static IEnumerable<string> SplitIntoChunks(string text, int maxLength)
+    {
+        var sentences = Regex.Split(text, "(?<=[.!?])\\s+");
+        var current = new StringBuilder();
+
+        foreach (var sentence in sentences)
+        {
+            var trimmed = sentence.Trim();
+            if (string.IsNullOrEmpty(trimmed)) continue;
+
+            if (trimmed.Length > maxLength)
+            {
+                if (current.Length > 0)
+                {
+                    yield return current.ToString();
+                    current.Clear();
+                }
+
+                for (var i = 0; i < trimmed.Length; i += maxLength)
+                {
+                    var length = Math.Min(maxLength, trimmed.Length - i);
+                    yield return trimmed.Substring(i, length);
+                }
+                continue;
+            }
+
+            if (current.Length + trimmed.Length + 1 > maxLength && current.Length > 0)
+            {
+                yield return current.ToString();
+                current.Clear();
+            }
+
+            if (current.Length > 0)
+                current.Append(' ');
+            current.Append(trimmed);
+        }
+
+        if (current.Length > 0)
+            yield return current.ToString();
+    }
+
+    private static async Task<List<float>> GenerateAudioSamples(KokoroTTS tts, KokoroVoice voice, string text)
+    {
+        var tokens = Tokenizer.Tokenize(text);
+        var chunkSamples = new List<float>();
+
+        Action<float[]> onAudioConfig = (samples) => {
+            lock (chunkSamples)
+            {
+                chunkSamples.AddRange(samples);
+            }
+        };
+
+        var job = KokoroJob.Create(tokens, voice, 1.0f, onAudioConfig);
+        tts.EnqueueJob(job);
+
+        var sw = Stopwatch.StartNew();
+        while (!job.isDone && sw.Elapsed.TotalSeconds < 30)
+        {
+            await Task.Delay(50);
+        }
+
+        if (!job.isDone)
+        {
+            job.Cancel();
+            throw new HttpError(504, "Timeout", "TTS generation timed out.");
+        }
+
+        return chunkSamples;
     }
 }
