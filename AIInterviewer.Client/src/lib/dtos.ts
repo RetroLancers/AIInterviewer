@@ -1,5 +1,5 @@
 /* Options:
-Date: 2026-02-05 17:11:46
+Date: 2026-02-05 19:05:14
 Version: 10.04
 Tip: To override a DTO option, remove "//" prefix before updating
 BaseUrl: https://localhost:5001
@@ -937,6 +937,7 @@ export class TextToSpeechRequest implements IReturn<Blob>
 // @Route("/ai/models", "GET")
 export class GetGeminiModels implements IReturn<GetGeminiModelsResponse>
 {
+    public apiKey?: string;
 
     public constructor(init?: Partial<GetGeminiModels>) { (Object as any).assign(this, init); }
     public getTypeName() { return 'GetGeminiModels'; }
@@ -1114,3 +1115,4 @@ export class QueryUsers extends QueryDb<User> implements IReturn<QueryResponse<U
     public getMethod() { return 'GET'; }
     public createResponse() { return new QueryResponse<User>(); }
 }
+

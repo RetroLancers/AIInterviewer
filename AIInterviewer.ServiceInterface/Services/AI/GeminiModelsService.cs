@@ -5,13 +5,25 @@ using System.Threading.Tasks;
 using AIInterviewer.ServiceModel.Tables.Configuration;
 using System.Collections.Generic;
 
+using AIInterviewer.ServiceInterface;
+
 namespace AIInterviewer.ServiceInterface.Services.AI;
 
 public class GeminiModelsService(SiteConfigHolder siteConfigHolder) : Service
 {
     public async Task<GetGeminiModelsResponse> Get(GetGeminiModels request)
     {
-        var client = siteConfigHolder.GetGeminiClient();
+        GeminiClient client;
+        
+        if (!string.IsNullOrEmpty(request.ApiKey))
+        {
+             client = new GeminiClient(request.ApiKey, "gemini-2.5-flash");
+        }
+        else
+        {
+            client = siteConfigHolder.GetGeminiClient();
+        }
+
         var modelsPager = await client.GetModels(null);
         var models = new List<string>();
         

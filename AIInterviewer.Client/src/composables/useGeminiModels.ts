@@ -21,7 +21,7 @@ export function useGeminiModels(geminiApiKey: () => string | null | undefined) {
         error.value = null
 
         try {
-            const response = await client.api(new GetGeminiModels())
+            const response = await client.api(new GetGeminiModels({ apiKey }))
 
             if (response.succeeded && response.response) {
                 models.value = response.response.models || []
