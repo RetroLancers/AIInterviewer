@@ -24,9 +24,7 @@
         
         <div class="flex-grow">
           <h2 class="text-xl font-semibold mb-4">Feedback Report</h2>
-          <div class="prose dark:prose-invert max-w-none whitespace-pre-wrap">
-              {{ result.reportText }}
-          </div>
+          <div class="prose dark:prose-invert max-w-none" v-html="renderedReport"></div>
         </div>
       </div>
 
@@ -40,10 +38,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { client } from '@/lib/gateway'
 import { GetInterview, type InterviewResultDto } from '@/lib/dtos'
+import MarkdownIt from 'markdown-it'
 
 const route = useRoute()
 const id = parseInt(route.params.id as string)
@@ -51,32 +50,35 @@ const id = parseInt(route.params.id as string)
 const result = ref<InterviewResultDto | null>(null)
 const loading = ref(true)
 const error = ref('')
+const markdown = new MarkdownIt({ linkify: true, breaks: true })
+
+const renderedReport = computed(() => {
+  if (!result.value?.reportText) {
+    return '<p>No report available.</p>'
+  }
+  return markdown.render(result.value.reportText)
+})
 
 const fetchResult = async () => {
   loading.value = true
   error.value = ''
-  try {
-    const api = await client.api(new GetInterview({ id }))
-    if (api.succeeded) {
-      if (api.response?.result) {
-        result.value = api.response.result
-      } else {
-        error.value = 'No result found for this interview.'
-      }
+  const api = await client.api(new GetInterview({ id }))
+  if (api.succeeded) {
+    if (api.response?.result) {
+      result.value = api.response.result
     } else {
-      error.value = api.error?.message || 'Failed to load interview.'
+      error.value = 'No result found for this interview.'
     }
-  } catch (e: any) {
-    error.value = e.message
-  } finally {
-    loading.value = false
+  } else {
+    error.value = api.error?.message || 'Failed to load interview.'
   }
+  loading.value = false
 }
 
 function getScoreClass(score: number) {
-    if (score >= 80) return 'border-green-500 text-green-600'
-    if (score >= 60) return 'border-yellow-500 text-yellow-600'
-    return 'border-red-500 text-red-600'
+  if (score >= 80) return 'border-green-500 text-green-600'
+  if (score >= 60) return 'border-yellow-500 text-yellow-600'
+  return 'border-red-500 text-red-600'
 }
 
 onMounted(() => {
