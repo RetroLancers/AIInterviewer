@@ -2,6 +2,8 @@
 
 We follow a file-based task management system to keep track of our progress.
 
+Important -> when creating a new branch you have to create the App_Data folder in the same folder as program.cs and then run npm run migrage
+
 ## Directory Structure
 
 *   **`Tasks/Queued/`**: Contains markdown files for tasks that are planned but not yet started.
