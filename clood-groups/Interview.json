@@ -9,6 +9,7 @@
         "AIInterviewer.ServiceModel/Types/Interview/EvaluationResponse.cs",
         "AIInterviewer.ServiceModel/Types/Interview/FinishInterview.cs",
         "AIInterviewer.ServiceModel/Types/Interview/GetInterview.cs",
+        "AIInterviewer.ServiceModel/Types/Interview/GetInterviewHistory.cs",
         "AIInterviewer.ServiceModel/Types/Interview/InterviewDtos.cs",
         "AIInterviewer.ServiceModel/Types/Interview/GenerateInterviewPrompt.cs",
         "AIInterviewer.ServiceModel/Types/Interview/CreateInterview.cs",

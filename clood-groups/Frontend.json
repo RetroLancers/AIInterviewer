@@ -2,7 +2,11 @@
     "name": "Frontend",
     "description": "Frontend pages and components for AI Interviewer",
     "files": [
+        "Tasks/Queued/09-interview-history-pages.md",
+        "AIInterviewer.Client/src/components/NavHeader.vue",
         "AIInterviewer.Client/src/pages/interviews/new.vue",
+        "AIInterviewer.Client/src/pages/interviews/history/index.vue",
+        "AIInterviewer.Client/src/pages/interviews/history/[id].vue",
         "AIInterviewer.Client/src/pages/interviews/[id]/index.vue",
         "AIInterviewer.Client/src/pages/interviews/[id]/result.vue",
         "AIInterviewer.Client/src/lib/gateway.ts",

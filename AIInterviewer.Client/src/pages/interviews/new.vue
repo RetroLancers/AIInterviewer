@@ -8,6 +8,17 @@
         </h1>
 
         <div class="space-y-6">
+          <div v-if="hasPrefilledPrompt" class="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md">
+            <div class="flex items-start">
+              <Iconify icon="mdi:history" class="h-5 w-5 text-blue-500 mt-0.5" />
+              <div class="ml-3">
+                <h3 class="text-sm font-medium text-blue-800 dark:text-blue-200">Using a saved prompt</h3>
+                <p class="mt-1 text-sm text-blue-700 dark:text-blue-300">
+                  This interview is prefilled from a previous session. You can edit the system prompt below before starting.
+                </p>
+              </div>
+            </div>
+          </div>
           <!-- Error State -->
           <div v-if="error" class="p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-md">
             <div class="flex">
@@ -131,12 +142,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, ref, onMounted, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { client } from '@/lib/gateway'
 import { GenerateInterviewPrompt, CreateInterview } from '@/lib/dtos'
 
 const router = useRouter()
+const route = useRoute('/interviews/new')
 
 const targetRole = ref('')
 const context = ref('')
@@ -144,6 +156,11 @@ const generatedPrompt = ref('')
 const loading = ref(false)
 const starting = ref(false)
 const error = ref<string | null>(null)
+const prefilledPrompt = computed(() => {
+    const prompt = route.query.prompt
+    return typeof prompt === 'string' ? prompt : ''
+})
+const hasPrefilledPrompt = computed(() => prefilledPrompt.value.length > 0)
 
 async function generatePrompt() {
     if (!targetRole.value) return
@@ -183,4 +200,18 @@ async function startInterview() {
 
     starting.value = false
 }
+
+const applyPrefilledPrompt = () => {
+    if (prefilledPrompt.value) {
+        generatedPrompt.value = prefilledPrompt.value
+    }
+}
+
+onMounted(() => {
+    applyPrefilledPrompt()
+})
+
+watch(() => route.query.prompt, () => {
+    applyPrefilledPrompt()
+})
 </script>
