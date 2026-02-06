@@ -73,6 +73,17 @@
                   </svg>
                </button>
             </div>
+            <div class="mt-3 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                <input
+                    id="skip-voice"
+                    type="checkbox"
+                    v-model="skipVoicePlayback"
+                    class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700"
+                />
+                <label for="skip-voice" class="select-none">
+                    Skip voice playback for AI responses
+                </label>
+            </div>
             <div v-if="isActiveRecording" class="text-center mt-2 text-red-600 text-sm font-bold animate-pulse">
                 Recording... {{ recordingDuration }}s
             </div>
@@ -116,6 +127,7 @@ const processing = ref(false)
 const processingAi = ref(false)
 const textInput = ref('')
 const chatContainer = ref<HTMLDivElement | null>(null)
+const skipVoicePlayback = ref(false)
 
 const { isRecording, startRecording, stopRecording, blobToBase64 } = useVocal()
 const { siteConfig } = useSiteConfig()
@@ -260,6 +272,7 @@ const sendMessage = async (message: string) => {
 }
 
 const playAiResponse = async (text: string) => {
+    if (skipVoicePlayback.value) return
     // TextToSpeechRequest returns a Blob (WAV)
     const api = await client.api(new TextToSpeechRequest({ text }))
     if (api.succeeded && api.response) {
