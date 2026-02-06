@@ -146,7 +146,9 @@ Provide a JSON output with the following schema:
         var result = new InterviewResult
         {
             InterviewId = interview.Id,
-            ReportText = evaluation.Feedback,
+            ReportText = string.IsNullOrWhiteSpace(evaluation.Feedback)
+                ? "No feedback provided."
+                : evaluation.Feedback.Trim(),
             Score = evaluation.Score,
             CreatedDate = DateTime.UtcNow
         };
@@ -159,9 +161,4 @@ Provide a JSON output with the following schema:
         };
     }
 
-    public class EvaluationResponse
-    {
-        public int Score { get; set; }
-        public string? Feedback { get; set; }
-    }
 }
