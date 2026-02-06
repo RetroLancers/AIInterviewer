@@ -260,8 +260,10 @@ const sendMessage = async (message: string) => {
 }
 
 const playAiResponse = async (text: string) => {
+    const sanitizedText = text.replace(/```[\s\S]*?```/g, ' ').replace(/\s+/g, ' ').trim()
+    if (!sanitizedText) return
     // TextToSpeechRequest returns a Blob (WAV)
-    const api = await client.api(new TextToSpeechRequest({ text }))
+    const api = await client.api(new TextToSpeechRequest({ text: sanitizedText }))
     if (api.succeeded && api.response) {
         const url = URL.createObjectURL(api.response)
         const audio = new Audio(url)
