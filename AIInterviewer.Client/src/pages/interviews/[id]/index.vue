@@ -85,15 +85,14 @@
                 </label>
                 <label class="flex items-center gap-2 cursor-pointer select-none">
                     <input type="checkbox" v-model="reviewMode" class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-                    <span>Review Transcript</span>
+                    <span>Review Text Before Sending</span>
                 </label>
             </div>
-    </div>
+    
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, nextTick, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+ 
 import { computed, ref, onMounted, nextTick, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useSpeechRecognition, useStorage } from '@vueuse/core'
