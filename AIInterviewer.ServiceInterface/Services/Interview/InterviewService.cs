@@ -97,14 +97,17 @@ public class InterviewService(SiteConfigHolder siteConfigHolder) : Service
         // 2. Get Context for AI
         var history = await Db.SelectAsync<InterviewChatHistory>(x => x.InterviewId == request.InterviewId);
         
-        // Construct string prompt from history
-        var historyText = string.Join("\n", history.OrderBy(x => x.EntryDate).Select(h => $"{h.Role}: {h.Content}"));
-        var fullPrompt = historyText + "\nInterviewer:"; 
-        
+        var orderedHistory = history.OrderBy(x => x.EntryDate).ToList();
+        var contents = orderedHistory.Select(entry => new Google.GenAI.Types.Content
+        {
+            Role = entry.Role == "Interviewer" ? "model" : "user",
+            Parts = new List<Google.GenAI.Types.Part> { new() { Text = entry.Content } }
+        }).ToList();
+
         var client = siteConfigHolder.GetGeminiClient();
         var aiResponse = await client.GenerateTextAsync(
-            prompt: fullPrompt, 
-            systemInstruction: interview.Prompt 
+            contents: contents,
+            systemInstruction: interview.Prompt
         );
 
         if (!string.IsNullOrEmpty(aiResponse))
