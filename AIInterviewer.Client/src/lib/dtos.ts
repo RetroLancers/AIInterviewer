@@ -617,6 +617,13 @@ export class GetInterviewResponse
     public constructor(init?: Partial<GetInterviewResponse>) { (Object as any).assign(this, init); }
 }
 
+export class GetInterviewHistoryResponse
+{
+    public interviews: InterviewDto[] = [];
+
+    public constructor(init?: Partial<GetInterviewHistoryResponse>) { (Object as any).assign(this, init); }
+}
+
 export class AddChatMessageResponse
 {
     public history: InterviewChatHistoryDto[] = [];
@@ -854,6 +861,18 @@ export class GetInterview implements IReturn<GetInterviewResponse>
     public getTypeName() { return 'GetInterview'; }
     public getMethod() { return 'GET'; }
     public createResponse() { return new GetInterviewResponse(); }
+}
+
+// @Route("/interviews/history", "GET")
+export class GetInterviewHistory implements IReturn<GetInterviewHistoryResponse>
+{
+    public limit?: number;
+    public offset?: number;
+
+    public constructor(init?: Partial<GetInterviewHistory>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetInterviewHistory'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new GetInterviewHistoryResponse(); }
 }
 
 // @Route("/interview/{InterviewId}/chat", "POST")
