@@ -149,7 +149,7 @@ const {
     start: startListening,
     stop: stopListening
 } = useSpeechRecognition({
-    continuous: manualMode,
+    continuous: manualMode.value,
     interimResults: false
 })
 
