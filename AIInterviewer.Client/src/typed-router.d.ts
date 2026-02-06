@@ -86,6 +86,20 @@ declare module 'vue-router/auto-routes' {
       { id: ParamValue<false> },
       | never
     >,
+    '/interviews/history/': RouteRecordInfo<
+      '/interviews/history/',
+      '/interviews/history',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/interviews/history/[id]': RouteRecordInfo<
+      '/interviews/history/[id]',
+      '/interviews/history/:id',
+      { id: ParamValue<true> },
+      { id: ParamValue<false> },
+      | never
+    >,
     '/interviews/new': RouteRecordInfo<
       '/interviews/new',
       '/interviews/new',
@@ -234,6 +248,18 @@ declare module 'vue-router/auto-routes' {
     'src/pages/interviews/[id]/result.vue': {
       routes:
         | '/interviews/[id]/result'
+      views:
+        | never
+    }
+    'src/pages/interviews/history/index.vue': {
+      routes:
+        | '/interviews/history/'
+      views:
+        | never
+    }
+    'src/pages/interviews/history/[id].vue': {
+      routes:
+        | '/interviews/history/[id]'
       views:
         | never
     }

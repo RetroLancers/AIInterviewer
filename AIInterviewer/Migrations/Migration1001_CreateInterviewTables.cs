@@ -49,6 +49,7 @@ public class Migration1001_CreateInterviewTables : MigrationBase
         public string Content { get; set; }
     }
 
+  
     [Alias("interview_result")]
     public class InterviewResult
     {
@@ -58,6 +59,9 @@ public class Migration1001_CreateInterviewTables : MigrationBase
 
         [ForeignKey(typeof(Interview), OnDelete = "Cascade")]
         public int InterviewId { get; set; }
+
+        [References(typeof(Interview))]
+        public Interview Interview { get; set; }
 
         [Required]
         public string ReportText { get; set; }
