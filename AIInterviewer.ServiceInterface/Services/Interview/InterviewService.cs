@@ -11,6 +11,28 @@ namespace AIInterviewer.ServiceInterface.Services.Interview;
 
 public class InterviewService(SiteConfigHolder siteConfigHolder) : Service
 {
+    private const string BaseInterviewRules = """
+Base Interview Rules (Mandatory):
+- Start the interview with the exact opening line: "We’ll proceed with the interview. Answer concisely but thoroughly."
+- Ask exactly one question at a time and wait for the candidate's response before continuing.
+- Ask 8–12 questions total, increasing difficulty as the interview progresses.
+- Maintain a firm, professional tone.
+- Do not provide feedback, evaluation, or hints during the interview.
+- After the final question and the candidate's response, end with: "The interview is complete. Evaluation follows. Please press the end interview button".
+""";
+
+    private static string ApplyBaseInterviewRules(string? systemPrompt)
+    {
+        if (string.IsNullOrWhiteSpace(systemPrompt))
+        {
+            return BaseInterviewRules;
+        }
+
+        return systemPrompt.Contains("Base Interview Rules (Mandatory):", StringComparison.Ordinal)
+            ? systemPrompt
+            : $"{systemPrompt.Trim()}\n\n{BaseInterviewRules}";
+    }
+
     public async Task<GenerateInterviewPromptResponse> Post(GenerateInterviewPrompt request)
     {
         var client = siteConfigHolder.GetGeminiClient();
@@ -22,14 +44,15 @@ public class InterviewService(SiteConfigHolder siteConfigHolder) : Service
         prompt += " The output should be the raw system prompt text that defines the persona and rules for the AI. Do not include markdown code blocks.";
 
         var result = await client.GenerateTextAsync(prompt);
-        return new GenerateInterviewPromptResponse { SystemPrompt = result?.Trim() ?? "Failed to generate prompt." };
+        var generatedPrompt = result?.Trim() ?? "Failed to generate prompt.";
+        return new GenerateInterviewPromptResponse { SystemPrompt = ApplyBaseInterviewRules(generatedPrompt) };
     }
 
     public async Task<CreateInterviewResponse> Post(CreateInterview request)
     {
         var interview = new AIInterviewer.ServiceModel.Tables.Interview.Interview
         {
-            Prompt = request.SystemPrompt,
+            Prompt = ApplyBaseInterviewRules(request.SystemPrompt),
             CreatedDate = DateTime.UtcNow,
             UserId = request.UserId
         };
@@ -149,6 +172,16 @@ Provide a JSON output with the following schema:
   ""Score"": (integer 0-100),
   ""Feedback"": (string, comprehensive markdown report)
 }}
+
+The ""Feedback"" must be markdown and include a section titled "Final Evaluation" with the following subsections:
+- "Summary"
+- "Strengths"
+- "Areas for Improvement"
+- "Role Fit"
+- "Hiring Recommendation"
+- "Next Steps"
+
+Only provide the final evaluation after the interview is complete and all questions have been asked and answered.
 ";
         
         var schema = new Schema
