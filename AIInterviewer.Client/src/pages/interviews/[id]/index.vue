@@ -220,6 +220,18 @@ const applyTranscriptToTextbox = (text: string) => {
         : text
 }
 
+const appendTranscriptDelta = (transcript: string) => {
+    const previous = lastTranscript.value
+    const nextText = transcript.startsWith(previous)
+        ? transcript.slice(previous.length).trim()
+        : transcript
+
+    if (nextText) {
+        applyTranscriptToTextbox(nextText)
+    }
+    lastTranscript.value = transcript
+}
+
 const handleTranscript = async (text: string) => {
     if (reviewMode.value) {
         applyTranscriptToTextbox(text)
@@ -326,8 +338,7 @@ watch(speechResult, async (value) => {
     
     const transcript = value?.trim()
     if (!transcript || transcript === lastTranscript.value) return
-    lastTranscript.value = transcript
-    applyTranscriptToTextbox(transcript)
+    appendTranscriptDelta(transcript)
 })
 </script>
 
