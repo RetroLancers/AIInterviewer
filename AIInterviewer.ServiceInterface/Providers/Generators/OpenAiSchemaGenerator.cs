@@ -16,7 +16,7 @@ public static class OpenAiSchemaGenerator
             dict["description"] = def.Description;
         }
 
-        if (def.Properties != null && def.Properties.Count > 0)
+        if (def.Properties is { Count: > 0 })
         {
             var props = new Dictionary<string, object>();
             foreach (var prop in def.Properties)
@@ -26,7 +26,7 @@ public static class OpenAiSchemaGenerator
             dict["properties"] = props;
         }
 
-        if (def.Required != null && def.Required.Count > 0)
+        if (def.Required is { Count: > 0 })
         {
             dict["required"] = def.Required;
         }
@@ -36,7 +36,7 @@ public static class OpenAiSchemaGenerator
             dict["items"] = MapSchema(def.Items);
         }
 
-        if (def.Enum != null && def.Enum.Count > 0)
+        if (def.Enum is { Count: > 0 })
         {
             dict["enum"] = def.Enum;
         }
