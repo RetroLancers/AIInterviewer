@@ -6,6 +6,7 @@ using AIInterviewer.ServiceInterface.Interfaces;
 using Microsoft.Extensions.Logging;
 using ServiceStack;
 using ServiceStack.OrmLite;
+using AIInterviewer.ServiceInterface.Extensions;
 
 namespace AIInterviewer.ServiceInterface.Services.Chat;
 
@@ -13,26 +14,7 @@ public class ChatService(SiteConfigHolder siteConfigHolder, IAiProviderFactory a
 {
     private async Task<IAiProvider> GetAiProviderAsync()
     {
-        var activeConfigId = siteConfigHolder.SiteConfig?.ActiveAiConfigId;
-        AiServiceConfig? config = null;
-
-        if (activeConfigId.HasValue)
-        {
-             config = await Db.SingleByIdAsync<AiServiceConfig>(activeConfigId.Value);
-        }
-        
-        if (config == null)
-        {
-             config = await Db.SingleAsync<AiServiceConfig>(x => x.ProviderType == "Gemini");
-        }
-
-
-        if (config == null)
-        {
-            throw new Exception("No AI Service Configuration found. Please configure AiServiceConfig table.");
-        }
-
-        return aiProviderFactory.GetProvider(config);
+        return await aiProviderFactory.GetActiveProviderAsync(siteConfigHolder, Db);
     }
     public async Task<TranscribeAudioResponse> Post(TranscribeAudioRequest request)
     {

@@ -569,13 +569,14 @@ export class AiConfigResponse {
 export class SiteConfigResponse {
     public id: number;
     public activeAiConfigId?: number;
+    public geminiApiKey?: string;
+    public interviewModel?: string;
     public globalFallbackModel?: string;
     public kokoroVoice?: string;
     public transcriptionProvider: string;
 
     public constructor(init?: Partial<SiteConfigResponse>) { (Object as any).assign(this, init); }
 }
-
 
 // @DataContract
 export class IdResponse {
@@ -839,10 +840,12 @@ export class GetSiteConfigRequest implements IReturn<SiteConfigResponse> {
 }
 
 // @Route("/configuration/site-config/{Id}", "PUT")
-// @Route("/configuration/site-config/{Id}", "PUT")
 export class UpdateSiteConfigRequest implements IReturn<IdResponse> {
     public id: number;
     public activeAiConfigId?: number;
+    public geminiApiKey?: string;
+    public interviewModel?: string;
+
     public globalFallbackModel?: string;
     public kokoroVoice?: string;
     // @Validate(Validator="NotEmpty")
@@ -853,7 +856,6 @@ export class UpdateSiteConfigRequest implements IReturn<IdResponse> {
     public getMethod() { return 'PUT'; }
     public createResponse() { return new IdResponse(); }
 }
-
 
 // @Route("/chat/transcribe", "POST")
 export class TranscribeAudioRequest implements IReturn<TranscribeAudioResponse> {

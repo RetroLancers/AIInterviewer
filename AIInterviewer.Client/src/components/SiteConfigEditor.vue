@@ -4,13 +4,13 @@
       <h2 class="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">Site Configuration</h2>
 
       <!-- Loading State -->
-      <div v-if="isLoading" class="flex items-center justify-center py-12">
+      <div v-if="isLoading || aiConfigsLoading" class="flex items-center justify-center py-12">
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
 
       <!-- Error Message -->
-      <div v-if="error" class="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
-        <p class="text-sm text-red-800 dark:text-red-200">{{ error }}</p>
+      <div v-if="error || aiConfigsError" class="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md">
+        <p class="text-sm text-red-800 dark:text-red-200">{{ error || aiConfigsError }}</p>
       </div>
 
       <!-- Success Message -->
@@ -19,61 +19,59 @@
       </div>
 
       <!-- Form -->
-      <form v-if="!isLoading && siteConfig" @submit.prevent="handleSubmit" class="space-y-6">
+      <form v-if="!isLoading && !aiConfigsLoading && siteConfig" @submit.prevent="handleSubmit" class="space-y-6">
         
-        <!-- AI Service Configuration -->
-        <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
-          <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">AI Service</h3>
-          
-          <div class="space-y-4">
-             <!-- Active AI Service Dropdown -->
-             <div>
-              <label for="active-ai-service" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Active AI Service
-              </label>
-              <div v-if="configsLoading" class="flex items-center text-sm text-gray-500 mb-2">
-                 <div class="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600 mr-2"></div>
-                 Loading AI configurations...
-              </div>
-              <select
-                id="active-ai-service"
-                v-model="formData.activeAiConfigId"
-                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100"
-              >
-                <option :value="undefined">Select an AI Service...</option>
-                <option v-for="config in configs" :key="config.id" :value="config.id">
-                  {{ config.name }} ({{ config.providerType }} - {{ config.modelId }})
-                </option>
-              </select>
-              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                Select which AI configuration to use for the interviewer. 
-                <router-link to="/config/ai" class="text-blue-600 hover:underline">Manage AI Services</router-link>
-              </p>
-              <p v-if="configsError" class="text-xs text-red-500 mt-1">{{ configsError }}</p>
-            </div>
+        <!-- Active AI Configuration -->
+        <div>
+           <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Active AI Configuration</h3>
+           <label for="active-ai-config" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+             Select Active AI Service
+           </label>
+           <select
+             id="active-ai-config"
+             v-model="formData.activeAiConfigId"
+             class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100"
+           >
+             <option :value="undefined">Select an AI Configuration...</option>
+             <option v-for="config in aiConfigs" :key="config.id" :value="config.id">
+               {{ config.name }} ({{ config.providerType }} - {{ config.modelId }})
+             </option>
+           </select>
+           <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+             Choose the AI service configuration to use for the application.
+           </p>
+           <div class="mt-2 text-sm text-blue-600 dark:text-blue-400">
+              <router-link to="/config/ai" class="hover:underline">Manage AI Configurations</router-link>
+           </div>
+        </div>
 
-            <div>
-              <label for="transcription-provider" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Transcription Provider
-              </label>
-              <select
-                id="transcription-provider"
-                v-model="formData.transcriptionProvider"
-                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100"
-                required
-              >
-                <option value="Gemini">Gemini (Server-side)</option>
-                <option value="Browser">Browser (Client-side)</option>
-              </select>
-              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                Choose whether speech is transcribed on the server or directly in the browser.
-              </p>
-            </div>
-          </div>
+        <div v-if="!formData.activeAiConfigId" class="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-md border border-yellow-200 dark:border-yellow-800">
+            <p class="text-sm text-yellow-800 dark:text-yellow-200">
+                No AI service selected. You must select an active configuration for the application to function correctly.
+            </p>
+        </div>
+
+        <!-- Transcription Provider -->
+        <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+          <label for="transcription-provider" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Transcription Provider
+          </label>
+          <select
+            id="transcription-provider"
+            v-model="formData.transcriptionProvider"
+            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100"
+            required
+          >
+            <option value="Gemini">Gemini (Server-side)</option>
+            <option value="Browser">Browser (Client-side)</option>
+          </select>
+          <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+            Choose whether speech is transcribed on the server or directly in the browser.
+          </p>
         </div>
 
         <!-- Voice Configuration -->
-        <div class="border-b border-gray-200 dark:border-gray-700 pb-6">
+        <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
           <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Voice Configuration (Kokoro TTS)</h3>
           
           <div>
@@ -104,7 +102,7 @@
         </div>
 
         <!-- Submit Button -->
-        <div class="flex items-center justify-end space-x-3 pt-4">
+        <div class="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200 dark:border-gray-700">
           <button
             type="submit"
             :disabled="isSaving"
@@ -123,24 +121,53 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { useSiteConfig } from '@/composables/useSiteConfig'
-import { useAiConfigs } from '@/composables/useAiConfigs'
+import { client } from '@/lib/gateway'
+import { ListAiConfigs, type AiConfigResponse } from '@/lib/dtos'
 
 const { siteConfig, isLoading, isSaving, error, saveSuccess, saveSiteConfig } = useSiteConfig()
-const { configs, isLoading: configsLoading, error: configsError } = useAiConfigs()
 
 // Form data
-const formData = ref({
-  activeAiConfigId: undefined as number | undefined,
+const formData = ref<{
+    activeAiConfigId?: number;
+    globalFallbackModel?: string;
+    kokoroVoice?: string;
+    transcriptionProvider: string;
+}>({
+  activeAiConfigId: undefined,
+  globalFallbackModel: '',
   kokoroVoice: 'af_heart',
   transcriptionProvider: 'Gemini'
 })
+
+// AI Configs
+const aiConfigs = ref<AiConfigResponse[]>([])
+const aiConfigsLoading = ref(false)
+const aiConfigsError = ref<string | null>(null)
+
+const loadAiConfigs = async () => {
+    aiConfigsLoading.value = true
+    aiConfigsError.value = null
+    try {
+        const response = await client.api(new ListAiConfigs())
+        if (response.succeeded) {
+            aiConfigs.value = response.response || []
+        } else {
+            aiConfigsError.value = response.error?.message || 'Failed to list AI configurations'
+        }
+    } catch (e: any) {
+        aiConfigsError.value = e.message || 'Error loading AI configurations'
+    } finally {
+        aiConfigsLoading.value = false
+    }
+}
 
 // Watch for siteConfig changes and update form
 watch(siteConfig, (newConfig) => {
   if (newConfig) {
     formData.value.activeAiConfigId = newConfig.activeAiConfigId
+    formData.value.globalFallbackModel = newConfig.globalFallbackModel || ''
     formData.value.kokoroVoice = newConfig.kokoroVoice || 'af_heart'
     formData.value.transcriptionProvider = newConfig.transcriptionProvider || 'Gemini'
   }
@@ -149,10 +176,13 @@ watch(siteConfig, (newConfig) => {
 const handleSubmit = async () => {
   await saveSiteConfig(
     formData.value.activeAiConfigId,
-    undefined, // globalFallbackModel
+    formData.value.globalFallbackModel || undefined,
     formData.value.kokoroVoice,
     formData.value.transcriptionProvider
   )
 }
-</script>
 
+onMounted(() => {
+    loadAiConfigs()
+})
+</script>
