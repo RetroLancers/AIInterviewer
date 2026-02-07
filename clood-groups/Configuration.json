@@ -18,6 +18,15 @@
         "AIInterviewer.Client/src/components/SiteConfigEditor.vue",
         "AIInterviewer.Client/src/composables/useSiteConfig.ts",
         "AIInterviewer/Configure.Db.Migrations.cs",
-        "AIInterviewer.ServiceInterface/SiteConfigHolderExtensions.cs"
+        "AIInterviewer.ServiceInterface/SiteConfigHolderExtensions.cs",
+        "AIInterviewer.ServiceModel/Types/Configuration/AiConfigResponse.cs",
+        "AIInterviewer.ServiceModel/Types/Configuration/CreateAiConfig.cs",
+        "AIInterviewer.ServiceModel/Types/Configuration/UpdateAiConfig.cs",
+        "AIInterviewer.ServiceModel/Types/Configuration/DeleteAiConfig.cs",
+        "AIInterviewer.ServiceModel/Types/Configuration/GetAiConfig.cs",
+        "AIInterviewer.ServiceModel/Types/Configuration/ListAiConfigs.cs",
+        "AIInterviewer.ServiceModel/Types/Configuration/ListAiConfigsResponse.cs",
+        "AIInterviewer.ServiceModel/Types/Configuration/ExtensionMethods/AiServiceConfigExtensions.cs",
+        "AIInterviewer.ServiceInterface/Services/Configuration/AiConfigService.cs"
     ]
 }

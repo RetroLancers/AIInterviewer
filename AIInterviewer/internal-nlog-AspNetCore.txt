@@ -1,0 +1,28 @@
+2026-02-07 08:49:53.2582 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2026-02-07 08:49:53.2582 Info Registered target NLog.Targets.FileTarget(Name=ownFile-web)
+2026-02-07 08:49:53.2582 Info Registered target NLog.Targets.ConsoleTarget(Name=lifetimeConsole)
+2026-02-07 08:49:53.2582 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.5.0.3962. Product version: 5.5.0+1873145cbc26e0312d9481234d69ce7dc68aac4e. GlobalAssemblyCache: False
+2026-02-07 08:49:53.2721 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=54, FilePath=C:\DevCurrent\AIInterviewer\AIInterviewer-23-ai-config-crud-service\AIInterviewer\bin\Debug\net10.0\nlog.config
+2026-02-07 08:49:53.5197 Info Configuration initialized.
+2026-02-07 08:49:54.0034 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=54, FilePath=C:\DevCurrent\AIInterviewer\AIInterviewer-23-ai-config-crud-service\AIInterviewer\bin\Debug\net10.0\nlog.config
+2026-02-07 09:17:15.5168 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2026-02-07 09:17:15.5168 Info Registered target NLog.Targets.FileTarget(Name=ownFile-web)
+2026-02-07 09:17:15.5168 Info Registered target NLog.Targets.ConsoleTarget(Name=lifetimeConsole)
+2026-02-07 09:17:15.5230 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.5.0.3962. Product version: 5.5.0+1873145cbc26e0312d9481234d69ce7dc68aac4e. GlobalAssemblyCache: False
+2026-02-07 09:17:15.5230 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=54, FilePath=C:\DevCurrent\AIInterviewer\AIInterviewer-23-ai-config-crud-service\AIInterviewer\bin\Debug\net10.0\nlog.config
+2026-02-07 09:17:15.5366 Info Configuration initialized.
+2026-02-07 09:17:15.8514 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=54, FilePath=C:\DevCurrent\AIInterviewer\AIInterviewer-23-ai-config-crud-service\AIInterviewer\bin\Debug\net10.0\nlog.config
+2026-02-07 09:20:31.4600 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2026-02-07 09:20:31.4600 Info Registered target NLog.Targets.FileTarget(Name=ownFile-web)
+2026-02-07 09:20:31.4600 Info Registered target NLog.Targets.ConsoleTarget(Name=lifetimeConsole)
+2026-02-07 09:20:31.4600 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.5.0.3962. Product version: 5.5.0+1873145cbc26e0312d9481234d69ce7dc68aac4e. GlobalAssemblyCache: False
+2026-02-07 09:20:31.4732 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=54, FilePath=C:\DevCurrent\AIInterviewer\AIInterviewer-23-ai-config-crud-service\AIInterviewer\bin\Debug\net10.0\nlog.config
+2026-02-07 09:20:31.4732 Info Configuration initialized.
+2026-02-07 09:20:31.7474 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=54, FilePath=C:\DevCurrent\AIInterviewer\AIInterviewer-23-ai-config-crud-service\AIInterviewer\bin\Debug\net10.0\nlog.config
+2026-02-07 09:21:53.6151 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2026-02-07 09:21:53.6264 Info Registered target NLog.Targets.FileTarget(Name=ownFile-web)
+2026-02-07 09:21:53.6264 Info Registered target NLog.Targets.ConsoleTarget(Name=lifetimeConsole)
+2026-02-07 09:21:53.6367 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.5.0.3962. Product version: 5.5.0+1873145cbc26e0312d9481234d69ce7dc68aac4e. GlobalAssemblyCache: False
+2026-02-07 09:21:53.6552 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=54, FilePath=C:\DevCurrent\AIInterviewer\AIInterviewer-23-ai-config-crud-service\AIInterviewer\bin\Debug\net10.0\nlog.config
+2026-02-07 09:21:53.6716 Info Configuration initialized.
+2026-02-07 09:21:54.3032 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=54, FilePath=C:\DevCurrent\AIInterviewer\AIInterviewer-23-ai-config-crud-service\AIInterviewer\bin\Debug\net10.0\nlog.config
