@@ -127,7 +127,7 @@ public class OpenAiProvider : IAiProvider
         };
     }
 
-    public async Task<T?> GenerateJsonAsync<T>(string prompt, string? systemPrompt = null) where T : class
+    public async Task<T?> GenerateJsonAsync<T>(string prompt, AiSchemaDefinition schema, string? systemPrompt = null) where T : class
     {
         try
         {
@@ -138,8 +138,11 @@ public class OpenAiProvider : IAiProvider
             }
             messages.Add(new UserChatMessage(prompt));
 
-            var schema = GenerateOpenAiSchema(typeof(T));
-            var schemaJson = JsonConvert.SerializeObject(schema);
+            var schemaJson = JsonConvert.SerializeObject(schema, new JsonSerializerSettings
+            {
+                ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver(),
+                NullValueHandling = NullValueHandling.Ignore
+            });
 
             var options = new ChatCompletionOptions
             {
@@ -179,48 +182,6 @@ public class OpenAiProvider : IAiProvider
         };
     }
 
-    private object GenerateOpenAiSchema(Type type)
-    {
-        if (type == typeof(string)) return new { type = "string" };
-        if (type == typeof(int) || type == typeof(long)) return new { type = "integer" };
-        if (type == typeof(bool)) return new { type = "boolean" };
-        if (type == typeof(double) || type == typeof(float) || type == typeof(decimal)) return new { type = "number" };
-
-        if (type.IsArray)
-        {
-            return new { type = "array", items = GenerateOpenAiSchema(type.GetElementType()!) };
-        }
-
-        if (type.IsGenericType && typeof(System.Collections.IEnumerable).IsAssignableFrom(type))
-        {
-            var args = type.GetGenericArguments();
-            if (args.Length > 0)
-            {
-                return new { type = "array", items = GenerateOpenAiSchema(args[0]) };
-            }
-        }
-
-        if (type.IsClass && type != typeof(string))
-        {
-            var properties = new Dictionary<string, object>();
-            var required = new List<string>();
-            foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
-            {
-                properties[prop.Name] = GenerateOpenAiSchema(prop.PropertyType);
-                required.Add(prop.Name);
-            }
-
-            return new
-            {
-                type = "object",
-                properties = properties,
-                required = required,
-                additionalProperties = false
-            };
-        }
-
-        return new { type = "string" };
-    }
 
     public async Task<IEnumerable<string>> ListModelsAsync()
     {

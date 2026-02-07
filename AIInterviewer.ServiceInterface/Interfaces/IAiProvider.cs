@@ -12,7 +12,7 @@ public interface IAiProvider
     
     Task<string?> GenerateTextFromAudioAsync(string prompt, byte[] audioData, string mimeType, string? systemPrompt = null);
     
-    Task<T?> GenerateJsonAsync<T>(string prompt, string? systemPrompt = null) where T : class;
+    Task<T?> GenerateJsonAsync<T>(string prompt, AiSchemaDefinition schema, string? systemPrompt = null) where T : class;
     
     Task<IEnumerable<string>> ListModelsAsync();
 }
