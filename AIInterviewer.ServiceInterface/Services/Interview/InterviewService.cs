@@ -8,6 +8,7 @@ using AIInterviewer.ServiceInterface.Interfaces;
 using AIInterviewer.ServiceModel.Types.Ai;
 using Microsoft.Extensions.Logging;
 using AIInterviewer.ServiceInterface.Extensions;
+using AIInterviewer.ServiceInterface.Utilities;
 
 namespace AIInterviewer.ServiceInterface.Services.Interview;
 
@@ -287,7 +288,8 @@ The ""Feedback"" must be markdown and include a section titled ""Final Evaluatio
         try
         {
             var provider = await GetAiProviderAsync();
-            var evaluation = await provider.GenerateJsonAsync<EvaluationResponse>(evaluationPrompt);
+            var schema = AiSchemaGenerator.Generate(typeof(EvaluationResponse));
+            var evaluation = await provider.GenerateJsonAsync<EvaluationResponse>(evaluationPrompt, schema);
 
             if (evaluation == null) throw new Exception("Failed to generate evaluation");
 
