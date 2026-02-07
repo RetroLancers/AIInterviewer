@@ -7,6 +7,7 @@ using AIInterviewer.ServiceModel.Tables.Configuration;
 using AIInterviewer.ServiceInterface.Interfaces;
 using AIInterviewer.ServiceModel.Types.Ai;
 using Microsoft.Extensions.Logging;
+using AIInterviewer.ServiceInterface.Extensions;
 
 namespace AIInterviewer.ServiceInterface.Services.Interview;
 
@@ -14,27 +15,7 @@ public class InterviewService(IAiProviderFactory aiProviderFactory, SiteConfigHo
 {
     private async Task<IAiProvider> GetAiProviderAsync()
     {
-        // Logic: Try to find config matching the SiteConfig.InterviewModel
-        var model = siteConfigHolder.SiteConfig?.InterviewModel;
-        AiServiceConfig? config = null;
-
-        if (!string.IsNullOrEmpty(model))
-        {
-             config = await Db.SingleAsync<AiServiceConfig>(x => x.ModelId == model);
-        }
-        
-        // Fallback: Get first Gemini provider
-        if (config == null)
-        {
-             config = await Db.SingleAsync<AiServiceConfig>(x => x.ProviderType == "Gemini");
-        }
-
-        if (config == null)
-        {
-            throw new Exception("No AI Service Configuration found. Please configure AiServiceConfig table.");
-        }
-
-        return aiProviderFactory.GetProvider(config);
+        return await aiProviderFactory.GetActiveProviderAsync(siteConfigHolder, Db);
     }
     private const string BaseInterviewRules = """
                                               Base Interview Rules (Mandatory):

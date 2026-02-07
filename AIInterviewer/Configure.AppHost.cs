@@ -12,7 +12,6 @@ public class AppHost() : AppHostBase("AIInterviewer"), IHostingStartup
         .ConfigureServices((Action<WebHostBuilderContext, IServiceCollection>)((context, services) => {
             var siteConfigHolder = new SiteConfigHolder();
             services.AddSingleton(siteConfigHolder);
-            services.AddScoped<AIInterviewer.ServiceInterface.Providers.GeminiAiProvider>();
             services.AddScoped<AIInterviewer.ServiceInterface.Interfaces.IAiProviderFactory, AIInterviewer.ServiceInterface.Factories.AiProviderFactory>();
             services.AddSingleton(context.Configuration.GetSection(nameof(AppConfig))?.Get<AppConfig>()
                 ?? new AppConfig {
