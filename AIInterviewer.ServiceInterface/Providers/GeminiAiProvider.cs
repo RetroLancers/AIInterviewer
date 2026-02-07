@@ -1,6 +1,7 @@
 using AIInterviewer.ServiceInterface.Interfaces;
 using AIInterviewer.ServiceModel.Types.Ai;
 using AIInterviewer.ServiceModel.Tables.Configuration;
+using AIInterviewer.ServiceInterface.Providers.Generators;
 using Google.GenAI;
 using Google.GenAI.Types;
 using Microsoft.Extensions.Logging;
@@ -109,7 +110,7 @@ public class GeminiAiProvider(AiServiceConfig config, ILogger<GeminiAiProvider> 
     {
         return await ExecuteWithRetryAsync(async (model) =>
         {
-            var schema = ConvertSchema(schemaDef);
+            var schema = GeminiSchemaGenerator.ConvertSchema(schemaDef);
             var config = new GenerateContentConfig
             {
                 ResponseMimeType = "application/json",
@@ -221,55 +222,6 @@ public class GeminiAiProvider(AiServiceConfig config, ILogger<GeminiAiProvider> 
             // Gemini doesn't support 'system' role in contents list usually.
             AiRole.System => "user", 
             _ => "user"
-        };
-    }
-
-    private Schema ConvertSchema(AiSchemaDefinition def)
-    {
-        var schema = new Schema
-        {
-            Type = MapType(def.Type),
-            Description = def.Description
-        };
-
-        if (def.Properties != null)
-        {
-            schema.Properties = new Dictionary<string, Schema>();
-            foreach (var prop in def.Properties)
-            {
-                schema.Properties[prop.Key] = ConvertSchema(prop.Value);
-            }
-        }
-
-        if (def.Required != null)
-        {
-            schema.Required = new List<string>(def.Required);
-        }
-
-        if (def.Items != null)
-        {
-            schema.Items = ConvertSchema(def.Items);
-        }
-
-        if (def.Enum != null)
-        {
-             schema.Enum = new List<string>(def.Enum);
-        }
-
-        return schema;
-    }
-
-    private Google.GenAI.Types.Type MapType(string type)
-    {
-        return type.ToLower() switch
-        {
-            "string" => Google.GenAI.Types.Type.STRING,
-            "number" => Google.GenAI.Types.Type.NUMBER,
-            "integer" => Google.GenAI.Types.Type.INTEGER,
-            "boolean" => Google.GenAI.Types.Type.BOOLEAN,
-            "array" => Google.GenAI.Types.Type.ARRAY,
-            "object" => Google.GenAI.Types.Type.OBJECT,
-            _ => Google.GenAI.Types.Type.STRING
         };
     }
 }
