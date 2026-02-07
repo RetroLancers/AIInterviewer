@@ -8,8 +8,14 @@ using ServiceStack;
 
 namespace AIInterviewer.ServiceInterface.Services.Chat;
 
-public class ChatService(SiteConfigHolder siteConfigHolder, IAiProvider aiProvider, ILogger<ChatService> logger) : Service
+public class ChatService(SiteConfigHolder siteConfigHolder, IAiProviderFactory aiProviderFactory, ILogger<ChatService> logger) : Service
 {
+    private IAiProvider GetAiProvider()
+    {
+        var model = siteConfigHolder.SiteConfig?.InterviewModel ?? "";
+        var providerName = model.Contains("gpt", StringComparison.OrdinalIgnoreCase) ? "OpenAI" : "Gemini";
+        return aiProviderFactory.GetProvider(providerName);
+    }
     public async Task<TranscribeAudioResponse> Post(TranscribeAudioRequest request)
     {
         if (siteConfigHolder.SiteConfig?.TranscriptionProvider == "Browser")
@@ -32,7 +38,7 @@ public class ChatService(SiteConfigHolder siteConfigHolder, IAiProvider aiProvid
         }
 
         var prompt = "Transcribe the following audio exactly. Do not add any commentary.";
-        var transcript = await aiProvider.GenerateTextFromAudioAsync(prompt, audioBytes, request.MimeType ?? "audio/webm");
+        var transcript = await GetAiProvider().GenerateTextFromAudioAsync(prompt, audioBytes, request.MimeType ?? "audio/webm");
         
         if (string.IsNullOrEmpty(transcript))
         {
