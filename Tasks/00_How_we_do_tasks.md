@@ -4,7 +4,15 @@ We follow a file-based task management system to keep track of our progress.
 
 Important -> when creating a new branch you have to create the App_Data folder in the same folder as program.cs and then run npm run migrage
 
-## Directory Structure
+## Project Layout
+
+The repository is structured such that the main branch and project files are located in a subfolder within the workspace root.
+
+*   **Workspace Root**: `c:\DevCurrent\AIInterviewer` (Where you start)
+*   **Main Repository**: `c:\DevCurrent\AIInterviewer\AIInterviewer` (Where the `.git` folder, `.sln`, and `Tasks/` folder reside)
+*   **Worktrees**: Should be created in the **Workspace Root** (parallel to the `AIInterviewer` folder).
+
+## Directory Structure (Inside Main Repository)
 
 *   **`Tasks/Queued/`**: Contains markdown files for tasks that are planned but not yet started.
 *   **`Tasks/in_progress/`**: Contains markdown files for tasks currently being worked on.
@@ -16,13 +24,14 @@ Important -> when creating a new branch you have to create the App_Data folder i
 1.  **Define a Task**:
     *   Create a new markdown file in `Tasks/Queued/` with a descriptive name (e.g., `01-setup-basic-structure.md`).
     *   Move the file to `Tasks/in_progress/` when starting.
-    *   Create a new **git worktree** for the feature branch to enable parallel development:
+    *   **From the Main Repository folder** (`AIInterviewer/`), create a new **git worktree** for the feature branch. This will place the worktree folder in the **Workspace Root**:
         ```bash
+        # Run this from c:\DevCurrent\AIInterviewer\AIInterviewer
         git worktree add ../AIInterviewer-<task-name> -b feature/<task-name>
         ```
 2.  **Document**: Inside the task file, outline the objective, requirements, and checklist of items to complete.
 3.  **Execute**:
-    *   Perform the work inside the newly created worktree directory (`../AIInterviewer-<task-name>`).
+    *   Perform the work inside the newly created worktree directory in the Workspace Root (`c:\DevCurrent\AIInterviewer\AIInterviewer-<task-name>`).
     *   As you work, check off items and add notes if the plan changes.
     *   Commit changes to the feature branch regularly from within the worktree.
 
@@ -41,9 +50,9 @@ Important -> when creating a new branch you have to create the App_Data folder i
 4.  **Complete**: Once satisfied, move the file from `Tasks/in_progress/` to `Tasks/completed/` and commit the change in the main repository or the worktree.
 
 5.  **Merge & Cleanup**:
-    *   Return to the main repository directory.
+    *   **Return to the Main Repository directory** (`c:\DevCurrent\AIInterviewer\AIInterviewer`).
     *   Merge the feature branch: `git merge feature/<task-name>`.
-    *   Remove the worktree: `git worktree remove ../AIInterviewer-<task-name>`.
+    *   Remove the worktree folder from the Workspace Root: `git worktree remove ../AIInterviewer-<task-name>`.
     *   Delete the local branch: `git branch -d feature/<task-name>`.
 
 ## Coding Standards
