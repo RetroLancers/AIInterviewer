@@ -224,7 +224,7 @@ async function startInterview() {
     }))
 
     if (api.succeeded && api.response) {
-        router.push(`/interviews/${api.response.id}`)
+        router.push(`/interviews/${api.response.id}?autostart=1`)
     } else {
         error.value = api.error?.message || 'Failed to create interview. Please try again.'
     }

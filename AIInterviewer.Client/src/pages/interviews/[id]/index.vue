@@ -29,7 +29,11 @@
                 </div>
             </div>
 
-            <div v-if="history.length === 0 && !processingAi" class="text-gray-500 text-center mt-20 italic">
+            <div v-if="history.length === 0 && autoStarting" class="text-gray-500 text-center mt-20 italic">
+                Starting the interview...
+            </div>
+
+            <div v-else-if="history.length === 0 && !processingAi" class="text-gray-500 text-center mt-20 italic">
                 The interviewer is waiting. Click the microphone to start.
             </div>
         </div>
@@ -91,6 +95,9 @@
             <div v-if="textEntry.errorMessage" class="mt-2 text-sm text-red-600 dark:text-red-400">
                 {{ textEntry.errorMessage }}
             </div>
+            <div v-if="autoStartError" class="mt-2 text-sm text-red-600 dark:text-red-400">
+                {{ autoStartError }}
+            </div>
         </div>
         </div>
             <div class="mt-4 flex items-center gap-6 text-sm text-gray-600 dark:text-gray-300 justify-center">
@@ -116,6 +123,7 @@ import {
     GetInterview, 
     FinishInterview, 
     AddChatMessage,
+    StartInterview,
     TranscribeAudioRequest,
     TextToSpeechRequest,
     type InterviewChatHistoryDto 
@@ -129,6 +137,9 @@ const id = computed(() => Number(route.params.id))
 const history = ref<InterviewChatHistoryDto[]>([])
 const processing = ref(false)
 const processingAi = ref(false)
+const autoStarting = ref(false)
+const autoStartError = ref('')
+const hasResult = ref(false)
 const chatContainer = ref<HTMLDivElement | null>(null)
 const skipVoicePlayback = ref(false)
 
@@ -201,10 +212,40 @@ const loadInterview = async () => {
     if (api.succeeded && api.response) {
         history.value = api.response.history ?? []
         if (api.response.result) {
+            hasResult.value = true
             router.push(`/interviews/${id.value}/result`)
         }
         scrollToBottom()
     }
+}
+
+const shouldAutoStart = computed(() => {
+    const value = route.query.autostart
+    return value === '1' || value === 'true'
+})
+
+const startInterview = async () => {
+    if (autoStarting.value || history.value.length > 0 || hasResult.value || !shouldAutoStart.value) return
+
+    autoStarting.value = true
+    autoStartError.value = ''
+    processingAi.value = true
+
+    const api = await client.api(new StartInterview({ interviewId: id.value }))
+    if (api.succeeded && api.response) {
+        history.value = api.response.history ?? []
+        scrollToBottom()
+
+        const lastMsg = history.value[history.value.length - 1]
+        if (lastMsg && lastMsg.role === 'Interviewer') {
+            await playAiResponse(lastMsg.content)
+        }
+    } else {
+        autoStartError.value = api.error?.message || 'Failed to start interview automatically.'
+    }
+
+    processingAi.value = false
+    autoStarting.value = false
 }
 
 const toggleRecording = async () => {
@@ -369,8 +410,9 @@ const endInterview = async () => {
     processing.value = false
 }
 
-onMounted(() => {
-    loadInterview()
+onMounted(async () => {
+    await loadInterview()
+    await startInterview()
 })
 
 watch(history, () => {
