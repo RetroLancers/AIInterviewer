@@ -44,8 +44,8 @@ ChatCompletionOptions options = new()
 - Ensure the schema generation logic handles the conversion to the specific provider's format (OpenAI's JSON schema vs Gemini's format).
 
 ## Checklist
-- [ ] Create `AiSchemaDefinition` type (or similar name).
-- [ ] Update `IAiProvider` interface method signature.
-- [ ] Implement support in `OpenAiProvider`.
-- [ ] Implement support in `GeminiAiProvider`.
-- [ ] Verify schema generation works for both providers without reflection in the provider implementation (or at least cleanly abstracted).
+- [x] Create `AiSchemaDefinition` type (or similar name).
+- [x] Update `IAiProvider` interface method signature.
+- [x] Implement support in `OpenAiProvider`.
+- [x] Implement support in `GeminiAiProvider`.
+- [x] Verify schema generation works for both providers without reflection in the provider implementation (or at least cleanly abstracted).

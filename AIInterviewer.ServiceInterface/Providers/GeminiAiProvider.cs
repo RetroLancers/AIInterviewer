@@ -105,11 +105,11 @@ public class GeminiAiProvider(AiServiceConfig config, ILogger<GeminiAiProvider> 
         });
     }
 
-    public async Task<T?> GenerateJsonAsync<T>(string prompt, string? systemPrompt = null) where T : class
+    public async Task<T?> GenerateJsonAsync<T>(string prompt, AiSchemaDefinition schemaDef, string? systemPrompt = null) where T : class
     {
         return await ExecuteWithRetryAsync(async (model) =>
         {
-            var schema = GenerateSchema(typeof(T));
+            var schema = ConvertSchema(schemaDef);
             var config = new GenerateContentConfig
             {
                 ResponseMimeType = "application/json",
@@ -224,45 +224,52 @@ public class GeminiAiProvider(AiServiceConfig config, ILogger<GeminiAiProvider> 
         };
     }
 
-    private Schema GenerateSchema(System.Type type)
+    private Schema ConvertSchema(AiSchemaDefinition def)
     {
-        if (type == typeof(int) || type == typeof(long)) return new Schema { Type = Google.GenAI.Types.Type.INTEGER };
-        if (type == typeof(string)) return new Schema { Type = Google.GenAI.Types.Type.STRING };
-        if (type == typeof(bool)) return new Schema { Type = Google.GenAI.Types.Type.BOOLEAN };
-        if (type == typeof(double) || type == typeof(float) || type == typeof(decimal)) return new Schema { Type = Google.GenAI.Types.Type.NUMBER };
-        
-        if (type.IsArray)
+        var schema = new Schema
         {
-             return new Schema 
-             { 
-                 Type = Google.GenAI.Types.Type.ARRAY, 
-                 Items = GenerateSchema(type.GetElementType()!)
-             };
-        }
-        
-        if (type.IsGenericType && typeof(System.Collections.IEnumerable).IsAssignableFrom(type))
+            Type = MapType(def.Type),
+            Description = def.Description
+        };
+
+        if (def.Properties != null)
         {
-             var args = type.GetGenericArguments();
-             if (args.Length > 0)
-             {
-                 return new Schema 
-                 { 
-                     Type = Google.GenAI.Types.Type.ARRAY, 
-                     Items = GenerateSchema(args[0])
-                 };
-             }
+            schema.Properties = new Dictionary<string, Schema>();
+            foreach (var prop in def.Properties)
+            {
+                schema.Properties[prop.Key] = ConvertSchema(prop.Value);
+            }
         }
 
-        if (type.IsClass && type != typeof(string))
+        if (def.Required != null)
         {
-             var schema = new Schema { Type = Google.GenAI.Types.Type.OBJECT, Properties = new Dictionary<string, Schema>(), Required = new List<string>() };
-             foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
-             {
-                 schema.Properties[prop.Name] = GenerateSchema(prop.PropertyType);
-                 schema.Required.Add(prop.Name);
-             }
-             return schema;
+            schema.Required = new List<string>(def.Required);
         }
-        return new Schema { Type = Google.GenAI.Types.Type.STRING }; // Fallback
+
+        if (def.Items != null)
+        {
+            schema.Items = ConvertSchema(def.Items);
+        }
+
+        if (def.Enum != null)
+        {
+             schema.Enum = new List<string>(def.Enum);
+        }
+
+        return schema;
+    }
+
+    private Google.GenAI.Types.Type MapType(string type)
+    {
+        return type.ToLower() switch
+        {
+            "string" => Google.GenAI.Types.Type.STRING,
+            "number" => Google.GenAI.Types.Type.NUMBER,
+            "integer" => Google.GenAI.Types.Type.INTEGER,
+            "boolean" => Google.GenAI.Types.Type.BOOLEAN,
+            "array" => Google.GenAI.Types.Type.ARRAY,
+            "object" => Google.GenAI.Types.Type.OBJECT,
+            _ => Google.GenAI.Types.Type.STRING
+        };
     }
 }
