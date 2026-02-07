@@ -15,6 +15,7 @@
         <PackageReference Include="KokoroSharp.GPU.Windows" Version="0.6.4" />
         <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.*" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.*" />
+        <PackageReference Include="OpenAI" Version="2.8.0" />
         <PackageReference Include="ServiceStack" Version="10.*" />
         <PackageReference Include="ServiceStack.Extensions" Version="10.*" />
         <PackageReference Include="ServiceStack.Ormlite" Version="10.*" />
