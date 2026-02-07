@@ -162,15 +162,22 @@ public class InterviewService(IAiProviderFactory aiProviderFactory, SiteConfigHo
 
             logger.LogInformation("Interview started successfully for InterviewId: {InterviewId}", request.InterviewId);
 
-            await Db.SaveAsync(new InterviewChatHistory
+            var newHistory = new InterviewChatHistory
             {
                 InterviewId = interview.Id,
                 Role = "Interviewer",
                 Content = aiResponse,
                 EntryDate = DateTime.UtcNow
-            });
+            };
+
+            await Db.SaveAsync(newHistory);
 
             trans.Commit();
+
+            return new StartInterviewResponse
+            {
+                History = new List<InterviewChatHistoryDto> { newHistory.ToDto() }
+            };
         }
         catch (Exception ex)
         {
@@ -178,12 +185,6 @@ public class InterviewService(IAiProviderFactory aiProviderFactory, SiteConfigHo
             trans.Rollback();
             throw;
         }
-
-        var updatedHistory = await Db.SelectAsync<InterviewChatHistory>(x => x.InterviewId == request.InterviewId);
-        return new StartInterviewResponse
-        {
-            History = updatedHistory.OrderBy(x => x.EntryDate).ToDto()
-        };
     }
 
     public async Task<AddChatMessageResponse> Post(AddChatMessage request)
