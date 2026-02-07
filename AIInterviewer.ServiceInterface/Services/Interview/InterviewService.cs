@@ -103,6 +103,47 @@ public class InterviewService(SiteConfigHolder siteConfigHolder) : Service
         };
     }
 
+    public async Task<StartInterviewResponse> Post(StartInterview request)
+    {
+        var interview =
+            await Db.SingleByIdAsync<AIInterviewer.ServiceModel.Tables.Interview.Interview>(request.InterviewId);
+        if (interview == null) throw HttpError.NotFound("Interview not found");
+
+        var history = await Db.SelectAsync<InterviewChatHistory>(x => x.InterviewId == request.InterviewId);
+        if (history.Any())
+        {
+            return new StartInterviewResponse
+            {
+                History = history.OrderBy(x => x.EntryDate).ToDto()
+            };
+        }
+
+        var client = siteConfigHolder.GetGeminiClient();
+        var aiResponse = await client.GenerateTextAsync(
+            "Begin the interview now.",
+            systemInstruction: interview.Prompt
+        );
+
+        if (string.IsNullOrWhiteSpace(aiResponse))
+        {
+            throw HttpError.BadRequest("Failed to start interview.");
+        }
+
+        await Db.SaveAsync(new InterviewChatHistory
+        {
+            InterviewId = interview.Id,
+            Role = "Interviewer",
+            Content = aiResponse,
+            EntryDate = DateTime.UtcNow
+        });
+
+        var updatedHistory = await Db.SelectAsync<InterviewChatHistory>(x => x.InterviewId == request.InterviewId);
+        return new StartInterviewResponse
+        {
+            History = updatedHistory.OrderBy(x => x.EntryDate).ToDto()
+        };
+    }
+
     public async Task<AddChatMessageResponse> Post(AddChatMessage request)
     {
         var interview =
