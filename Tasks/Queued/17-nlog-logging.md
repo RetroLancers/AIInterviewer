@@ -35,9 +35,9 @@ We need to add proper logging to our services using NLog. This will help with de
 - [x] Add `NLog.Web.AspNetCore` NuGet package
 - [x] Create and configure `nlog.config`
 - [x] Update `Program.cs` to use NLog
-- [ ] Inject `ILogger` into Services
-- [ ] Add logging to `InterviewService`
-- [ ] Add logging to `TtsService`
-- [ ] Add logging to `SiteConfigService`
-- [ ] Verify log file creation and content
+- [x] Inject `ILogger` into Services
+- [x] Add logging to `InterviewService`
+- [x] Add logging to `TtsService`
+- [x] Add logging to `SiteConfigService`
+- [x] Verify log file creation and content
 - [x] Create `Infrastructure.json` clood-group

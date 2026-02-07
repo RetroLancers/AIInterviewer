@@ -3,11 +3,12 @@ using AIInterviewer.ServiceModel.Types.Configuration;
 using AIInterviewer.ServiceModel.Types.Configuration.ExtensionMethods;
 using ServiceStack;
 using ServiceStack.OrmLite;
+using Microsoft.Extensions.Logging;
 
 namespace AIInterviewer.ServiceInterface.Services.Configuration;
 
 [ValidateHasRole("Admin")]
-public class SiteConfigService(SiteConfigHolder holder) : Service
+public class SiteConfigService(SiteConfigHolder holder, ILogger<SiteConfigService> logger) : Service
 {
     public SiteConfigResponse Get(GetSiteConfigRequest request)
     {
@@ -16,11 +17,22 @@ public class SiteConfigService(SiteConfigHolder holder) : Service
 
     public void Put(UpdateSiteConfigRequest request)
     {
+        logger.LogInformation("Updating site configuration");
         using var trans = Db.OpenTransaction();
-        var config = request.ToTable();
-        Db.Save(config);
-        trans.Commit();
+        try
+        {
+            var config = request.ToTable();
+            Db.Save(config);
+            trans.Commit();
 
-        holder.SiteConfig = config;
+            holder.SiteConfig = config;
+            logger.LogInformation("Site configuration updated successfully");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error updating site configuration");
+            trans.Rollback();
+            throw;
+        }
     }
 }

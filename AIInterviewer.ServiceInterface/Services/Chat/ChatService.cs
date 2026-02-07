@@ -34,6 +34,15 @@ public class ChatService(SiteConfigHolder siteConfigHolder, ILogger<ChatService>
 
         var prompt = "Transcribe the following audio exactly. Do not add any commentary.";
         var transcript = await client.GenerateTextFromAudioAsync(prompt, audioBytes, request.MimeType ?? "audio/webm");
+        
+        if (string.IsNullOrEmpty(transcript))
+        {
+            logger.LogWarning("Gemini failed to return a transcript for the audio data.");
+        }
+        else
+        {
+            logger.LogInformation("Audio transcription completed. Transcript length: {Length}", transcript.Length);
+        }
 
         return new TranscribeAudioResponse
         {

@@ -1,0 +1,12 @@
+{
+    "name": "Infrastructure",
+    "description": "Cross-cutting infrastructure concerns like logging, database configuration, and startup.",
+    "files": [
+        "AIInterviewer/AIInterviewer/Program.cs",
+        "AIInterviewer/AIInterviewer/AIInterviewer.csproj",
+        "AIInterviewer/AIInterviewer/nlog.config",
+        "AIInterviewer/AIInterviewer/appsettings.json",
+        "AIInterviewer/AIInterviewer/Configure.Db.cs",
+        "AIInterviewer/AIInterviewer/Configure.AppHost.cs"
+    ]
+}

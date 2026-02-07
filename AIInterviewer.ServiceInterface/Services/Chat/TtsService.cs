@@ -8,11 +8,12 @@ using KokoroSharp.Core;
 using KokoroSharp.Processing;
 using AIInterviewer.ServiceModel.Tables.Configuration;
 using AIInterviewer.ServiceModel.Types.Chat;
+using Microsoft.Extensions.Logging;
 
 namespace AIInterviewer.ServiceInterface.Services.Chat;
  
 
-public class TtsService(SiteConfigHolder siteConfigHolder) : Service
+public class TtsService(SiteConfigHolder siteConfigHolder, ILogger<TtsService> logger) : Service
 {
     private static KokoroTTS? _tts;
     private static readonly object _lock = new();
@@ -30,6 +31,7 @@ public class TtsService(SiteConfigHolder siteConfigHolder) : Service
  
     public async Task<HttpResult> Post(TextToSpeechRequest request)
     {
+        logger.LogTrace("Processing TTS request for text: {TextSnippet}...", request.Text?.Substring(0, Math.Min(request.Text.Length, 30)));
         if (string.IsNullOrEmpty(request.Text))
             throw new HttpError(400, "ValidationError", "Text is required.");
 
@@ -50,8 +52,9 @@ public class TtsService(SiteConfigHolder siteConfigHolder) : Service
                  voice = KokoroVoiceManager.GetVoice("af_heart");
              }
         }
-        catch(Exception)
+        catch(Exception ex)
         {
+            logger.LogWarning(ex, "Failed to load voice {VoiceName}, falling back to af_heart", voiceName);
             voice = KokoroVoiceManager.GetVoice("af_heart"); 
         }
 
@@ -75,6 +78,7 @@ public class TtsService(SiteConfigHolder siteConfigHolder) : Service
         }
         catch (Exception ex)
         {
+            logger.LogError(ex, "Error during TTS generation");
             throw new HttpError(500, "TtsError", ex.Message);
         }
     }
@@ -149,7 +153,7 @@ public class TtsService(SiteConfigHolder siteConfigHolder) : Service
             yield return current.ToString();
     }
 
-    private static async Task<List<float>> GenerateAudioSamples(KokoroTTS tts, KokoroVoice voice, string text)
+    private async Task<List<float>> GenerateAudioSamples(KokoroTTS tts, KokoroVoice voice, string text)
     {
         var tokens = Tokenizer.Tokenize(text);
         var chunkSamples = new List<float>();
@@ -171,8 +175,9 @@ public class TtsService(SiteConfigHolder siteConfigHolder) : Service
         }
 
         if (job.isDone) return chunkSamples;
+        
+        logger.LogError("TTS generation timed out after 30 seconds for text: {TextSnippet}", text.Substring(0, Math.Min(text.Length, 50)));
         job.Cancel();
         throw new HttpError(504, "Timeout", "TTS generation timed out.");
-
     }
 }

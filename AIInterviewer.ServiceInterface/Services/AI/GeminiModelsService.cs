@@ -5,13 +5,15 @@ using System.Threading.Tasks;
 using AIInterviewer.ServiceModel.Tables.Configuration;
 using System.Collections.Generic;
 using AIInterviewer.ServiceInterface;
+using Microsoft.Extensions.Logging;
 
 namespace AIInterviewer.ServiceInterface.Services.AI;
 
-public class GeminiModelsService(SiteConfigHolder siteConfigHolder) : Service
+public class GeminiModelsService(SiteConfigHolder siteConfigHolder, ILogger<GeminiModelsService> logger) : Service
 {
     public async Task<GetGeminiModelsResponse> Get(GetGeminiModels request)
     {
+        logger.LogInformation("Fetching available Gemini models.");
         GeminiClient client;
 
         if (!string.IsNullOrEmpty(request.ApiKey))
@@ -34,9 +36,12 @@ public class GeminiModelsService(SiteConfigHolder siteConfigHolder) : Service
             }
         }
 
-        return new GetGeminiModelsResponse
+        var response = new GetGeminiModelsResponse
         {
             Models = models
         };
+        
+        logger.LogInformation("Fetched {Count} Gemini models.", models.Count);
+        return response;
     }
 }

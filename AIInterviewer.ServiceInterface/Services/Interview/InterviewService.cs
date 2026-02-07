@@ -5,10 +5,11 @@ using AIInterviewer.ServiceModel.Tables.Interview;
 using AIInterviewer.ServiceModel.Types.Interview.ExtensionMethods;
 using AIInterviewer.ServiceModel.Tables.Configuration;
 using Google.GenAI.Types;
+using Microsoft.Extensions.Logging;
 
 namespace AIInterviewer.ServiceInterface.Services.Interview;
 
-public class InterviewService(SiteConfigHolder siteConfigHolder) : Service
+public class InterviewService(SiteConfigHolder siteConfigHolder, ILogger<InterviewService> logger) : Service
 {
     private const string BaseInterviewRules = """
                                               Base Interview Rules (Mandatory):
@@ -34,6 +35,7 @@ public class InterviewService(SiteConfigHolder siteConfigHolder) : Service
 
     public async Task<GenerateInterviewPromptResponse> Post(GenerateInterviewPrompt request)
     {
+        logger.LogInformation("Generating interview prompt for role: {TargetRole}", request.TargetRole);
         var client = siteConfigHolder.GetGeminiClient();
         var prompt =
             $"Create a system prompt for an AI interviewer interviewing a candidate for the role of '{request.TargetRole}'.";
@@ -129,8 +131,11 @@ public class InterviewService(SiteConfigHolder siteConfigHolder) : Service
 
             if (string.IsNullOrWhiteSpace(aiResponse))
             {
+                logger.LogWarning("Failed to start interview: AI returned empty response for InterviewId: {InterviewId}", request.InterviewId);
                 throw HttpError.BadRequest("Failed to start interview.");
             }
+
+            logger.LogInformation("Interview started successfully for InterviewId: {InterviewId}", request.InterviewId);
 
             await Db.SaveAsync(new InterviewChatHistory
             {
@@ -142,8 +147,9 @@ public class InterviewService(SiteConfigHolder siteConfigHolder) : Service
 
             trans.Commit();
         }
-        catch
+        catch (Exception ex)
         {
+            logger.LogError(ex, "Error starting interview for InterviewId: {InterviewId}", request.InterviewId);
             trans.Rollback();
             throw;
         }
@@ -202,8 +208,9 @@ public class InterviewService(SiteConfigHolder siteConfigHolder) : Service
 
             trans.Commit();
         }
-        catch
+        catch (Exception ex)
         {
+            logger.LogError(ex, "Error adding chat message for InterviewId: {InterviewId}", request.InterviewId);
             trans.Rollback();
             throw;
         }
@@ -284,8 +291,9 @@ The ""Feedback"" must be markdown and include a section titled ""Final Evaluatio
 
             trans.Commit();
         }
-        catch
+        catch (Exception ex)
         {
+            logger.LogError(ex, "Error finishing interview for InterviewId: {Id}", request.Id);
             trans.Rollback();
             throw;
         }
