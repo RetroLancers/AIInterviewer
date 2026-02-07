@@ -10,8 +10,16 @@ using Microsoft.Extensions.Logging;
 
 namespace AIInterviewer.ServiceInterface.Services.Interview;
 
-public class InterviewService(IAiProvider aiProvider, ILogger<InterviewService> logger) : Service
+public class InterviewService(IAiProviderFactory aiProviderFactory, SiteConfigHolder siteConfigHolder, ILogger<InterviewService> logger) : Service
 {
+    private IAiProvider GetAiProvider()
+    {
+        // Simple logic for now: assume Gemini unless model implies otherwise.
+        // In future, SiteConfig might have explicit 'AiProvider' field.
+        var model = siteConfigHolder.SiteConfig?.InterviewModel ?? "";
+        var providerName = model.Contains("gpt", StringComparison.OrdinalIgnoreCase) ? "OpenAI" : "Gemini";
+        return aiProviderFactory.GetProvider(providerName);
+    }
     private const string BaseInterviewRules = """
                                               Base Interview Rules (Mandatory):
                                               - Start the interview with the exact opening line: "We’ll proceed with the interview. Answer concisely but thoroughly."
@@ -47,7 +55,7 @@ public class InterviewService(IAiProvider aiProvider, ILogger<InterviewService> 
         prompt +=
             " The output should be the raw system prompt text that defines the persona and rules for the AI. Do not include markdown code blocks.";
 
-        var result = await aiProvider.GenerateTextAsync(prompt);
+        var result = await GetAiProvider().GenerateTextAsync(prompt);
         var generatedPrompt = result?.Trim() ?? "Failed to generate prompt.";
         return new GenerateInterviewPromptResponse { SystemPrompt = ApplyBaseInterviewRules(generatedPrompt) };
     }
@@ -123,7 +131,7 @@ public class InterviewService(IAiProvider aiProvider, ILogger<InterviewService> 
         using var trans = Db.OpenTransaction();
         try
         {
-            var aiResponse = await aiProvider.GenerateTextAsync(
+            var aiResponse = await GetAiProvider().GenerateTextAsync(
                 "Begin the interview now.",
                 systemPrompt: interview.Prompt
             );
@@ -188,7 +196,7 @@ public class InterviewService(IAiProvider aiProvider, ILogger<InterviewService> 
                 Content = entry.Content
             }).ToList();
 
-            var aiResponse = await aiProvider.GenerateTextAsync(
+            var aiResponse = await GetAiProvider().GenerateTextAsync(
                 messages: messages,
                 systemPrompt: interview.Prompt
             );
@@ -259,7 +267,7 @@ The ""Feedback"" must be markdown and include a section titled ""Final Evaluatio
         InterviewResult result;
         try
         {
-            var evaluation = await aiProvider.GenerateJsonAsync<EvaluationResponse>(evaluationPrompt);
+            var evaluation = await GetAiProvider().GenerateJsonAsync<EvaluationResponse>(evaluationPrompt);
 
             if (evaluation == null) throw new Exception("Failed to generate evaluation");
 
