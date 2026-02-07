@@ -8,6 +8,6 @@ Ensure that site configuration updates are consistent by wrapping them in a data
 - While the secondary operation is an in-memory update (`holder.SiteConfig = config`), ensuring the database write is fully committed before or during the update is good practice, especially if future configuration updates touch multiple tables (e.g., separate tables for different provider settings).
 
 ## Checklist
-- [ ] Implement `Db.OpenTransaction()` in `SiteConfigService.Put`.
-- [ ] Verify that the in-memory holder is only updated after a successful DB commit.
-- [ ] Update clood files.
+- [x] Implement `Db.OpenTransaction()` in `SiteConfigService.Put`.
+- [x] Verify that the in-memory holder is only updated after a successful DB commit.
+- [x] Update clood files.
