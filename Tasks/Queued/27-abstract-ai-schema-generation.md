@@ -11,27 +11,25 @@ Finalize the abstraction of AI schema generation by enforcing a tree-walking app
 
 ## Requirements
 1.  **Refactor Interface**:
-    -   Modify `IAiProvider.GenerateJsonAsync` to **remove the generic `T` parameter**.
-    -   It should return `Task<string?>` (the raw JSON string) instead of `T`.
-    -   It should accept a `schemaName` string (or similar) explicitly.
+    -   Update `IAiProvider.GenerateJsonAsync` to accept `AiSchemaDefinition schema` explicitly.
+    -   Signature should look like: `Task<T?> GenerateJsonAsync<T>(string prompt, AiSchemaDefinition schema, string schemaName, ...)`
+    -   **Crucially**: The provider must use the passed `AiSchemaDefinition` to construct the AI request (using a tree walker), **NOT** partially inspect `typeof(T)` to build the schema.
 2.  **Explicit Tree Walker for Both Providers**:
-    -   **OpenAI**: Remove `JsonConvert` usage. Implement a manual recursive walker that constructs the JSON Schema string (or `BinaryData`) from `AiSchemaDefinition`.
-    -   **Gemini**: Ensure `ConvertSchema` is a robust recursive tree walker that converts `AiSchemaDefinition` to `Google.GenAI.Types.Schema` without any hidden reflection.
-    -   Both implementations must strictly avoid `System.Type` or reflection-based serialization for schema generation.
+    -   **OpenAI**: Implement a manual recursive walker that constructs the JSON Schema string (or `BinaryData`) from the passed `AiSchemaDefinition`. Do not use `JsonConvert` or reflection on `T` to build this schema.
+    -   **Gemini**: Ensure `ConvertSchema` uses the `AiSchemaDefinition` to build `Google.GenAI.Types.Schema`.
+    -   Both providers should finally deserialize the raw JSON response to `T` using standard JSON deserialization (e.g. `JsonConvert.DeserializeObject<T>`).
 3.  **Update Consumers**:
-    -   Refactor all calls to `GenerateJsonAsync` (e.g., in `AiConfigService`) to handle the deserialization themselves.
+    -   Callers must construct and pass the `AiSchemaDefinition` explicitly.
+    -   `AiSchemaGenerator.Generate(typeof(T))` can still be used *by the consumer* if they want to derive it from the type initially, but the *Provider* shouldn't care where it came from; it just respects the passed definition.
 
 ## Checklist
 - [ ] Refactor `IAiProvider` interface:
-    -   Change `Task<T?> GenerateJsonAsync<T>(...)` to `Task<string?> GenerateJsonAsync(string prompt, AiSchemaDefinition schema, string schemaName, ...)`
+    -   Update signature: `Task<T?> GenerateJsonAsync<T>(string prompt, AiSchemaDefinition schema, string schemaName, ...)`
 - [ ] Update `GeminiAiProvider`:
-    -   Match new interface.
-    -   Ensure `ConvertSchema` works as a tree walker (already exists, verify compliance).
-    -   Return the raw JSON string (remove internal deserialization).
+    -   Ensure it uses the passed `AiSchemaDefinition` for the request.
+    -   Deserialize the response to `T` before returning.
 - [ ] Update `OpenAiProvider`:
-    -   Match new interface.
-    -   **Implement Tree Walker**: Replace `JsonConvert.SerializeObject(schema)` with a custom recursive method that builds the JSON schema string from `AiSchemaDefinition`.
-    -   Remove `typeof(T)`.
-- [ ] Update `AiSchemaGenerator` (if needed) or relevant call sites to ensure `AiSchemaDefinition` is passed correctly.
-- [ ] Refactor call sites (e.g. `AiConfigService`) to handle deserialization manually.
-- [ ] Verify both providers work with the new abstraction.
+    -   **Implement Tree Walker**: Replace `JsonConvert.SerializeObject(schema)` with a custom recursive method that builds the OpenAI JSON schema string from `AiSchemaDefinition`.
+    -   Deserialize the response to `T` before returning.
+- [ ] Update call sites to pass `AiSchemaDefinition`.
+- [ ] Verify functionality.
