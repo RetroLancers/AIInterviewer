@@ -9,11 +9,13 @@ using Newtonsoft.Json;
 using System.Reflection;
 using OpenAI;
 using System.ClientModel;
+using OpenAI.Models;
 
 namespace AIInterviewer.ServiceInterface.Providers;
 
 public class OpenAiProvider : IAiProvider
 {
+    private readonly OpenAIModelClient _modelClient;
     private readonly ChatClient _chatClient;
     private readonly ILogger<OpenAiProvider> _logger;
     private readonly AiServiceConfig _config;
@@ -31,6 +33,7 @@ public class OpenAiProvider : IAiProvider
             options.Endpoint = new Uri(config.BaseUrl);
         }
 
+        _modelClient = new OpenAIModelClient(new ApiKeyCredential(config.ApiKey), options);
         _chatClient = new ChatClient(config.ModelId ?? "gpt-4o", new ApiKeyCredential(config.ApiKey), options);
     }
 
@@ -69,10 +72,7 @@ public class OpenAiProvider : IAiProvider
                 sdkMessages.Add(new SystemChatMessage(systemPrompt));
             }
 
-            foreach (var msg in messages)
-            {
-                sdkMessages.Add(MapMessage(msg));
-            }
+            sdkMessages.AddRange(messages.Select(MapMessage));
 
             var options = new ChatCompletionOptions();
             if (temperature.HasValue) options.Temperature = (float?)temperature.Value;
@@ -222,8 +222,9 @@ public class OpenAiProvider : IAiProvider
         return new { type = "string" };
     }
 
-    public Task<IEnumerable<string>> ListModelsAsync()
+    public async Task<IEnumerable<string>> ListModelsAsync()
     {
-        return Task.FromResult<IEnumerable<string>>(new[] { "gpt-4o", "gpt-4-turbo", "gpt-3.5-turbo", "gpt-4o-mini" });
+        var clientResult = await _modelClient.GetModelsAsync();
+        return clientResult.Value.Select(model => model.Id).ToList();
     }
 }
