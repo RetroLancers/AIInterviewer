@@ -21,6 +21,7 @@ Currently, the application communicates directly with Gemini. We need to support
 3.  Ensure the interface signature is strictly generic and doesn't leak Gemini details.
 
 ## Definition of Done
-*   `IAiProvider` exists.
-*   Agnostic models exist.
-*   No strict dependency on Gemini in the interface definition.
+*   [x] `IAiProvider` exists.
+*   [x] Agnostic models exist.
+*   [x] No strict dependency on Gemini in the interface definition.
+*   [x] Refactored `InterviewService` and `ChatService` to use `IAiProvider`.

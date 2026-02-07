@@ -1,0 +1,7 @@
+[
+    "AIInterviewer.ServiceInterface/Interfaces/IAiProvider.cs",
+    "AIInterviewer.ServiceInterface/Providers/GeminiAiProvider.cs",
+    "AIInterviewer.ServiceModel/Types/Ai/AiMessage.cs",
+    "AIInterviewer.ServiceModel/Types/Ai/AiRole.cs",
+    "AIInterviewer.ServiceInterface/Services/AI/GeminiModelsService.cs"
+]

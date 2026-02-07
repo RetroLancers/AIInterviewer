@@ -4,12 +4,13 @@ using AIInterviewer.ServiceModel.Types.Interview;
 using AIInterviewer.ServiceModel.Tables.Interview;
 using AIInterviewer.ServiceModel.Types.Interview.ExtensionMethods;
 using AIInterviewer.ServiceModel.Tables.Configuration;
-using Google.GenAI.Types;
+using AIInterviewer.ServiceInterface.Interfaces;
+using AIInterviewer.ServiceModel.Types.Ai;
 using Microsoft.Extensions.Logging;
 
 namespace AIInterviewer.ServiceInterface.Services.Interview;
 
-public class InterviewService(SiteConfigHolder siteConfigHolder, ILogger<InterviewService> logger) : Service
+public class InterviewService(IAiProvider aiProvider, ILogger<InterviewService> logger) : Service
 {
     private const string BaseInterviewRules = """
                                               Base Interview Rules (Mandatory):
@@ -36,7 +37,6 @@ public class InterviewService(SiteConfigHolder siteConfigHolder, ILogger<Intervi
     public async Task<GenerateInterviewPromptResponse> Post(GenerateInterviewPrompt request)
     {
         logger.LogInformation("Generating interview prompt for role: {TargetRole}", request.TargetRole);
-        var client = siteConfigHolder.GetGeminiClient();
         var prompt =
             $"Create a system prompt for an AI interviewer interviewing a candidate for the role of '{request.TargetRole}'.";
         if (!string.IsNullOrEmpty(request.Context))
@@ -47,7 +47,7 @@ public class InterviewService(SiteConfigHolder siteConfigHolder, ILogger<Intervi
         prompt +=
             " The output should be the raw system prompt text that defines the persona and rules for the AI. Do not include markdown code blocks.";
 
-        var result = await client.GenerateTextAsync(prompt);
+        var result = await aiProvider.GenerateTextAsync(prompt);
         var generatedPrompt = result?.Trim() ?? "Failed to generate prompt.";
         return new GenerateInterviewPromptResponse { SystemPrompt = ApplyBaseInterviewRules(generatedPrompt) };
     }
@@ -123,10 +123,9 @@ public class InterviewService(SiteConfigHolder siteConfigHolder, ILogger<Intervi
         using var trans = Db.OpenTransaction();
         try
         {
-            var client = siteConfigHolder.GetGeminiClient();
-            var aiResponse = await client.GenerateTextAsync(
+            var aiResponse = await aiProvider.GenerateTextAsync(
                 "Begin the interview now.",
-                systemInstruction: interview.Prompt
+                systemPrompt: interview.Prompt
             );
 
             if (string.IsNullOrWhiteSpace(aiResponse))
@@ -183,16 +182,15 @@ public class InterviewService(SiteConfigHolder siteConfigHolder, ILogger<Intervi
             var history = await Db.SelectAsync<InterviewChatHistory>(x => x.InterviewId == request.InterviewId);
 
             var orderedHistory = history.OrderBy(x => x.EntryDate).ToList();
-            var contents = orderedHistory.Select(entry => new Content
+            var messages = orderedHistory.Select(entry => new AiMessage
             {
-                Role = entry.Role == "Interviewer" ? "model" : "user",
-                Parts = [new Part { Text = entry.Content }]
+                Role = entry.Role == "Interviewer" ? AiRole.Model : AiRole.User,
+                Content = entry.Content
             }).ToList();
 
-            var client = siteConfigHolder.GetGeminiClient();
-            var aiResponse = await client.GenerateTextAsync(
-                contents: contents,
-                systemInstruction: interview.Prompt
+            var aiResponse = await aiProvider.GenerateTextAsync(
+                messages: messages,
+                systemPrompt: interview.Prompt
             );
 
             if (!string.IsNullOrEmpty(aiResponse))
@@ -257,23 +255,11 @@ The ""Feedback"" must be markdown and include a section titled ""Final Evaluatio
  
 ";
 
-        var schema = new Schema
-        {
-            Type = Google.GenAI.Types.Type.OBJECT,
-            Properties = new Dictionary<string, Schema>
-            {
-                ["Score"] = new() { Type = Google.GenAI.Types.Type.INTEGER },
-                ["Feedback"] = new() { Type = Google.GenAI.Types.Type.STRING }
-            },
-            Required = ["Score", "Feedback"]
-        };
-
         using var trans = Db.OpenTransaction();
         InterviewResult result;
         try
         {
-            var client = siteConfigHolder.GetGeminiClient();
-            var evaluation = await client.GenerateJsonAsync<EvaluationResponse>(evaluationPrompt, schema);
+            var evaluation = await aiProvider.GenerateJsonAsync<EvaluationResponse>(evaluationPrompt);
 
             if (evaluation == null) throw new Exception("Failed to generate evaluation");
 
