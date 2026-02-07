@@ -14,10 +14,10 @@ Finalize the abstraction of AI schema generation by enforcing a tree-walking app
     -   Modify `IAiProvider.GenerateJsonAsync` to **remove the generic `T` parameter**.
     -   It should return `Task<string?>` (the raw JSON string) instead of `T`.
     -   It should accept a `schemaName` string (or similar) explicitly.
-2.  **Explicit Tree Walker for OpenAI**:
-    -   Remove `JsonConvert` usage in `OpenAiProvider`.
-    -   Implement a manual recursive walker (similar to Gemini's `ConvertSchema`) that constructs the JSON Schema string (or `BinaryData`) from `AiSchemaDefinition`.
-    -   This ensures strictly controlled, deterministic output without runtime reflection overhead or dependency on Json.NET settings.
+2.  **Explicit Tree Walker for Both Providers**:
+    -   **OpenAI**: Remove `JsonConvert` usage. Implement a manual recursive walker that constructs the JSON Schema string (or `BinaryData`) from `AiSchemaDefinition`.
+    -   **Gemini**: Ensure `ConvertSchema` is a robust recursive tree walker that converts `AiSchemaDefinition` to `Google.GenAI.Types.Schema` without any hidden reflection.
+    -   Both implementations must strictly avoid `System.Type` or reflection-based serialization for schema generation.
 3.  **Update Consumers**:
     -   Refactor all calls to `GenerateJsonAsync` (e.g., in `AiConfigService`) to handle the deserialization themselves.
 
@@ -26,11 +26,12 @@ Finalize the abstraction of AI schema generation by enforcing a tree-walking app
     -   Change `Task<T?> GenerateJsonAsync<T>(...)` to `Task<string?> GenerateJsonAsync(string prompt, AiSchemaDefinition schema, string schemaName, ...)`
 - [ ] Update `GeminiAiProvider`:
     -   Match new interface.
-    -   Return the raw JSON string (already does `ExtractText`, just remove deserialization).
+    -   Ensure `ConvertSchema` works as a tree walker (already exists, verify compliance).
+    -   Return the raw JSON string (remove internal deserialization).
 - [ ] Update `OpenAiProvider`:
     -   Match new interface.
     -   **Implement Tree Walker**: Replace `JsonConvert.SerializeObject(schema)` with a custom recursive method that builds the JSON schema string from `AiSchemaDefinition`.
     -   Remove `typeof(T)`.
 - [ ] Update `AiSchemaGenerator` (if needed) or relevant call sites to ensure `AiSchemaDefinition` is passed correctly.
-- [ ] Refactor `AiConfigService` and generic usage to deserialize the result manually.
+- [ ] Refactor call sites (e.g. `AiConfigService`) to handle deserialization manually.
 - [ ] Verify both providers work with the new abstraction.
