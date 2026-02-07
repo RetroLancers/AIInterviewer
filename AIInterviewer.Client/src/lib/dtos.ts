@@ -1,5 +1,5 @@
 /* Options:
-Date: 2026-02-07 09:22:04
+Date: 2026-02-07 14:46:18
 Version: 10.04
 Tip: To override a DTO option, remove "//" prefix before updating
 BaseUrl: https://localhost:5001
@@ -611,11 +611,17 @@ export class AiConfigResponse
     public constructor(init?: Partial<AiConfigResponse>) { (Object as any).assign(this, init); }
 }
 
+export class ListAiConfigsResponse
+{
+    public configs: AiConfigResponse[] = [];
+
+    public constructor(init?: Partial<ListAiConfigsResponse>) { (Object as any).assign(this, init); }
+}
+
 export class SiteConfigResponse
 {
     public id: number;
-    public geminiApiKey: string;
-    public interviewModel: string;
+    public activeAiConfigId: number;
     public globalFallbackModel?: string;
     public kokoroVoice?: string;
     public transcriptionProvider: string;
@@ -829,13 +835,13 @@ export class FinishInterview implements IReturn<FinishInterviewResponse>
 }
 
 // @Route("/api/config/ai", "GET")
-export class ListAiConfigs implements IReturn<AiConfigResponse[]>
+export class ListAiConfigs implements IReturn<ListAiConfigsResponse>
 {
 
     public constructor(init?: Partial<ListAiConfigs>) { (Object as any).assign(this, init); }
     public getTypeName() { return 'ListAiConfigs'; }
     public getMethod() { return 'GET'; }
-    public createResponse() { return new Array<AiConfigResponse>(); }
+    public createResponse() { return new ListAiConfigsResponse(); }
 }
 
 // @Route("/api/config/ai/{Id}", "GET")
@@ -906,11 +912,8 @@ export class GetSiteConfigRequest implements IReturn<SiteConfigResponse>
 export class UpdateSiteConfigRequest implements IReturn<IdResponse>
 {
     public id: number;
-    // @Validate(Validator="NotEmpty")
-    public geminiApiKey: string;
-
-    // @Validate(Validator="NotEmpty")
-    public interviewModel: string;
+    // @Validate(Validator="GreaterThan(0)")
+    public activeAiConfigId: number;
 
     public globalFallbackModel?: string;
     public kokoroVoice?: string;

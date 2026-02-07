@@ -76,3 +76,20 @@
 2026-02-07 14:43:30.1461 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=54, FilePath=C:\DevCurrent\AIInterviewer\AIInterviewer-25-update-site-config-ui\AIInterviewer\bin\Debug\net10.0\nlog.config
 2026-02-07 14:43:30.1461 Info Configuration initialized.
 2026-02-07 14:43:30.4232 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=54, FilePath=C:\DevCurrent\AIInterviewer\AIInterviewer-25-update-site-config-ui\AIInterviewer\bin\Debug\net10.0\nlog.config
+2026-02-07 14:45:33.2057 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2026-02-07 14:45:33.2110 Info Registered target NLog.Targets.FileTarget(Name=ownFile-web)
+2026-02-07 14:45:33.2110 Info Registered target NLog.Targets.ConsoleTarget(Name=lifetimeConsole)
+2026-02-07 14:45:33.2110 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.5.0.3962. Product version: 5.5.0+1873145cbc26e0312d9481234d69ce7dc68aac4e. GlobalAssemblyCache: False
+2026-02-07 14:45:33.2276 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=54, FilePath=C:\DevCurrent\AIInterviewer\AIInterviewer-25-update-site-config-ui\AIInterviewer\bin\Debug\net10.0\nlog.config
+2026-02-07 14:45:33.2276 Info Configuration initialized.
+2026-02-07 14:45:33.6318 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=54, FilePath=C:\DevCurrent\AIInterviewer\AIInterviewer-25-update-site-config-ui\AIInterviewer\bin\Debug\net10.0\nlog.config
+2026-02-07 14:46:06.7490 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2026-02-07 14:46:06.7490 Info Registered target NLog.Targets.FileTarget(Name=ownFile-web)
+2026-02-07 14:46:06.7490 Info Registered target NLog.Targets.ConsoleTarget(Name=lifetimeConsole)
+2026-02-07 14:46:06.7561 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.5.0.3962. Product version: 5.5.0+1873145cbc26e0312d9481234d69ce7dc68aac4e. GlobalAssemblyCache: False
+2026-02-07 14:46:06.7561 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=54, FilePath=C:\DevCurrent\AIInterviewer\AIInterviewer-25-update-site-config-ui\AIInterviewer\bin\Debug\net10.0\nlog.config
+2026-02-07 14:46:06.7722 Info Configuration initialized.
+2026-02-07 14:46:07.1075 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=54, FilePath=C:\DevCurrent\AIInterviewer\AIInterviewer-25-update-site-config-ui\AIInterviewer\bin\Debug\net10.0\nlog.config
+2026-02-07 14:46:45.8412 Info Shutdown() called. Logger closing...
+2026-02-07 14:46:45.8412 Info Closing old configuration.
+2026-02-07 14:46:45.8482 Info Logger has been closed down.

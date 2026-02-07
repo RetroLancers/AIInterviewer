@@ -26,8 +26,7 @@ export function useSiteConfig() {
     }
 
     const saveSiteConfig = async (
-        geminiApiKey: string,
-        interviewModel: string,
+        activeAiConfigId: number,
         globalFallbackModel?: string,
         kokoroVoice?: string,
         transcriptionProvider?: string
@@ -43,8 +42,7 @@ export function useSiteConfig() {
 
         const response = await client.api(new UpdateSiteConfigRequest({
             id: siteConfig.value.id,
-            geminiApiKey,
-            interviewModel,
+            activeAiConfigId,
             globalFallbackModel: globalFallbackModel || undefined,
             kokoroVoice: kokoroVoice || undefined,
             transcriptionProvider: transcriptionProvider || siteConfig.value.transcriptionProvider || 'Gemini'
