@@ -6,6 +6,8 @@
         "AIInterviewer.ServiceModel/Tables/Configuration/SiteConfigHolder.cs",
         "AIInterviewer/Migrations/Migration1000_CreateSiteConfig.cs",
         "AIInterviewer/Migrations/Migration1002_AddTranscriptionProviderToSiteConfig.cs",
+        "AIInterviewer.ServiceModel/Tables/Configuration/AiServiceConfig.cs",
+        "AIInterviewer/Migrations/Migration1003_CreateAiServiceConfig.cs",
         "AIInterviewer.ServiceModel/Types/Configuration/ExtensionMethods/SiteConfigExtensions.cs",
         "AIInterviewer.ServiceModel/Types/Configuration/GetSiteConfigRequest.cs",
         "AIInterviewer.ServiceModel/Types/Configuration/UpdateSiteConfigRequest.cs",

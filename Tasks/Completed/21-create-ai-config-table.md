@@ -20,10 +20,10 @@ We need to store API keys, models, and endpoints for multiple providers (Gemini,
     *   Migration class in `Migrations`.
 
 ## Implementation Steps
-1.  Define `AiServiceConfig` in ServiceModel.
-2.  Create Migration script (e.g., `MigrationXXXX_CreateAiServiceConfig.cs`).
-3.  Run `npm run migrate`.
+1.  [x] Define `AiServiceConfig` in ServiceModel.
+2.  [x] Create Migration script (e.g., `MigrationXXXX_CreateAiServiceConfig.cs`).
+3.  [x] Run `npm run migrate`.
 
 ## Definition of Done
-*   Table created in DB.
-*   POCO exists in ServiceModel.
+*   [x] Table created in DB.
+*   [x] POCO exists in ServiceModel.
