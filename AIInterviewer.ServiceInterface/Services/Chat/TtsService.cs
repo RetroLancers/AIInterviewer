@@ -25,8 +25,8 @@ public class TtsService(SiteConfigHolder siteConfigHolder) : Service
         {
             if (_tts == null)
             {
-                // Load model. This might download the model if not present (~300MB) or use bundled if configured.
-                // The nuget package wraps it.
+                // Load model. This might download the model if not present (~300MB).
+                // It's recommended to pre-load this using the 'tts.load' AppTask (npm run tts:load).
                 _tts = KokoroTTS.LoadModel(); 
                 
                 // Ensure voices are available? 

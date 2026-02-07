@@ -14,6 +14,7 @@
         "AIInterviewer/ConfigureSiteConfig.cs",
         "AIInterviewer/Migrations/Migration1001_AddKokoroVoiceToSiteConfig.cs",
         "AIInterviewer.Client/src/components/SiteConfigEditor.vue",
-        "AIInterviewer.Client/src/composables/useSiteConfig.ts"
+        "AIInterviewer.Client/src/composables/useSiteConfig.ts",
+        "AIInterviewer/Configure.Db.Migrations.cs"
     ]
 }

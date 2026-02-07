@@ -5,6 +5,8 @@ using AIInterviewer.ServiceInterface.Data;
 using ServiceStack;
 using ServiceStack.Data;
 using ServiceStack.OrmLite;
+using KokoroSharp;
+using Microsoft.Extensions.Logging;
 
 [assembly: HostingStartup(typeof(AIInterviewer.ConfigureDbMigrations))]
 
@@ -44,6 +46,16 @@ public class ConfigureDbMigrations : IHostingStartup
             });
             AppTasks.Register("migrate.revert", args => migrator.Revert(args[0]));
             AppTasks.Register("migrate.rerun", args => migrator.Rerun(args[0]));
+            AppTasks.Register("tts.load", _ => {
+                var log = appHost.GetApplicationServices().GetRequiredService<ILogger<ConfigureDbMigrations>>();
+                log.LogInformation("Pre-loading Kokoro TTS model...");
+                try {
+                    KokoroTTS.LoadModel();
+                    log.LogInformation("Kokoro TTS model loaded successfully.");
+                } catch (Exception ex) {
+                    log.LogError(ex, "Failed to load Kokoro TTS model.");
+                }
+            });
             AppTasks.Run();
         });
 

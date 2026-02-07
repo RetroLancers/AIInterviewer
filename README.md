@@ -170,19 +170,28 @@ npm run ui:dev
 ```
 
 ### Database Migrations
+ 
+ ```bash
+ cd AIInterviewer
+ npm run migrate
+ ```
+ 
+### TTS Model Setup
+
+The application uses Kokoro TTS for voice generation. The model is approximately 300MB and is downloaded on first use. To pre-download the model:
 
 ```bash
 cd AIInterviewer
-npm run migrate
+npm run tts:load
 ```
 
-### Revert / Rerun last migration
-
-```bash
-cd AIInterviewer
-npm run revert:last
-npm run rerun:last
-```
+ ### Revert / Rerun last migration
+ 
+ ```bash
+ cd AIInterviewer
+ npm run revert:last
+ npm run rerun:last
+ ```
 
 ## Development Workflow
 
