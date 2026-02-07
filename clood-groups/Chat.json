@@ -8,8 +8,6 @@
                 "AIInterviewer.ServiceInterface/Services/Chat/ChatService.cs",
                 "AIInterviewer.ServiceInterface/Services/Chat/TtsService.cs",
                 "AIInterviewer/Configure.AI.Chat.cs",
-                "AIInterviewer.ServiceInterface/GeminiApi.cs",
-                "AIInterviewer.ServiceInterface/SiteConfigHolderExtensions.cs",
                 "AIInterviewer.ServiceInterface/Services/AI/GeminiModelsService.cs"
         ]
 }
