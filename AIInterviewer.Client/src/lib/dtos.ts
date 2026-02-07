@@ -1,5 +1,5 @@
 /* Options:
-Date: 2026-02-05 19:05:14
+Date: 2026-02-07 09:22:04
 Version: 10.04
 Tip: To override a DTO option, remove "//" prefix before updating
 BaseUrl: https://localhost:5001
@@ -38,10 +38,6 @@ export interface IHasBearerToken
 }
 
 export interface IPost
-{
-}
-
-export interface IGet
 {
 }
 
@@ -192,6 +188,36 @@ export class User
     public constructor(init?: Partial<User>) { (Object as any).assign(this, init); }
 }
 
+export class InterviewDto
+{
+    public id: number;
+    public prompt: string;
+    public createdDate: string;
+
+    public constructor(init?: Partial<InterviewDto>) { (Object as any).assign(this, init); }
+}
+
+export class InterviewChatHistoryDto
+{
+    public id: number;
+    public role: string;
+    public content: string;
+    public entryDate: string;
+
+    public constructor(init?: Partial<InterviewChatHistoryDto>) { (Object as any).assign(this, init); }
+}
+
+export class InterviewResultDto
+{
+    public id: number;
+    public interviewId: number;
+    public reportText?: string;
+    public score: number;
+    public createdDate: string;
+
+    public constructor(init?: Partial<InterviewResultDto>) { (Object as any).assign(this, init); }
+}
+
 // @DataContract
 export class ResponseError
 {
@@ -229,36 +255,6 @@ export class ResponseStatus
     public meta?: { [index:string]: string; };
 
     public constructor(init?: Partial<ResponseStatus>) { (Object as any).assign(this, init); }
-}
-
-export class InterviewDto
-{
-    public id: number;
-    public prompt: string;
-    public createdDate: string;
-
-    public constructor(init?: Partial<InterviewDto>) { (Object as any).assign(this, init); }
-}
-
-export class InterviewChatHistoryDto
-{
-    public id: number;
-    public role: string;
-    public content: string;
-    public entryDate: string;
-
-    public constructor(init?: Partial<InterviewChatHistoryDto>) { (Object as any).assign(this, init); }
-}
-
-export class InterviewResultDto
-{
-    public id: number;
-    public interviewId: number;
-    public reportText?: string;
-    public score: number;
-    public createdDate: string;
-
-    public constructor(init?: Partial<InterviewResultDto>) { (Object as any).assign(this, init); }
 }
 
 /** @description Annotations for the message, when applicable, as when using the web search tool. */
@@ -552,48 +548,6 @@ export class AiFileContent extends AiContent
     public constructor(init?: Partial<AiFileContent>) { super(init); (Object as any).assign(this, init); }
 }
 
-// @DataContract
-export class RegisterResponse implements IHasSessionId, IHasBearerToken
-{
-    // @DataMember(Order=1)
-    public userId?: string;
-
-    // @DataMember(Order=2)
-    public sessionId?: string;
-
-    // @DataMember(Order=3)
-    public userName?: string;
-
-    // @DataMember(Order=4)
-    public referrerUrl?: string;
-
-    // @DataMember(Order=5)
-    public bearerToken?: string;
-
-    // @DataMember(Order=6)
-    public refreshToken?: string;
-
-    // @DataMember(Order=7)
-    public refreshTokenExpiry?: string;
-
-    // @DataMember(Order=8)
-    public roles?: string[];
-
-    // @DataMember(Order=9)
-    public permissions?: string[];
-
-    // @DataMember(Order=10)
-    public redirectUrl?: string;
-
-    // @DataMember(Order=11)
-    public responseStatus?: ResponseStatus;
-
-    // @DataMember(Order=12)
-    public meta?: { [index:string]: string; };
-
-    public constructor(init?: Partial<RegisterResponse>) { (Object as any).assign(this, init); }
-}
-
 export class GenerateInterviewPromptResponse
 {
     public systemPrompt: string;
@@ -643,6 +597,18 @@ export class FinishInterviewResponse
     public result?: InterviewResultDto;
 
     public constructor(init?: Partial<FinishInterviewResponse>) { (Object as any).assign(this, init); }
+}
+
+export class AiConfigResponse
+{
+    public id: number;
+    public name: string;
+    public providerType: string;
+    public apiKey: string;
+    public modelId: string;
+    public baseUrl?: string;
+
+    public constructor(init?: Partial<AiConfigResponse>) { (Object as any).assign(this, init); }
 }
 
 export class SiteConfigResponse
@@ -781,60 +747,6 @@ export class AuthenticateResponse implements IHasSessionId, IHasBearerToken
     public constructor(init?: Partial<AuthenticateResponse>) { (Object as any).assign(this, init); }
 }
 
-/** @description Sign Up */
-// @Api(Description="Sign Up")
-// @DataContract
-export class Register implements IReturn<RegisterResponse>, IPost
-{
-    // @DataMember(Order=1)
-    public userName?: string;
-
-    // @DataMember(Order=2)
-    public firstName?: string;
-
-    // @DataMember(Order=3)
-    public lastName?: string;
-
-    // @DataMember(Order=4)
-    public displayName?: string;
-
-    // @DataMember(Order=5)
-    public email?: string;
-
-    // @DataMember(Order=6)
-    public password?: string;
-
-    // @DataMember(Order=7)
-    public confirmPassword?: string;
-
-    // @DataMember(Order=8)
-    public autoLogin?: boolean;
-
-    // @DataMember(Order=10)
-    public errorView?: string;
-
-    // @DataMember(Order=11)
-    public meta?: { [index:string]: string; };
-
-    public constructor(init?: Partial<Register>) { (Object as any).assign(this, init); }
-    public getTypeName() { return 'Register'; }
-    public getMethod() { return 'POST'; }
-    public createResponse() { return new RegisterResponse(); }
-}
-
-// @Route("/confirm-email")
-export class ConfirmEmail implements IReturnVoid, IGet
-{
-    public userId: string;
-    public code: string;
-    public returnUrl?: string;
-
-    public constructor(init?: Partial<ConfirmEmail>) { (Object as any).assign(this, init); }
-    public getTypeName() { return 'ConfirmEmail'; }
-    public getMethod() { return 'GET'; }
-    public createResponse() {}
-}
-
 // @Route("/interview/generate-prompt", "POST")
 export class GenerateInterviewPrompt implements IReturn<GenerateInterviewPromptResponse>
 {
@@ -914,6 +826,69 @@ export class FinishInterview implements IReturn<FinishInterviewResponse>
     public getTypeName() { return 'FinishInterview'; }
     public getMethod() { return 'POST'; }
     public createResponse() { return new FinishInterviewResponse(); }
+}
+
+// @Route("/api/config/ai", "GET")
+export class ListAiConfigs implements IReturn<AiConfigResponse[]>
+{
+
+    public constructor(init?: Partial<ListAiConfigs>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'ListAiConfigs'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new Array<AiConfigResponse>(); }
+}
+
+// @Route("/api/config/ai/{Id}", "GET")
+export class GetAiConfig implements IReturn<AiConfigResponse>
+{
+    public id: number;
+
+    public constructor(init?: Partial<GetAiConfig>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetAiConfig'; }
+    public getMethod() { return 'GET'; }
+    public createResponse() { return new AiConfigResponse(); }
+}
+
+// @Route("/api/config/ai", "POST")
+export class CreateAiConfig implements IReturn<AiConfigResponse>
+{
+    public name: string;
+    public providerType: string;
+    public apiKey: string;
+    public modelId: string;
+    public baseUrl?: string;
+
+    public constructor(init?: Partial<CreateAiConfig>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'CreateAiConfig'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new AiConfigResponse(); }
+}
+
+// @Route("/api/config/ai/{Id}", "PUT")
+export class UpdateAiConfig implements IReturn<AiConfigResponse>
+{
+    public id: number;
+    public name: string;
+    public providerType: string;
+    public apiKey: string;
+    public modelId: string;
+    public baseUrl?: string;
+
+    public constructor(init?: Partial<UpdateAiConfig>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'UpdateAiConfig'; }
+    public getMethod() { return 'PUT'; }
+    public createResponse() { return new AiConfigResponse(); }
+}
+
+// @Route("/api/config/ai/{Id}", "DELETE")
+export class DeleteAiConfig implements IReturnVoid
+{
+    public id: number;
+
+    public constructor(init?: Partial<DeleteAiConfig>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'DeleteAiConfig'; }
+    public getMethod() { return 'DELETE'; }
+    public createResponse() {}
 }
 
 // @Route("/configuration/site-config/{Id}", "GET")
@@ -1152,3 +1127,4 @@ export class QueryUsers extends QueryDb<User> implements IReturn<QueryResponse<U
     public getMethod() { return 'GET'; }
     public createResponse() { return new QueryResponse<User>(); }
 }
+
