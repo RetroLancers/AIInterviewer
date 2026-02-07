@@ -1,47 +1,59 @@
 using ServiceStack;
+using ServiceStack.OrmLite;
 using AIInterviewer.ServiceModel.Types.AI;
-using System.Linq;
-using System.Threading.Tasks;
 using AIInterviewer.ServiceModel.Tables.Configuration;
-using System.Collections.Generic;
-using AIInterviewer.ServiceInterface;
+using AIInterviewer.ServiceInterface.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace AIInterviewer.ServiceInterface.Services.AI;
 
-public class GeminiModelsService(SiteConfigHolder siteConfigHolder, ILogger<GeminiModelsService> logger) : Service
+public class GeminiModelsService(IAiProviderFactory aiProviderFactory, SiteConfigHolder siteConfigHolder, ILogger<GeminiModelsService> logger) : Service
 {
     public async Task<GetGeminiModelsResponse> Get(GetGeminiModels request)
     {
         logger.LogInformation("Fetching available Gemini models.");
-        GeminiClient client;
+        
+        AiServiceConfig? config = null;
 
         if (!string.IsNullOrEmpty(request.ApiKey))
         {
-            client = new GeminiClient(request.ApiKey, "gemini-2.5-flash");
+            config = new AiServiceConfig 
+            { 
+                ProviderType = "Gemini", 
+                ApiKey = request.ApiKey,
+                ModelId = "gemini-2.0-flash-exp"
+            };
         }
         else
         {
-            client = siteConfigHolder.GetGeminiClient();
-        }
-
-        var modelsPager = await client.GetModels(null);
-        var models = new List<string>();
-
-        await foreach (var model in modelsPager)
-        {
-            if (model.Name != null && model.Name.StartsWith("models/gemini"))
+            config = await Db.SingleAsync<AiServiceConfig>(x => x.ProviderType == "Gemini");
+            
+            if (config == null)
             {
-                models.Add(model.Name.Replace("models/", ""));
+                var siteConfig = siteConfigHolder.SiteConfig;
+                if (siteConfig != null && !string.IsNullOrEmpty(siteConfig.GeminiApiKey))
+                {
+                    config = new AiServiceConfig
+                    {
+                        ProviderType = "Gemini",
+                        ApiKey = siteConfig.GeminiApiKey,
+                        ModelId = siteConfig.InterviewModel ?? "gemini-2.0-flash-exp"
+                    };
+                }
             }
         }
 
-        var response = new GetGeminiModelsResponse
+        if (config == null)
         {
-            Models = models
+            throw new HttpError(400, "ConfigurationError", "No Gemini configuration found.");
+        }
+
+        var provider = aiProviderFactory.GetProvider(config);
+        var models = await provider.ListModelsAsync();
+
+        return new GetGeminiModelsResponse
+        {
+            Models = models.ToList()
         };
-        
-        logger.LogInformation("Fetched {Count} Gemini models.", models.Count);
-        return response;
     }
 }

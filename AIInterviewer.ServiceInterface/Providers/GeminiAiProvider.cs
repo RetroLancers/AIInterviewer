@@ -23,7 +23,8 @@ public class GeminiAiProvider(AiServiceConfig config, ILogger<GeminiAiProvider> 
         
         return new Client(apiKey: apiKey, httpOptions: new HttpOptions()
         {
-            Timeout = 180 * 1000 * 2
+            Timeout = 180 * 1000 * 2,
+            BaseUrl = config.BaseUrl
         });
     }
 
@@ -136,6 +137,21 @@ public class GeminiAiProvider(AiServiceConfig config, ILogger<GeminiAiProvider> 
             }
             return null;
         });
+    }
+
+    public async Task<IEnumerable<string>> ListModelsAsync()
+    {
+        var client = GetClient();
+        var modelsPager = await client.Models.ListAsync(new ListModelsConfig());
+        var models = new List<string>();
+        await foreach (var model in modelsPager)
+        {
+            if (model.Name != null && model.Name.StartsWith("models/gemini"))
+            {
+                models.Add(model.Name.Replace("models/", ""));
+            }
+        }
+        return models;
     }
 
     // Helper methods
