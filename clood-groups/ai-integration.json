@@ -6,5 +6,6 @@
     "AIInterviewer.ServiceModel/Tables/Configuration/AiServiceConfig.cs",
     "AIInterviewer.ServiceModel/Types/Ai/AiMessage.cs",
     "AIInterviewer.ServiceModel/Types/Ai/AiRole.cs",
-    "AIInterviewer.ServiceInterface/Services/AI/GeminiModelsService.cs"
+    "AIInterviewer.ServiceInterface/Services/AI/GeminiModelsService.cs",
+    "AIInterviewer.ServiceInterface/Providers/OpenAiProvider.cs"
 ]

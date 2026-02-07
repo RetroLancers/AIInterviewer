@@ -12,8 +12,7 @@ public class AiProviderFactory(IServiceProvider serviceProvider) : IAiProviderFa
         return config.ProviderType switch
         {
             "Gemini" => ActivatorUtilities.CreateInstance<GeminiAiProvider>(serviceProvider, config),
-            // Future providers:
-            // "OpenAI" => ActivatorUtilities.CreateInstance<OpenAiProvider>(serviceProvider, config),
+            "OpenAI" => ActivatorUtilities.CreateInstance<OpenAiProvider>(serviceProvider, config),
             _ => throw new ArgumentException($"Unknown AI Provider Type: {config.ProviderType}", nameof(config))
         };
     }
