@@ -37,15 +37,17 @@ ChatCompletionOptions options = new()
 ```
 
 ## Requirements
-- Create a new type (e.g., `AiSchemaDefinition`) that can be used by both providers.
-- Refactor `IAiProvider` interface to use this new type for schema generation instead of taking a Type and using reflection.
-- Update `GeminiAiProvider` to support this new type.
-- Update `OpenAiProvider` to support this new type.
-- Ensure the schema generation logic handles the conversion to the specific provider's format (OpenAI's JSON schema vs Gemini's format).
+- Create a new recursive type structure (e.g., `AiSchemaDefinition`) that represents the schema (Object, Array, String, Number, Boolean, etc.).
+- This type must be capable of defining properties, required fields, and nested schemas.
+- **Strictly avoid using `System.Type` or Reflection.** The schema should be defined by manual construction of this tree or a helper fluent API, not by inspecting CLR types.
+- The "Generate Schema" logic should be a tree walker that traverses this `AiSchemaDefinition` structure and outputs the provider-specific format (JSON Schema for OpenAI, appropriate format for Gemini).
+- Refactor `IAiProvider` interface to accept this `AiSchemaDefinition` instead of a `Type`.
+- Update `GeminiAiProvider` and `OpenAiProvider` to implement the walker for their respective formats.
 
 ## Checklist
-- [ ] Create `AiSchemaDefinition` type (or similar name).
-- [ ] Update `IAiProvider` interface method signature.
-- [ ] Implement support in `OpenAiProvider`.
-- [ ] Implement support in `GeminiAiProvider`.
-- [ ] Verify schema generation works for both providers without reflection in the provider implementation (or at least cleanly abstracted).
+- [ ] Design and implement `AiSchemaDefinition` (or similar) recursive tree structure.
+- [ ] Implement a tree walker for OpenAI that produces JSON Schema.
+- [ ] Implement a tree walker for Gemini that produces the required Gemini schema format.
+- [ ] Update `IAiProvider` interface to use `AiSchemaDefinition`.
+- [ ] Refactor call sites to construct `AiSchemaDefinition` explicitly instead of passing a C# type.
+- [ ] Verify both providers work correctly with the new tree-based schema generation.
