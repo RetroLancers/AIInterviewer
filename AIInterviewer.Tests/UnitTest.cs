@@ -4,6 +4,9 @@ using ServiceStack.Testing;
 using AIInterviewer.ServiceInterface;
 using AIInterviewer.ServiceInterface.Services.Configuration;
 using AIInterviewer.ServiceModel;
+using AIInterviewer.ServiceModel.Tables.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace AIInterviewer.Tests;
 
@@ -13,7 +16,10 @@ public class UnitTest
 
     public UnitTest()
     {
+        AIInterviewer.AppHost.RegisterKey();
         appHost = new BasicAppHost().Init();
+        appHost.Container.AddSingleton<SiteConfigHolder>();
+        appHost.Container.AddSingleton<ILogger<SiteConfigService>>(new NullLogger<SiteConfigService>());
         appHost.Container.AddTransient<SiteConfigService>();
     }
 
