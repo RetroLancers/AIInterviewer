@@ -26,24 +26,11 @@ public class GeminiModelsService(IAiProviderFactory aiProviderFactory, SiteConfi
         }
         else
         {
-            var activeConfigId = siteConfigHolder.SiteConfig?.ActiveAiConfigId;
-            if (activeConfigId.HasValue)
+            var siteConfig = siteConfigHolder.SiteConfig;
+            if (siteConfig != null && siteConfig.ActiveAiConfigId > 0)
             {
-                config = await Db.SingleByIdAsync<AiServiceConfig>(activeConfigId.Value);
+                config = await Db.SingleByIdAsync<AiServiceConfig>(siteConfig.ActiveAiConfigId);
                 if (config?.ProviderType != "Gemini") config = null; // Only use if it's Gemini
-            }
-
-            if (config == null)
-            {
-                var siteConfig = siteConfigHolder.SiteConfig;
-                if (siteConfig != null && siteConfig.ActiveAiConfigId > 0)
-                {
-                    var activeConfig = await Db.SingleByIdAsync<AiServiceConfig>(siteConfig.ActiveAiConfigId);
-                    if (activeConfig != null && activeConfig.ProviderType == "Gemini")
-                    {
-                        config = activeConfig;
-                    }
-                }
             }
         }
 
