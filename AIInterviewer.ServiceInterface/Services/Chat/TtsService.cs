@@ -18,6 +18,9 @@ public class TtsService(SiteConfigHolder siteConfigHolder, ILogger<TtsService> l
     private static KokoroTTS? _tts;
     private static readonly object _lock = new();
     private const int MaxChunkLength = 600;
+
+    // Use compiled regex to avoid recompilation overhead
+    private static readonly Regex _sentenceSplitter = new Regex("(?<=[.!?])\\s+", RegexOptions.Compiled);
  
 
     private static KokoroTTS GetTts()
@@ -114,7 +117,7 @@ public class TtsService(SiteConfigHolder siteConfigHolder, ILogger<TtsService> l
 
     private static IEnumerable<string> SplitIntoChunks(string text, int maxLength)
     {
-        var sentences = Regex.Split(text, "(?<=[.!?])\\s+");
+        var sentences = _sentenceSplitter.Split(text);
         var current = new StringBuilder();
 
         foreach (var sentence in sentences)
