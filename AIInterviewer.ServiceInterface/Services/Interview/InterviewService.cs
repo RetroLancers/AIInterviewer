@@ -118,24 +118,35 @@ public class InterviewService(SiteConfigHolder siteConfigHolder) : Service
             };
         }
 
-        var client = siteConfigHolder.GetGeminiClient();
-        var aiResponse = await client.GenerateTextAsync(
-            "Begin the interview now.",
-            systemInstruction: interview.Prompt
-        );
-
-        if (string.IsNullOrWhiteSpace(aiResponse))
+        using var trans = Db.OpenTransaction();
+        try
         {
-            throw HttpError.BadRequest("Failed to start interview.");
+            var client = siteConfigHolder.GetGeminiClient();
+            var aiResponse = await client.GenerateTextAsync(
+                "Begin the interview now.",
+                systemInstruction: interview.Prompt
+            );
+
+            if (string.IsNullOrWhiteSpace(aiResponse))
+            {
+                throw HttpError.BadRequest("Failed to start interview.");
+            }
+
+            await Db.SaveAsync(new InterviewChatHistory
+            {
+                InterviewId = interview.Id,
+                Role = "Interviewer",
+                Content = aiResponse,
+                EntryDate = DateTime.UtcNow
+            });
+
+            trans.Commit();
         }
-
-        await Db.SaveAsync(new InterviewChatHistory
+        catch
         {
-            InterviewId = interview.Id,
-            Role = "Interviewer",
-            Content = aiResponse,
-            EntryDate = DateTime.UtcNow
-        });
+            trans.Rollback();
+            throw;
+        }
 
         var updatedHistory = await Db.SelectAsync<InterviewChatHistory>(x => x.InterviewId == request.InterviewId);
         return new StartInterviewResponse
@@ -150,40 +161,51 @@ public class InterviewService(SiteConfigHolder siteConfigHolder) : Service
             await Db.SingleByIdAsync<AIInterviewer.ServiceModel.Tables.Interview.Interview>(request.InterviewId);
         if (interview == null) throw HttpError.NotFound("Interview not found");
 
-        // 1. Save User Message
-        await Db.SaveAsync(new InterviewChatHistory
+        using var trans = Db.OpenTransaction();
+        try
         {
-            InterviewId = interview.Id,
-            Role = "User",
-            Content = request.Message,
-            EntryDate = DateTime.UtcNow
-        });
-
-        // 2. Get Context for AI
-        var history = await Db.SelectAsync<InterviewChatHistory>(x => x.InterviewId == request.InterviewId);
-
-        var orderedHistory = history.OrderBy(x => x.EntryDate).ToList();
-        var contents = orderedHistory.Select(entry => new Content
-        {
-            Role = entry.Role == "Interviewer" ? "model" : "user",
-            Parts = [new Part { Text = entry.Content }]
-        }).ToList();
-
-        var client = siteConfigHolder.GetGeminiClient();
-        var aiResponse = await client.GenerateTextAsync(
-            contents: contents,
-            systemInstruction: interview.Prompt
-        );
-
-        if (!string.IsNullOrEmpty(aiResponse))
-        {
+            // 1. Save User Message
             await Db.SaveAsync(new InterviewChatHistory
             {
                 InterviewId = interview.Id,
-                Role = "Interviewer",
-                Content = aiResponse,
+                Role = "User",
+                Content = request.Message,
                 EntryDate = DateTime.UtcNow
             });
+
+            // 2. Get Context for AI
+            var history = await Db.SelectAsync<InterviewChatHistory>(x => x.InterviewId == request.InterviewId);
+
+            var orderedHistory = history.OrderBy(x => x.EntryDate).ToList();
+            var contents = orderedHistory.Select(entry => new Content
+            {
+                Role = entry.Role == "Interviewer" ? "model" : "user",
+                Parts = [new Part { Text = entry.Content }]
+            }).ToList();
+
+            var client = siteConfigHolder.GetGeminiClient();
+            var aiResponse = await client.GenerateTextAsync(
+                contents: contents,
+                systemInstruction: interview.Prompt
+            );
+
+            if (!string.IsNullOrEmpty(aiResponse))
+            {
+                await Db.SaveAsync(new InterviewChatHistory
+                {
+                    InterviewId = interview.Id,
+                    Role = "Interviewer",
+                    Content = aiResponse,
+                    EntryDate = DateTime.UtcNow
+                });
+            }
+
+            trans.Commit();
+        }
+        catch
+        {
+            trans.Rollback();
+            throw;
         }
 
         // Return updated history
@@ -239,22 +261,34 @@ The ""Feedback"" must be markdown and include a section titled ""Final Evaluatio
             Required = ["Score", "Feedback"]
         };
 
-        var client = siteConfigHolder.GetGeminiClient();
-        var evaluation = await client.GenerateJsonAsync<EvaluationResponse>(evaluationPrompt, schema);
-
-        if (evaluation == null) throw new Exception("Failed to generate evaluation");
-
-        var result = new InterviewResult
+        using var trans = Db.OpenTransaction();
+        InterviewResult result;
+        try
         {
-            InterviewId = interview.Id,
-            ReportText = string.IsNullOrWhiteSpace(evaluation.Feedback)
-                ? "No feedback provided."
-                : evaluation.Feedback.Trim(),
-            Score = evaluation.Score,
-            CreatedDate = DateTime.UtcNow
-        };
+            var client = siteConfigHolder.GetGeminiClient();
+            var evaluation = await client.GenerateJsonAsync<EvaluationResponse>(evaluationPrompt, schema);
 
-        await Db.SaveAsync(result);
+            if (evaluation == null) throw new Exception("Failed to generate evaluation");
+
+            result = new InterviewResult
+            {
+                InterviewId = interview.Id,
+                ReportText = string.IsNullOrWhiteSpace(evaluation.Feedback)
+                    ? "No feedback provided."
+                    : evaluation.Feedback.Trim(),
+                Score = evaluation.Score,
+                CreatedDate = DateTime.UtcNow
+            };
+
+            await Db.SaveAsync(result);
+
+            trans.Commit();
+        }
+        catch
+        {
+            trans.Rollback();
+            throw;
+        }
 
         return new FinishInterviewResponse
         {
