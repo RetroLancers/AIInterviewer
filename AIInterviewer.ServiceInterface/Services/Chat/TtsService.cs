@@ -14,25 +14,16 @@ namespace AIInterviewer.ServiceInterface.Services.Chat;
 
 public class TtsService(SiteConfigHolder siteConfigHolder) : Service
 {
-    private static KokoroTTS _tts;
+    private static KokoroTTS? _tts;
     private static readonly object _lock = new();
     private const int MaxChunkLength = 600;
  
 
-    private KokoroTTS GetTts()
+    private static KokoroTTS GetTts()
     {
         lock (_lock)
         {
-            if (_tts == null)
-            {
-                // Load model. This might download the model if not present (~300MB).
-                // It's recommended to pre-load this using the 'tts.load' AppTask (npm run tts:load).
-                _tts = KokoroTTS.LoadModel(); 
-                
-                // Ensure voices are available? 
-                // If GetVoice returns null or throws, we might need to handle it.
-                // Assuming defaults work.
-            }
+            _tts ??= KokoroTTS.LoadModel();
             return _tts;
         }
     }
@@ -179,12 +170,9 @@ public class TtsService(SiteConfigHolder siteConfigHolder) : Service
             await Task.Delay(50);
         }
 
-        if (!job.isDone)
-        {
-            job.Cancel();
-            throw new HttpError(504, "Timeout", "TTS generation timed out.");
-        }
+        if (job.isDone) return chunkSamples;
+        job.Cancel();
+        throw new HttpError(504, "Timeout", "TTS generation timed out.");
 
-        return chunkSamples;
     }
 }

@@ -11,12 +11,12 @@ Convert the lazy-loading logic for the Kokoro TTS model in `TtsService.cs` into 
 - Add a convenient `npm run` script to `package.json` to make running this task easy.
 
 ## Checklist
-- [ ] Create `AppTask` for `tts.load` in `Configure.Db.Migrations.cs`.
-- [ ] Add `npm run tts:load` script to `AIInterviewer/package.json`.
-- [ ] Verify the task works correctly (runs without error and loads/downloads model).
-- [ ] Update `README.md` with "TTS Model Setup" section.
-- [ ] Refactor `TtsService.cs` to use the same logic or refer to the task's necessity.
-- [ ] Update `clood-groups/service-interface.json` if necessary.
+- [x] Create `AppTask` for `tts.load` in `Configure.Db.Migrations.cs`.
+- [x] Add `npm run tts:load` script to `AIInterviewer/package.json`.
+- [x] Verify the task works correctly (runs without error and loads/downloads model).
+- [x] Update `README.md` with "TTS Model Setup" section.
+- [x] Refactor `TtsService.cs` to use the same logic or refer to the task's necessity.
+- [x] Update `clood-groups/service-interface.json` if necessary.
 
 ## Notes
 - The model file is large (~300MB).
