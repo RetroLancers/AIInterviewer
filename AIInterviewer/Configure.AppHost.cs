@@ -33,5 +33,5 @@ public class AppHost() : AppHostBase("AIInterviewer"), IHostingStartup
     
     // TODO: Replace with your own License Key. FREE Individual or OSS License available from: https://servicestack.net/free
     public static void RegisterKey() =>
-        ServiceStack.Licensing.RegisterLicense("OSS BSD-3-Clause 2025 https://github.com/NetCoreTemplates/nextjs fikwwuuSWXcMlSp9HNi2aWOqg+XskqXNG/2epBNhPeQ4zEddXhxSFlFwv3Rfvr74nB5kaGPVvA1sY6MgfMkHYngn8FSLnDZPXUtCt54N5hEen1mKPxTIAPJjBGjWNSP+vccFGl4mpbpxjmpZ8+eKcAuzvMuWa3UqZFpV/49Buis=");
+        ServiceStack.Licensing.RegisterLicense("Individual (c) 2026 Sterling Kooshesh sTWLaPYQlgdtZoHvx+gczZdmepDtoKPlR5bOIbV1XZZNHfe6U4hdO1F4C7T/N/5dRuox3Ga57oaVYfWTSC6MN8X6WfzMw1IEPRZoCorUsLWIw9NyxgcQ7Uds4ygM4Dw+wrw5Zp3gFg+r/KUd/IRIqJHmBOS7n6TRm+XmQOQuU6M=");
 }
