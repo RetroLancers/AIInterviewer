@@ -13,8 +13,8 @@ Ensure that multi-step database operations in `InterviewService` are wrapped in 
 - Ensure proper error handling and rollbacks on failure.
 
 ## Checklist
-- [ ] Audit `InterviewService.cs` for all write operations.
-- [ ] Implement transactions for `AddChatMessage` (considering the AI call timeout/failure).
-- [ ] Implement transactions for any new or updated service methods.
-- [ ] Verify that transactions work as expected during failures (e.g., DB disconnect, validation errors).
-- [ ] Update clood files for the interview domain.
+- [x] Audit `InterviewService.cs` for all write operations.
+- [x] Implement transactions for `AddChatMessage` (considering the AI call timeout/failure).
+- [x] Implement transactions for any new or updated service methods.
+- [x] Verify that transactions work as expected during failures (e.g., DB disconnect, validation errors).
+- [x] Update clood files for the interview domain.
