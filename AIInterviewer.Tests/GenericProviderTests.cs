@@ -37,7 +37,7 @@ public class GenericProviderTests
              ApiKey = apiKey,
              ModelId = _configuration["Gemini:ModelId"],
              Name = "TestGemini",
-             ProviderType = AiProviderType.Gemini
+             ProviderType = "Gemini"
         };
         
         var provider = new GeminiAiProvider(config, NullLogger<GeminiAiProvider>.Instance);
@@ -45,10 +45,10 @@ public class GenericProviderTests
         var schema = new AiSchemaDefinition
         {
              Description = "A simple person object",
-             Properties = new Dictionary<string, AiSchemaProperty>
+             Properties = new Dictionary<string, AiSchemaDefinition>
              {
-                 { "name", new AiSchemaProperty { Type = "string", Description = "Name of the person" } },
-                 { "age", new AiSchemaProperty { Type = "integer", Description = "Age of the person" } }
+                 { "name", new AiSchemaDefinition { Type = "string", Description = "Name of the person" } },
+                 { "age", new AiSchemaDefinition { Type = "integer", Description = "Age of the person" } }
              },
              Required = new List<string> { "name", "age" }
         };
@@ -57,7 +57,7 @@ public class GenericProviderTests
         
         var result = await provider.GenerateJsonAsync<PersonTest>(prompt, schema, "Person");
         
-        Assert.IsNotNull(result);
+        Assert.That(result, Is.Not.Null);
         Assert.That(result.Name, Is.EqualTo("Alice"));
         Assert.That(result.Age, Is.EqualTo(25));
     }
@@ -76,7 +76,7 @@ public class GenericProviderTests
              ApiKey = apiKey,
              ModelId = _configuration["OpenAI:ModelId"] ?? "gpt-4o",
              Name = "TestOpenAI",
-             ProviderType = AiProviderType.OpenAI
+             ProviderType = "OpenAI"
         };
 
         var provider = new OpenAiProvider(config, NullLogger<OpenAiProvider>.Instance);
@@ -84,10 +84,10 @@ public class GenericProviderTests
         var schema = new AiSchemaDefinition
         {
              Description = "A simple person object",
-             Properties = new Dictionary<string, AiSchemaProperty>
+             Properties = new Dictionary<string, AiSchemaDefinition>
              {
-                 { "name", new AiSchemaProperty { Type = "string", Description = "Name of the person" } },
-                 { "age", new AiSchemaProperty { Type = "integer", Description = "Age of the person" } }
+                 { "name", new AiSchemaDefinition { Type = "string", Description = "Name of the person" } },
+                 { "age", new AiSchemaDefinition { Type = "integer", Description = "Age of the person" } }
              },
              Required = new List<string> { "name", "age" }
         };
@@ -96,7 +96,7 @@ public class GenericProviderTests
         
         var result = await provider.GenerateJsonAsync<PersonTest>(prompt, schema, "Person");
         
-        Assert.IsNotNull(result);
+        Assert.That(result, Is.Not.Null);
         Assert.That(result.Name, Is.EqualTo("Bob"));
         Assert.That(result.Age, Is.EqualTo(40));
     }
