@@ -7,5 +7,10 @@
     "AIInterviewer.ServiceModel/Types/Ai/AiMessage.cs",
     "AIInterviewer.ServiceModel/Types/Ai/AiRole.cs",
     "AIInterviewer.ServiceInterface/Services/AI/GeminiModelsService.cs",
-    "AIInterviewer.ServiceInterface/Providers/OpenAiProvider.cs"
+    "AIInterviewer.ServiceInterface/Providers/OpenAiProvider.cs",
+    "AIInterviewer.ServiceInterface/Services/Configuration/AiConfigService.cs",
+    "AIInterviewer.ServiceModel/Types/Configuration/AiConfigRequest.cs",
+    "AIInterviewer.ServiceModel/Types/Configuration/AiConfigResponse.cs",
+    "AIInterviewer.ServiceModel/Types/Configuration/ExtensionMethods/AiConfigExtensions.cs",
+    "AIInterviewer.Client/src/pages/admin/ai-configs.vue"
 ]

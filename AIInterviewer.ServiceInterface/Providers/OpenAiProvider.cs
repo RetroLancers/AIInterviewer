@@ -226,4 +226,11 @@ public class OpenAiProvider : IAiProvider
 
         return new { type = "string" };
     }
+
+    public async Task<IEnumerable<string>> ListModelsAsync()
+    {
+        // For now return a few common models. 
+        // In a real implementation, we might want to query the OpenAI API.
+        return await Task.FromResult(new List<string> { "gpt-4o", "gpt-4o-mini", "o1-preview", "o1-mini" });
+    }
 }
