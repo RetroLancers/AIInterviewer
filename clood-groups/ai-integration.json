@@ -17,5 +17,6 @@
     "AIInterviewer.ServiceModel/Types/Ai/AiSchemaDefinition.cs",
     "AIInterviewer.ServiceInterface/Services/Interview/InterviewService.cs",
     "AIInterviewer.ServiceInterface/Providers/Generators/OpenAiSchemaGenerator.cs",
-    "AIInterviewer.ServiceInterface/Providers/Generators/GeminiSchemaGenerator.cs"
+    "AIInterviewer.ServiceInterface/Providers/Generators/GeminiSchemaGenerator.cs",
+    "AIInterviewer.Tests/GenericProviderTests.cs"
 ]
