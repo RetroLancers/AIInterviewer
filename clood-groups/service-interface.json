@@ -1,0 +1,11 @@
+{
+    "name": "Service Interface",
+    "description": "Main service implementations",
+    "files": [
+        "AIInterviewer.ServiceInterface/Services/AI/GeminiModelsService.cs",
+        "AIInterviewer.ServiceInterface/Services/Chat/ChatService.cs",
+        "AIInterviewer.ServiceInterface/Services/Chat/TtsService.cs",
+        "AIInterviewer.ServiceInterface/Services/Configuration/SiteConfigService.cs",
+        "AIInterviewer.ServiceInterface/Services/Interview/InterviewService.cs"
+    ]
+}
