@@ -50,7 +50,7 @@ public class GenericProviderTests
                  { "name", new AiSchemaDefinition { Type = "string", Description = "Name of the person" } },
                  { "age", new AiSchemaDefinition { Type = "integer", Description = "Age of the person" } }
              },
-             Required = new List<string> { "name", "age" }
+             Required = ["name", "age"]
         };
         
         var prompt = "Generate a JSON for a person named Alice who is 25 years old.";
@@ -71,7 +71,7 @@ public class GenericProviderTests
             Assert.Ignore("OpenAI:ApiKey secret not configured. Use `dotnet user-secrets set \"OpenAI:ApiKey\" \"<API_KEY>\"` to run.");
         }
 
-         var config = new AiServiceConfig
+        var config = new AiServiceConfig
         {
              ApiKey = apiKey,
              ModelId = _configuration["OpenAI:ModelId"] ?? "gpt-4o",
@@ -89,7 +89,7 @@ public class GenericProviderTests
                  { "name", new AiSchemaDefinition { Type = "string", Description = "Name of the person" } },
                  { "age", new AiSchemaDefinition { Type = "integer", Description = "Age of the person" } }
              },
-             Required = new List<string> { "name", "age" }
+             Required = ["name", "age"]
         };
         
         var prompt = "Generate a JSON for a person named Bob who is 40 years old.";
