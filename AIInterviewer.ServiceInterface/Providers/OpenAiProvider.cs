@@ -127,7 +127,7 @@ public class OpenAiProvider : IAiProvider
         };
     }
 
-    public async Task<T?> GenerateJsonAsync<T>(string prompt, AiSchemaDefinition schema, string? systemPrompt = null) where T : class
+    public async Task<T?> GenerateJsonAsync<T>(string prompt, AiSchemaDefinition schema, string schemaName, string? systemPrompt = null) where T : class
     {
         try
         {
@@ -138,7 +138,8 @@ public class OpenAiProvider : IAiProvider
             }
             messages.Add(new UserChatMessage(prompt));
 
-            var schemaJson = JsonConvert.SerializeObject(schema, new JsonSerializerSettings
+            var openAiSchema = MapSchema(schema);
+            var schemaJson = JsonConvert.SerializeObject(openAiSchema, new JsonSerializerSettings
             {
                 ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver(),
                 NullValueHandling = NullValueHandling.Ignore
@@ -147,7 +148,7 @@ public class OpenAiProvider : IAiProvider
             var options = new ChatCompletionOptions
             {
                 ResponseFormat = ChatResponseFormat.CreateJsonSchemaFormat(
-                    jsonSchemaFormatName: typeof(T).Name,
+                    jsonSchemaFormatName: schemaName,
                     jsonSchema: BinaryData.FromString(schemaJson),
                     jsonSchemaIsStrict: true
                 )
@@ -169,7 +170,50 @@ public class OpenAiProvider : IAiProvider
         }
     }
 
-  
+    private Dictionary<string, object> MapSchema(AiSchemaDefinition def)
+    {
+        var dict = new Dictionary<string, object>
+        {
+            ["type"] = def.Type
+        };
+
+        if (!string.IsNullOrEmpty(def.Description))
+        {
+            dict["description"] = def.Description;
+        }
+
+        if (def.Properties != null && def.Properties.Count > 0)
+        {
+            var props = new Dictionary<string, object>();
+            foreach (var prop in def.Properties)
+            {
+                props[prop.Key] = MapSchema(prop.Value);
+            }
+            dict["properties"] = props;
+        }
+
+        if (def.Required != null && def.Required.Count > 0)
+        {
+            dict["required"] = def.Required;
+        }
+
+        if (def.Items != null)
+        {
+            dict["items"] = MapSchema(def.Items);
+        }
+
+        if (def.Enum != null && def.Enum.Count > 0)
+        {
+            dict["enum"] = def.Enum;
+        }
+
+        if (def.Type == "object")
+        {
+            dict["additionalProperties"] = def.AdditionalProperties ?? false;
+        }
+
+        return dict;
+    }
 
     private ChatMessage MapMessage(AiMessage msg)
     {

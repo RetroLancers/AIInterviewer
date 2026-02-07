@@ -105,7 +105,7 @@ public class GeminiAiProvider(AiServiceConfig config, ILogger<GeminiAiProvider> 
         });
     }
 
-    public async Task<T?> GenerateJsonAsync<T>(string prompt, AiSchemaDefinition schemaDef, string? systemPrompt = null) where T : class
+    public async Task<T?> GenerateJsonAsync<T>(string prompt, AiSchemaDefinition schemaDef, string schemaName, string? systemPrompt = null) where T : class
     {
         return await ExecuteWithRetryAsync(async (model) =>
         {

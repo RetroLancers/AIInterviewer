@@ -290,7 +290,7 @@ The ""Feedback"" must be markdown and include a section titled ""Final Evaluatio
         {
             var provider = await GetAiProviderAsync();
             var schema = AiSchemaGenerator.Generate(typeof(EvaluationResponse));
-            var evaluation = await provider.GenerateJsonAsync<EvaluationResponse>(evaluationPrompt, schema);
+            var evaluation = await provider.GenerateJsonAsync<EvaluationResponse>(evaluationPrompt, schema, nameof(EvaluationResponse));
 
             if (evaluation == null) throw new Exception("Failed to generate evaluation");
 

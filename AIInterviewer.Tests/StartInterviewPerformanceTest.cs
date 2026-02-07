@@ -41,7 +41,7 @@ public class MockAiProvider : IAiProvider
         return Task.FromResult<string?>("Audio Response");
     }
 
-    public Task<T?> GenerateJsonAsync<T>(string prompt, string? systemPrompt = null) where T : class
+    public Task<T?> GenerateJsonAsync<T>(string prompt, AiSchemaDefinition schema, string schemaName, string? systemPrompt = null) where T : class
     {
         return Task.FromResult<T?>(null);
     }
