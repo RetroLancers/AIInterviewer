@@ -14,20 +14,20 @@ public class InterviewService(IAiProviderFactory aiProviderFactory, SiteConfigHo
 {
     private async Task<IAiProvider> GetAiProviderAsync()
     {
-        // Logic: Try to find config matching the SiteConfig.InterviewModel
-        var model = siteConfigHolder.SiteConfig?.InterviewModel;
+        var activeConfigId = siteConfigHolder.SiteConfig?.ActiveAiConfigId;
         AiServiceConfig? config = null;
 
-        if (!string.IsNullOrEmpty(model))
+        if (activeConfigId.HasValue)
         {
-             config = await Db.SingleAsync<AiServiceConfig>(x => x.ModelId == model);
+             config = await Db.SingleByIdAsync<AiServiceConfig>(activeConfigId.Value);
         }
         
-        // Fallback: Get first Gemini provider
+        // Fallback: Get first Gemini provider if no active config is selected
         if (config == null)
         {
              config = await Db.SingleAsync<AiServiceConfig>(x => x.ProviderType == "Gemini");
         }
+
 
         if (config == null)
         {

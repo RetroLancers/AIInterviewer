@@ -34,14 +34,14 @@ public class ConfigureSiteConfig : IHostingStartup
             {
                 var siteConfig = new SiteConfig()
                 {
-                    GeminiApiKey = "",
-                    InterviewModel = "",
+                    ActiveAiConfigId = null,
                     GlobalFallbackModel = "",
                     KokoroVoice = "af_heart",
                     TranscriptionProvider = "Gemini"
                 };
                 siteConfigHolder.SiteConfig = siteConfig;
                 siteConfig.Id = (int)db.Insert(siteConfig, true);
+
             }
         }
     }
