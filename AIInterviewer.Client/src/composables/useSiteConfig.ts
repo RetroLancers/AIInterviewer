@@ -26,7 +26,7 @@ export function useSiteConfig() {
     }
 
     const saveSiteConfig = async (
-        activeAiConfigId?: number,
+        activeAiConfigId: number,
         globalFallbackModel?: string,
         kokoroVoice?: string,
         transcriptionProvider?: string

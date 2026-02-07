@@ -35,7 +35,15 @@ public class GeminiModelsService(IAiProviderFactory aiProviderFactory, SiteConfi
 
             if (config == null)
             {
-                config = await Db.SingleAsync<AiServiceConfig>(x => x.ProviderType == "Gemini");
+                var siteConfig = siteConfigHolder.SiteConfig;
+                if (siteConfig != null && siteConfig.ActiveAiConfigId > 0)
+                {
+                    var activeConfig = await Db.SingleByIdAsync<AiServiceConfig>(siteConfig.ActiveAiConfigId);
+                    if (activeConfig != null && activeConfig.ProviderType == "Gemini")
+                    {
+                        config = activeConfig;
+                    }
+                }
             }
         }
 

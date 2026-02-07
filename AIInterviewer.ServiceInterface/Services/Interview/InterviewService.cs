@@ -15,7 +15,26 @@ public class InterviewService(IAiProviderFactory aiProviderFactory, SiteConfigHo
 {
     private async Task<IAiProvider> GetAiProviderAsync()
     {
-        return await aiProviderFactory.GetActiveProviderAsync(siteConfigHolder, Db);
+        var activeConfigId = siteConfigHolder.SiteConfig?.ActiveAiConfigId ?? 0;
+        AiServiceConfig? config = null;
+
+        if (activeConfigId > 0)
+        {
+             config = await Db.SingleByIdAsync<AiServiceConfig>(activeConfigId);
+        }
+        
+        // Fallback: Get first Gemini provider if active one not found or not set
+        if (config == null)
+        {
+             config = await Db.SingleAsync<AiServiceConfig>(x => x.ProviderType == "Gemini");
+        }
+
+        if (config == null)
+        {
+            throw new Exception("No AI Service Configuration found. Please configure AiServiceConfig table.");
+        }
+
+        return aiProviderFactory.GetProvider(config);
     }
     private const string BaseInterviewRules = """
                                               Base Interview Rules (Mandatory):

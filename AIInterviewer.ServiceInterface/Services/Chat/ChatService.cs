@@ -14,7 +14,25 @@ public class ChatService(SiteConfigHolder siteConfigHolder, IAiProviderFactory a
 {
     private async Task<IAiProvider> GetAiProviderAsync()
     {
-        return await aiProviderFactory.GetActiveProviderAsync(siteConfigHolder, Db);
+        var activeConfigId = siteConfigHolder.SiteConfig?.ActiveAiConfigId ?? 0;
+        AiServiceConfig? config = null;
+
+        if (activeConfigId > 0)
+        {
+             config = await Db.SingleByIdAsync<AiServiceConfig>(activeConfigId);
+        }
+        
+        if (config == null)
+        {
+             config = await Db.SingleAsync<AiServiceConfig>(x => x.ProviderType == "Gemini");
+        }
+
+        if (config == null)
+        {
+            throw new Exception("No AI Service Configuration found. Please configure AiServiceConfig table.");
+        }
+
+        return aiProviderFactory.GetProvider(config);
     }
     public async Task<TranscribeAudioResponse> Post(TranscribeAudioRequest request)
     {

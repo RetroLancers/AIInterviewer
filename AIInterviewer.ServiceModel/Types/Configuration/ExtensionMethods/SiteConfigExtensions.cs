@@ -10,8 +10,6 @@ public static class SiteConfigExtensions
         {
             Id = request.Id,
             ActiveAiConfigId = request.ActiveAiConfigId,
-            GeminiApiKey = request.GeminiApiKey,
-            InterviewModel = request.InterviewModel,
             GlobalFallbackModel = request.GlobalFallbackModel,
             KokoroVoice = request.KokoroVoice,
             TranscriptionProvider = request.TranscriptionProvider
@@ -24,8 +22,6 @@ public static class SiteConfigExtensions
         {
             Id = table.Id,
             ActiveAiConfigId = table.ActiveAiConfigId,
-            GeminiApiKey = table.GeminiApiKey,
-            InterviewModel = table.InterviewModel,
             GlobalFallbackModel = table.GlobalFallbackModel,
             KokoroVoice = table.KokoroVoice,
             TranscriptionProvider = table.TranscriptionProvider
