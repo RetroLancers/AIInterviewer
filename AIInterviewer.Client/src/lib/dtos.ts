@@ -624,6 +624,13 @@ export class GetInterviewHistoryResponse
     public constructor(init?: Partial<GetInterviewHistoryResponse>) { (Object as any).assign(this, init); }
 }
 
+export class StartInterviewResponse
+{
+    public history: InterviewChatHistoryDto[] = [];
+
+    public constructor(init?: Partial<StartInterviewResponse>) { (Object as any).assign(this, init); }
+}
+
 export class AddChatMessageResponse
 {
     public history: InterviewChatHistoryDto[] = [];
@@ -873,6 +880,17 @@ export class GetInterviewHistory implements IReturn<GetInterviewHistoryResponse>
     public getTypeName() { return 'GetInterviewHistory'; }
     public getMethod() { return 'GET'; }
     public createResponse() { return new GetInterviewHistoryResponse(); }
+}
+
+// @Route("/interview/{InterviewId}/start", "POST")
+export class StartInterview implements IReturn<StartInterviewResponse>
+{
+    public interviewId: number;
+
+    public constructor(init?: Partial<StartInterview>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'StartInterview'; }
+    public getMethod() { return 'POST'; }
+    public createResponse() { return new StartInterviewResponse(); }
 }
 
 // @Route("/interview/{InterviewId}/chat", "POST")
@@ -1134,4 +1152,3 @@ export class QueryUsers extends QueryDb<User> implements IReturn<QueryResponse<U
     public getMethod() { return 'GET'; }
     public createResponse() { return new QueryResponse<User>(); }
 }
-
