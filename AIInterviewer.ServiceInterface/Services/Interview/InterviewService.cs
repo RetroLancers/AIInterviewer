@@ -224,16 +224,22 @@ public class InterviewService(IAiProviderFactory aiProviderFactory, SiteConfigHo
 
             if (!string.IsNullOrEmpty(aiResponse))
             {
-                await Db.SaveAsync(new InterviewChatHistory
+                var aiChatHistory = new InterviewChatHistory
                 {
                     InterviewId = interview.Id,
                     Role = "Interviewer",
                     Content = aiResponse,
                     EntryDate = DateTime.UtcNow
-                });
+                };
+                await Db.SaveAsync(aiChatHistory);
+                orderedHistory.Add(aiChatHistory);
             }
 
             trans.Commit();
+            return new AddChatMessageResponse
+            {
+                History = orderedHistory.ToDto()
+            };
         }
         catch (Exception ex)
         {
@@ -241,13 +247,6 @@ public class InterviewService(IAiProviderFactory aiProviderFactory, SiteConfigHo
             trans.Rollback();
             throw;
         }
-
-        // Return updated history
-        var updatedHistory = await Db.SelectAsync<InterviewChatHistory>(x => x.InterviewId == request.InterviewId);
-        return new AddChatMessageResponse
-        {
-            History = updatedHistory.OrderBy(x => x.EntryDate).ToDto()
-        };
     }
 
     public async Task<FinishInterviewResponse> Post(FinishInterview request)
