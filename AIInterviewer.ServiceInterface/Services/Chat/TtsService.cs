@@ -8,6 +8,7 @@ using KokoroSharp.Core;
 using KokoroSharp.Processing;
 using AIInterviewer.ServiceModel.Tables.Configuration;
 using AIInterviewer.ServiceModel.Types.Chat;
+using AIInterviewer.ServiceInterface.Utilities;
 using Microsoft.Extensions.Logging;
 
 namespace AIInterviewer.ServiceInterface.Services.Chat;
@@ -18,6 +19,9 @@ public class TtsService(SiteConfigHolder siteConfigHolder, ILogger<TtsService> l
     private static KokoroTTS? _tts;
     private static readonly object _lock = new();
     private const int MaxChunkLength = 600;
+
+    // Use compiled regex to avoid recompilation overhead
+    private static readonly Regex _sentenceSplitter = new Regex("(?<=[.!?])\\s+", RegexOptions.Compiled);
  
 
     private static KokoroTTS GetTts()
@@ -72,7 +76,7 @@ public class TtsService(SiteConfigHolder siteConfigHolder, ILogger<TtsService> l
 
             var allSamples = audioData.ToArray();
             var pcmBytes = KokoroPlayback.GetBytes(allSamples);
-            var wavBytes = AddWavHeader(pcmBytes, KokoroPlayback.waveFormat.SampleRate);
+            var wavBytes = WavUtils.AddWavHeader(pcmBytes, KokoroPlayback.waveFormat.SampleRate);
 
             return new HttpResult(wavBytes, "audio/wav");
         }
@@ -83,29 +87,6 @@ public class TtsService(SiteConfigHolder siteConfigHolder, ILogger<TtsService> l
         }
     }
 
-    private byte[] AddWavHeader(byte[] pcmData, int sampleRate)
-    {
-        using var stream = new MemoryStream();
-        using var writer = new BinaryWriter(stream);
-        
-        writer.Write("RIFF".ToCharArray());
-        writer.Write(36 + pcmData.Length);
-        writer.Write("WAVE".ToCharArray());
-        writer.Write("fmt ".ToCharArray());
-        writer.Write(16);
-        writer.Write((short)1); // AudioFormat 1 = PCM
-        writer.Write((short)1); // NumChannels 1
-        writer.Write(sampleRate);
-        writer.Write(sampleRate * 1 * 16 / 8); // ByteRate
-        writer.Write((short)(1 * 16 / 8)); // BlockAlign
-        writer.Write((short)16); // BitsPerSample
-        writer.Write("data".ToCharArray());
-        writer.Write(pcmData.Length);
-        writer.Write(pcmData);
-        
-        return stream.ToArray();
-    }
-
     private static string SanitizeForSpeech(string text)
     {
         var withoutCodeBlocks = Regex.Replace(text, "```[\\s\\S]*?```", " ");
@@ -114,7 +95,7 @@ public class TtsService(SiteConfigHolder siteConfigHolder, ILogger<TtsService> l
 
     private static IEnumerable<string> SplitIntoChunks(string text, int maxLength)
     {
-        var sentences = Regex.Split(text, "(?<=[.!?])\\s+");
+        var sentences = _sentenceSplitter.Split(text);
         var current = new StringBuilder();
 
         foreach (var sentence in sentences)

@@ -162,7 +162,7 @@ public class InterviewService(IAiProviderFactory aiProviderFactory, SiteConfigHo
 
             logger.LogInformation("Interview started successfully for InterviewId: {InterviewId}", request.InterviewId);
 
-            var newHistory = new InterviewChatHistory
+            var chatHistory = new InterviewChatHistory
             {
                 InterviewId = interview.Id,
                 Role = "Interviewer",
@@ -170,13 +170,13 @@ public class InterviewService(IAiProviderFactory aiProviderFactory, SiteConfigHo
                 EntryDate = DateTime.UtcNow
             };
 
-            await Db.SaveAsync(newHistory);
+            await Db.SaveAsync(chatHistory);
 
             trans.Commit();
 
             return new StartInterviewResponse
             {
-                History = new List<InterviewChatHistoryDto> { newHistory.ToDto() }
+                History = new List<InterviewChatHistoryDto> { chatHistory.ToDto() }
             };
         }
         catch (Exception ex)
