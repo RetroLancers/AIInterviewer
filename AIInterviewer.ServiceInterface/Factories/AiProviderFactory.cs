@@ -1,18 +1,20 @@
-using AIInterviewer.ServiceInterface.Interfaces;
 using AIInterviewer.ServiceInterface.Providers;
+using AIInterviewer.ServiceModel.Tables.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using AIInterviewer.ServiceInterface.Interfaces;
 
 namespace AIInterviewer.ServiceInterface.Factories;
 
 public class AiProviderFactory(IServiceProvider serviceProvider) : IAiProviderFactory
 {
-    public IAiProvider GetProvider(string providerName)
+    public IAiProvider GetProvider(AiServiceConfig config)
     {
-        return providerName switch
+        return config.ProviderType switch
         {
-            "Gemini" => serviceProvider.GetRequiredService<GeminiAiProvider>(),
-            // Future providers like OpenAI can be added here
-            _ => throw new ArgumentException($"Unknown AI Provider: {providerName}", nameof(providerName))
+            "Gemini" => ActivatorUtilities.CreateInstance<GeminiAiProvider>(serviceProvider, config),
+            // Future providers:
+            // "OpenAI" => ActivatorUtilities.CreateInstance<OpenAiProvider>(serviceProvider, config),
+            _ => throw new ArgumentException($"Unknown AI Provider Type: {config.ProviderType}", nameof(config))
         };
     }
 }

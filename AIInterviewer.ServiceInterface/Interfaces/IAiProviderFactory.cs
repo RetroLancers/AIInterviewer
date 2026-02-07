@@ -1,8 +1,8 @@
-using AIInterviewer.ServiceInterface.Interfaces;
+using AIInterviewer.ServiceModel.Tables.Configuration;
 
 namespace AIInterviewer.ServiceInterface.Interfaces;
 
 public interface IAiProviderFactory
 {
-    IAiProvider GetProvider(string providerName);
+    IAiProvider GetProvider(AiServiceConfig config);
 }

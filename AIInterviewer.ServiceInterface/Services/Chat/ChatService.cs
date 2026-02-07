@@ -5,16 +5,33 @@ using AIInterviewer.ServiceModel.Types.Chat;
 using AIInterviewer.ServiceInterface.Interfaces;
 using Microsoft.Extensions.Logging;
 using ServiceStack;
+using ServiceStack.OrmLite;
 
 namespace AIInterviewer.ServiceInterface.Services.Chat;
 
 public class ChatService(SiteConfigHolder siteConfigHolder, IAiProviderFactory aiProviderFactory, ILogger<ChatService> logger) : Service
 {
-    private IAiProvider GetAiProvider()
+    private async Task<IAiProvider> GetAiProviderAsync()
     {
-        var model = siteConfigHolder.SiteConfig?.InterviewModel ?? "";
-        var providerName = model.Contains("gpt", StringComparison.OrdinalIgnoreCase) ? "OpenAI" : "Gemini";
-        return aiProviderFactory.GetProvider(providerName);
+        var model = siteConfigHolder.SiteConfig?.InterviewModel;
+        AiServiceConfig? config = null;
+
+        if (!string.IsNullOrEmpty(model))
+        {
+             config = await Db.SingleAsync<AiServiceConfig>(x => x.ModelId == model);
+        }
+        
+        if (config == null)
+        {
+             config = await Db.SingleAsync<AiServiceConfig>(x => x.ProviderType == "Gemini");
+        }
+
+        if (config == null)
+        {
+            throw new Exception("No AI Service Configuration found. Please configure AiServiceConfig table.");
+        }
+
+        return aiProviderFactory.GetProvider(config);
     }
     public async Task<TranscribeAudioResponse> Post(TranscribeAudioRequest request)
     {
@@ -38,7 +55,8 @@ public class ChatService(SiteConfigHolder siteConfigHolder, IAiProviderFactory a
         }
 
         var prompt = "Transcribe the following audio exactly. Do not add any commentary.";
-        var transcript = await GetAiProvider().GenerateTextFromAudioAsync(prompt, audioBytes, request.MimeType ?? "audio/webm");
+        var provider = await GetAiProviderAsync();
+        var transcript = await provider.GenerateTextFromAudioAsync(prompt, audioBytes, request.MimeType ?? "audio/webm");
         
         if (string.IsNullOrEmpty(transcript))
         {

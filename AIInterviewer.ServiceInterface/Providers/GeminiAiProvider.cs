@@ -9,16 +9,16 @@ using System.Reflection;
 
 namespace AIInterviewer.ServiceInterface.Providers;
 
-public class GeminiAiProvider(SiteConfigHolder siteConfigHolder, ILogger<GeminiAiProvider> logger) : IAiProvider
+public class GeminiAiProvider(AiServiceConfig config, ILogger<GeminiAiProvider> logger) : IAiProvider
 {
     public string ProviderName => "Gemini";
 
     private Client GetClient()
     {
-        var apiKey = siteConfigHolder.SiteConfig?.GeminiApiKey;
+        var apiKey = config.ApiKey;
         if (string.IsNullOrEmpty(apiKey))
         {
-            throw new Exception("Gemini API Key is not configured.");
+            throw new Exception("Gemini API Key is not configured in AiServiceConfig.");
         }
         
         return new Client(apiKey: apiKey, httpOptions: new HttpOptions()
@@ -29,9 +29,8 @@ public class GeminiAiProvider(SiteConfigHolder siteConfigHolder, ILogger<GeminiA
 
     private string GetModel()
     {
-         var model = siteConfigHolder.SiteConfig?.InterviewModel;
-         if (string.IsNullOrEmpty(model)) return "gemini-2.0-flash-exp"; // Default or fallback
-         return model;
+         if (string.IsNullOrEmpty(config.ModelId)) return "gemini-2.0-flash-exp"; 
+         return config.ModelId;
     }
     
     private string GetFallbackModel()

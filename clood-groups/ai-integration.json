@@ -3,6 +3,7 @@
     "AIInterviewer.ServiceInterface/Providers/GeminiAiProvider.cs",
     "AIInterviewer.ServiceInterface/Interfaces/IAiProviderFactory.cs",
     "AIInterviewer.ServiceInterface/Factories/AiProviderFactory.cs",
+    "AIInterviewer.ServiceModel/Tables/Configuration/AiServiceConfig.cs",
     "AIInterviewer.ServiceModel/Types/Ai/AiMessage.cs",
     "AIInterviewer.ServiceModel/Types/Ai/AiRole.cs",
     "AIInterviewer.ServiceInterface/Services/AI/GeminiModelsService.cs"

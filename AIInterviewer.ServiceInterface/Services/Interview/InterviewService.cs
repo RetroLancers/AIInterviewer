@@ -12,13 +12,29 @@ namespace AIInterviewer.ServiceInterface.Services.Interview;
 
 public class InterviewService(IAiProviderFactory aiProviderFactory, SiteConfigHolder siteConfigHolder, ILogger<InterviewService> logger) : Service
 {
-    private IAiProvider GetAiProvider()
+    private async Task<IAiProvider> GetAiProviderAsync()
     {
-        // Simple logic for now: assume Gemini unless model implies otherwise.
-        // In future, SiteConfig might have explicit 'AiProvider' field.
-        var model = siteConfigHolder.SiteConfig?.InterviewModel ?? "";
-        var providerName = model.Contains("gpt", StringComparison.OrdinalIgnoreCase) ? "OpenAI" : "Gemini";
-        return aiProviderFactory.GetProvider(providerName);
+        // Logic: Try to find config matching the SiteConfig.InterviewModel
+        var model = siteConfigHolder.SiteConfig?.InterviewModel;
+        AiServiceConfig? config = null;
+
+        if (!string.IsNullOrEmpty(model))
+        {
+             config = await Db.SingleAsync<AiServiceConfig>(x => x.ModelId == model);
+        }
+        
+        // Fallback: Get first Gemini provider
+        if (config == null)
+        {
+             config = await Db.SingleAsync<AiServiceConfig>(x => x.ProviderType == "Gemini");
+        }
+
+        if (config == null)
+        {
+            throw new Exception("No AI Service Configuration found. Please configure AiServiceConfig table.");
+        }
+
+        return aiProviderFactory.GetProvider(config);
     }
     private const string BaseInterviewRules = """
                                               Base Interview Rules (Mandatory):
@@ -55,7 +71,8 @@ public class InterviewService(IAiProviderFactory aiProviderFactory, SiteConfigHo
         prompt +=
             " The output should be the raw system prompt text that defines the persona and rules for the AI. Do not include markdown code blocks.";
 
-        var result = await GetAiProvider().GenerateTextAsync(prompt);
+        var provider = await GetAiProviderAsync();
+        var result = await provider.GenerateTextAsync(prompt);
         var generatedPrompt = result?.Trim() ?? "Failed to generate prompt.";
         return new GenerateInterviewPromptResponse { SystemPrompt = ApplyBaseInterviewRules(generatedPrompt) };
     }
@@ -131,7 +148,8 @@ public class InterviewService(IAiProviderFactory aiProviderFactory, SiteConfigHo
         using var trans = Db.OpenTransaction();
         try
         {
-            var aiResponse = await GetAiProvider().GenerateTextAsync(
+            var provider = await GetAiProviderAsync();
+            var aiResponse = await provider.GenerateTextAsync(
                 "Begin the interview now.",
                 systemPrompt: interview.Prompt
             );
@@ -196,7 +214,8 @@ public class InterviewService(IAiProviderFactory aiProviderFactory, SiteConfigHo
                 Content = entry.Content
             }).ToList();
 
-            var aiResponse = await GetAiProvider().GenerateTextAsync(
+            var provider = await GetAiProviderAsync();
+            var aiResponse = await provider.GenerateTextAsync(
                 messages: messages,
                 systemPrompt: interview.Prompt
             );
@@ -267,7 +286,8 @@ The ""Feedback"" must be markdown and include a section titled ""Final Evaluatio
         InterviewResult result;
         try
         {
-            var evaluation = await GetAiProvider().GenerateJsonAsync<EvaluationResponse>(evaluationPrompt);
+            var provider = await GetAiProviderAsync();
+            var evaluation = await provider.GenerateJsonAsync<EvaluationResponse>(evaluationPrompt);
 
             if (evaluation == null) throw new Exception("Failed to generate evaluation");
 
