@@ -16,8 +16,11 @@ public class SiteConfigService(SiteConfigHolder holder) : Service
 
     public void Put(UpdateSiteConfigRequest request)
     {
+        using var trans = Db.OpenTransaction();
         var config = request.ToTable();
         Db.Save(config);
+        trans.Commit();
+
         holder.SiteConfig = config;
     }
 }
