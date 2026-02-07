@@ -9,8 +9,7 @@ public static class SiteConfigExtensions
         return new SiteConfig
         {
             Id = request.Id,
-            GeminiApiKey = request.GeminiApiKey,
-            InterviewModel = request.InterviewModel,
+            ActiveAiConfigId = request.ActiveAiConfigId,
             GlobalFallbackModel = request.GlobalFallbackModel,
             KokoroVoice = request.KokoroVoice,
             TranscriptionProvider = request.TranscriptionProvider
@@ -22,8 +21,7 @@ public static class SiteConfigExtensions
         return new SiteConfigResponse
         {
             Id = table.Id,
-            GeminiApiKey = table.GeminiApiKey,
-            InterviewModel = table.InterviewModel,
+            ActiveAiConfigId = table.ActiveAiConfigId,
             GlobalFallbackModel = table.GlobalFallbackModel,
             KokoroVoice = table.KokoroVoice,
             TranscriptionProvider = table.TranscriptionProvider

@@ -7,11 +7,8 @@ public class UpdateSiteConfigRequest : IReturn<IdResponse>
 {
     public int Id { get; set; }
 
-    [ValidateNotEmpty]
-    public string GeminiApiKey { get; set; }
-
-    [ValidateNotEmpty]
-    public string InterviewModel { get; set; }
+    [ValidateGreaterThan(0)]
+    public int ActiveAiConfigId { get; set; }
 
     public string? GlobalFallbackModel { get; set; }
 

@@ -31,14 +31,13 @@ public class GeminiModelsService(IAiProviderFactory aiProviderFactory, SiteConfi
             if (config == null)
             {
                 var siteConfig = siteConfigHolder.SiteConfig;
-                if (siteConfig != null && !string.IsNullOrEmpty(siteConfig.GeminiApiKey))
+                if (siteConfig != null && siteConfig.ActiveAiConfigId > 0)
                 {
-                    config = new AiServiceConfig
+                    var activeConfig = await Db.SingleByIdAsync<AiServiceConfig>(siteConfig.ActiveAiConfigId);
+                    if (activeConfig != null && activeConfig.ProviderType == "Gemini")
                     {
-                        ProviderType = "Gemini",
-                        ApiKey = siteConfig.GeminiApiKey,
-                        ModelId = siteConfig.InterviewModel ?? "gemini-2.0-flash-exp"
-                    };
+                        config = activeConfig;
+                    }
                 }
             }
         }

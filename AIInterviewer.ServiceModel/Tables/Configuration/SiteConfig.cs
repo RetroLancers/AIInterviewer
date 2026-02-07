@@ -10,13 +10,8 @@ public class SiteConfig
     public int Id { get; set; }
 
     [Required]
-    [StringLength(2096)]
-    public string GeminiApiKey { get; set; }
-
-  
-    [Required]
-    [StringLength(255)]
-    public string InterviewModel { get; set; }
+    [References(typeof(AiServiceConfig))]
+    public int ActiveAiConfigId { get; set; }
 
     [StringLength(255)]
     public string? GlobalFallbackModel { get; set; }

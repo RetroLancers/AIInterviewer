@@ -14,35 +14,57 @@ public class ConfigureSiteConfig : IHostingStartup
 
     private void UpdateSiteConfigHolder(ServiceStackHost appHost)
     {
-        using var db = appHost.Resolve<IDbConnectionFactory>().Open();
-        if (db.TableExists<SiteConfig>())
+        try
         {
-            var siteConfigs = db.Select<SiteConfig>();
-            var siteConfigHolder = appHost.Resolve<SiteConfigHolder>();
-            if (siteConfigs is { Count: > 0 })
+            using var db = appHost.Resolve<IDbConnectionFactory>().Open();
+            if (db.TableExists<SiteConfig>())
             {
-                var siteConfig = siteConfigs[0];
-                if (string.IsNullOrWhiteSpace(siteConfig.TranscriptionProvider))
+                var siteConfigs = db.Select<SiteConfig>();
+                var siteConfigHolder = appHost.Resolve<SiteConfigHolder>();
+                if (siteConfigs is { Count: > 0 })
                 {
-                    siteConfig.TranscriptionProvider = "Gemini";
-                    db.Update(siteConfig);
-                }
+                    var siteConfig = siteConfigs[0];
+                    if (string.IsNullOrWhiteSpace(siteConfig.TranscriptionProvider))
+                    {
+                        siteConfig.TranscriptionProvider = "Gemini";
+                        db.Update(siteConfig);
+                    }
 
-                siteConfigHolder.SiteConfig = siteConfig;
-            }
-            else
-            {
-                var siteConfig = new SiteConfig()
+                    siteConfigHolder.SiteConfig = siteConfig;
+                }
+                else
                 {
-                    GeminiApiKey = "",
-                    InterviewModel = "",
-                    GlobalFallbackModel = "",
-                    KokoroVoice = "af_heart",
-                    TranscriptionProvider = "Gemini"
-                };
-                siteConfigHolder.SiteConfig = siteConfig;
-                siteConfig.Id = (int)db.Insert(siteConfig, true);
+                    // Check if there's at least one AI config to reference
+                    var firstAiConfig = db.Select<AiServiceConfig>().FirstOrDefault();
+                    if (firstAiConfig == null)
+                    {
+                        // Create a default Gemini config if none exists
+                        firstAiConfig = new AiServiceConfig
+                        {
+                            Name = "Default Gemini Config",
+                            ProviderType = "Gemini",
+                            ApiKey = "",
+                            ModelId = "gemini-2.0-flash-exp"
+                        };
+                        firstAiConfig.Id = (int)db.Insert(firstAiConfig, true);
+                    }
+
+                    var siteConfig = new SiteConfig()
+                    {
+                        ActiveAiConfigId = firstAiConfig.Id,
+                        GlobalFallbackModel = "",
+                        KokoroVoice = "af_heart",
+                        TranscriptionProvider = "Gemini"
+                    };
+                    siteConfigHolder.SiteConfig = siteConfig;
+                    siteConfig.Id = (int)db.Insert(siteConfig, true);
+                }
             }
+        }
+        catch (Exception)
+        {
+            // Ignore errors during startup - this can happen during migrations
+            // The SiteConfigHolder will remain with a null SiteConfig, which services should handle
         }
     }
 }

@@ -13,12 +13,12 @@ public class ChatService(SiteConfigHolder siteConfigHolder, IAiProviderFactory a
 {
     private async Task<IAiProvider> GetAiProviderAsync()
     {
-        var model = siteConfigHolder.SiteConfig?.InterviewModel;
+        var activeConfigId = siteConfigHolder.SiteConfig?.ActiveAiConfigId ?? 0;
         AiServiceConfig? config = null;
 
-        if (!string.IsNullOrEmpty(model))
+        if (activeConfigId > 0)
         {
-             config = await Db.SingleAsync<AiServiceConfig>(x => x.ModelId == model);
+             config = await Db.SingleByIdAsync<AiServiceConfig>(activeConfigId);
         }
         
         if (config == null)
