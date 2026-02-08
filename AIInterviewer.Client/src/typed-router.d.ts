@@ -51,16 +51,16 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/admin/ai-configs': RouteRecordInfo<
-      '/admin/ai-configs',
-      '/admin/ai-configs',
+    '/admin/bookings': RouteRecordInfo<
+      '/admin/bookings',
+      '/admin/bookings',
       Record<never, never>,
       Record<never, never>,
       | never
     >,
-    '/admin/bookings': RouteRecordInfo<
-      '/admin/bookings',
-      '/admin/bookings',
+    '/ai-configs': RouteRecordInfo<
+      '/ai-configs',
+      '/ai-configs',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -165,15 +165,15 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
-    'src/pages/admin/ai-configs.vue': {
-      routes:
-        | '/admin/ai-configs'
-      views:
-        | never
-    }
     'src/pages/admin/bookings.vue': {
       routes:
         | '/admin/bookings'
+      views:
+        | never
+    }
+    'src/pages/ai-configs.vue': {
+      routes:
+        | '/ai-configs'
       views:
         | never
     }

@@ -11,7 +11,9 @@
       <div class="flex flex-grow flex-shrink flex-nowrap justify-end items-center">
         <nav class="relative flex flex-grow leading-6 font-semibold text-slate-700 dark:text-slate-200">
           <ul class="flex flex-wrap items-center justify-end w-full m-0">
-
+            <li class="relative flex flex-wrap just-fu-start m-0">
+              <RouterLink to="/ai-configs" class="p-4 flex items-center justify-start mw-full hover:text-sky-500 dark:hover:text-sky-400" ActiveClass="text-blue-700 dark:text-blue-300">Ai Configs</RouterLink>
+            </li>
             <li class="relative flex flex-wrap just-fu-start m-0">
               <RouterLink to="/SiteConfig" class="p-4 flex items-center justify-start mw-full hover:text-sky-500 dark:hover:text-sky-400" ActiveClass="text-blue-700 dark:text-blue-300">Site Config</RouterLink>
             </li>
