@@ -32,6 +32,9 @@ public class Migration1011_CreateInterviewerTable : MigrationBase
         [ForeignKey(typeof(AiServiceConfig))]
         public int? AiConfigId { get; set; }
 
+        [References(typeof(AiServiceConfig))]
+        public AiServiceConfig AiConfig { get; set; }
+
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }
