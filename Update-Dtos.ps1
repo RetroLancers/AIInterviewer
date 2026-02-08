@@ -45,8 +45,8 @@ Start-Sleep -Seconds 15
 Write-Host "`nUpdating DTOs in $clientDir..." -ForegroundColor Cyan
 Push-Location $clientDir
 try {
-    # Run pnpm run dtos with the specific URL
-    pnpm run dtos $baseUrl
+    # Run pnpm run update-dtos with the specific URL and output path
+    pnpm run update-dtos $baseUrl src/lib/dtos.ts
     Write-Host "DTOs updated successfully!" -ForegroundColor Green
 }
 catch {

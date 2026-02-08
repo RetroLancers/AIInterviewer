@@ -15,7 +15,8 @@
     *   `.\Update-Dtos.ps1 -TaskNumber [TaskNumber]`
 *   **Port Mapping**: The script automatically maps your task number to a port (e.g., Task 01 -> Port 5001) to ensure separate worktrees don't conflict.
 *   **Manual Update**: If for some reason you must update manually, use the `--urls` flag with the port matching your task:
-    *   `npm run dtos -- --urls https://localhost:50[TaskNumber]`
+    *   `pnpm run dtos --urls https://localhost:50[TaskNumber]`
+*   **Update-Dtos Script**: The `Update-Dtos.ps1` script uses `pnpm run update-dtos` which is configured to save DTOs directly to `src/lib/dtos.ts`.
 
 ## Service Placement
 *   **Location**: `AIInterviewer.ServiceInterface\Services`
