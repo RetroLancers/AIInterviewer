@@ -25,6 +25,19 @@
         "AIInterviewer.Client/src/composables/useInterviewHistory.ts",
         "AIInterviewer.Client/src/components/interview/InterviewHistoryCard.vue",
         "AIInterviewer.Client/src/components/interview/InterviewHistoryList.vue",
-        "Tasks/Queued/12-update-interview-rules-analysis.md"
+        "Tasks/Queued/12-update-interview-rules-analysis.md",
+        "AIInterviewer.ServiceModel/Types/Interview/CreateInterviewer.cs",
+        "AIInterviewer.ServiceModel/Types/Interview/UpdateInterviewer.cs",
+        "AIInterviewer.ServiceModel/Types/Interview/DeleteInterviewer.cs",
+        "AIInterviewer.ServiceModel/Types/Interview/GetInterviewer.cs",
+        "AIInterviewer.ServiceModel/Types/Interview/ListInterviewers.cs",
+        "AIInterviewer.ServiceModel/Types/Interview/ListInterviewersResponse.cs",
+        "AIInterviewer.ServiceModel/Types/Interview/InterviewerResponse.cs",
+        "AIInterviewer.ServiceModel/Types/Interview/ExtensionMethods/InterviewerExtensions.cs",
+        "AIInterviewer.ServiceInterface/Services/Interview/InterviewerService.cs",
+        "AIInterviewer.ServiceInterface/Validators/Interview/CreateInterviewerValidator.cs",
+        "AIInterviewer.ServiceInterface/Validators/Interview/UpdateInterviewerValidator.cs",
+        "AIInterviewer/Configure.Validation.cs",
+        "AIInterviewer.Tests/InterviewerServiceTests.cs"
     ]
 }
