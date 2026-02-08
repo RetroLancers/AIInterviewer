@@ -12,7 +12,7 @@ public class UpdateSiteConfigRequest : IReturn<IdResponse>
 
     public string? GlobalFallbackModel { get; set; }
 
-    public string? KokoroVoice { get; set; }
+    public string? DefaultVoice { get; set; }
 
     [ValidateNotEmpty]
     public string TranscriptionProvider { get; set; }

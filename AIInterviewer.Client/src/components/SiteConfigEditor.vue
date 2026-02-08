@@ -105,7 +105,7 @@
             </label>
             <select
               id="kokoro-voice"
-              v-model="formData.kokoroVoice"
+              v-model="formData.defaultVoice"
               class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100"
             >
               <option value="af_heart">af_heart (Default)</option>
@@ -157,7 +157,7 @@ const { aiConfigs, isLoading: aiConfigsLoading, error: aiConfigsError } = useAiC
 const formData = ref({
   activeAiConfigId: 0,
   globalFallbackModel: '',
-  kokoroVoice: 'af_heart',
+  defaultVoice: 'af_heart',
   transcriptionProvider: 'Gemini'
 })
 
@@ -177,7 +177,7 @@ watch(siteConfig, (newConfig) => {
   if (newConfig) {
     formData.value.activeAiConfigId = newConfig.activeAiConfigId || 0
     formData.value.globalFallbackModel = newConfig.globalFallbackModel || ''
-    formData.value.kokoroVoice = newConfig.kokoroVoice || 'af_heart'
+    formData.value.defaultVoice = newConfig.defaultVoice || 'af_heart'
     formData.value.transcriptionProvider = newConfig.transcriptionProvider || 'Gemini'
   }
 }, { immediate: true })
@@ -186,7 +186,7 @@ const handleSubmit = async () => {
   await saveSiteConfig(
     formData.value.activeAiConfigId,
     formData.value.globalFallbackModel || undefined,
-    formData.value.kokoroVoice,
+    formData.value.defaultVoice,
     formData.value.transcriptionProvider
   )
 }

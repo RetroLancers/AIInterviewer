@@ -195,7 +195,7 @@
 import { computed, ref, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { client } from '@/lib/gateway'
-import { GenerateInterviewPrompt, CreateInterview, ListAiConfigs, AiServiceConfig } from '@/lib/dtos'
+import { GenerateInterviewPrompt, CreateInterview, ListAiConfigs, AiConfigResponse } from '@/lib/dtos'
 
 const router = useRouter()
 const route = useRoute()
@@ -207,7 +207,7 @@ const systemPrompt = ref('')
 const loading = ref(false)
 const starting = ref(false)
 const error = ref<string | null>(null)
-const aiConfigs = ref<AiServiceConfig[]>([])
+const aiConfigs = ref<AiConfigResponse[]>([])
 const selectedAiConfigId = ref<number | undefined>(undefined)
 
 const prefilledPrompt = computed(() => {
@@ -224,7 +224,7 @@ onMounted(async () => {
 async function fetchAiConfigs() {
     const api = await client.api(new ListAiConfigs())
     if (api.succeeded && api.response) {
-        aiConfigs.value = api.response.results || []
+        aiConfigs.value = api.response.configs || []
     }
 }
 

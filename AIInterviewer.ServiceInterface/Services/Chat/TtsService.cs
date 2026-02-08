@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using ServiceStack;
+using ServiceStack.OrmLite;
 using KokoroSharp;
 using KokoroSharp.Core;
 using KokoroSharp.Processing;
@@ -10,6 +11,7 @@ using AIInterviewer.ServiceModel.Tables.Configuration;
 using AIInterviewer.ServiceModel.Types.Chat;
 using AIInterviewer.ServiceInterface.Utilities;
 using Microsoft.Extensions.Logging;
+using AIInterviewer.ServiceModel.Tables.Interview;
 
 namespace AIInterviewer.ServiceInterface.Services.Chat;
  
@@ -43,7 +45,30 @@ public class TtsService(SiteConfigHolder siteConfigHolder, ILogger<TtsService> l
         if (string.IsNullOrWhiteSpace(sanitizedText))
             return new HttpResult { StatusCode = System.Net.HttpStatusCode.NoContent };
 
-        var voiceName = siteConfigHolder.SiteConfig?.KokoroVoice ?? "af_heart";
+        string? voiceName = null;
+
+        // 1. Try to get voice from interview's AI config
+        if (request.InterviewId.HasValue)
+        {
+             var interview = await Db.SingleByIdAsync<AIInterviewer.ServiceModel.Tables.Interview.Interview>(request.InterviewId.Value);
+             if (interview?.AiConfigId != null)
+             {
+                 var aiConfig = await Db.SingleByIdAsync<AiServiceConfig>(interview.AiConfigId.Value);
+                 voiceName = aiConfig?.Voice;
+             }
+        }
+
+        // 2. Fall back to site default voice
+        if (string.IsNullOrEmpty(voiceName))
+        {
+             voiceName = siteConfigHolder.SiteConfig?.DefaultVoice;
+        }
+
+        // 3. Final fallback
+        if (string.IsNullOrEmpty(voiceName))
+        {
+            voiceName = "af_heart";
+        }
 
         var tts = GetTts();
         KokoroVoice voice;

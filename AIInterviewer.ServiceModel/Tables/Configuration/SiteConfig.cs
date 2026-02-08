@@ -16,8 +16,8 @@ public class SiteConfig
     [StringLength(255)]
     public string? GlobalFallbackModel { get; set; }
 
-    [StringLength(255)]
-    public string? KokoroVoice { get; set; }
+    [StringLength(100)]
+    public string? DefaultVoice { get; set; }
 
     [Required]
     [StringLength(64)]

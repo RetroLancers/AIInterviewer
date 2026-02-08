@@ -11,7 +11,7 @@ public static class SiteConfigExtensions
             Id = request.Id,
             ActiveAiConfigId = request.ActiveAiConfigId,
             GlobalFallbackModel = request.GlobalFallbackModel,
-            KokoroVoice = request.KokoroVoice,
+            DefaultVoice = request.DefaultVoice,
             TranscriptionProvider = request.TranscriptionProvider
         };
     }
@@ -23,7 +23,7 @@ public static class SiteConfigExtensions
             Id = table.Id,
             ActiveAiConfigId = table.ActiveAiConfigId,
             GlobalFallbackModel = table.GlobalFallbackModel,
-            KokoroVoice = table.KokoroVoice,
+            DefaultVoice = table.DefaultVoice,
             TranscriptionProvider = table.TranscriptionProvider
         };
     }
