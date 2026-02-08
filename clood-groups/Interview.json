@@ -22,6 +22,9 @@
         "AIInterviewer.Client/src/pages/interviews/[id]/result.vue",
         "AIInterviewer.Client/src/pages/interviews/[id]/index.vue",
         "AIInterviewer.Client/src/composables/useInterview.ts",
+        "AIInterviewer.Client/src/composables/useInterviewHistory.ts",
+        "AIInterviewer.Client/src/components/interview/InterviewHistoryCard.vue",
+        "AIInterviewer.Client/src/components/interview/InterviewHistoryList.vue",
         "Tasks/Queued/12-update-interview-rules-analysis.md"
     ]
 }
