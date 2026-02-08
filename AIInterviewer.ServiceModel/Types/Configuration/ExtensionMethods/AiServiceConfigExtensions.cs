@@ -14,6 +14,7 @@ public static class AiServiceConfigExtensions
             ProviderType = request.ProviderType,
             ApiKey = request.ApiKey,
             ModelId = request.ModelId,
+            FallbackModelId = request.FallbackModelId,
             BaseUrl = request.BaseUrl
         };
     }
@@ -24,6 +25,7 @@ public static class AiServiceConfigExtensions
         table.ProviderType = request.ProviderType;
         table.ApiKey = request.ApiKey;
         table.ModelId = request.ModelId;
+        table.FallbackModelId = request.FallbackModelId;
         table.BaseUrl = request.BaseUrl;
     }
 
@@ -36,6 +38,7 @@ public static class AiServiceConfigExtensions
             ProviderType = table.ProviderType,
             ApiKey = table.ApiKey,
             ModelId = table.ModelId,
+            FallbackModelId = table.FallbackModelId,
             BaseUrl = table.BaseUrl
         };
     }

@@ -45,8 +45,8 @@ Start-Sleep -Seconds 15
 Write-Host "`nUpdating DTOs in $clientDir..." -ForegroundColor Cyan
 Push-Location $clientDir
 try {
-    # Run npm run dtos with the specific URL
-    npm run dtos -- --urls $baseUrl
+    # Run pnpm run dtos with the specific URL
+    pnpm run dtos $baseUrl
     Write-Host "DTOs updated successfully!" -ForegroundColor Green
 }
 catch {

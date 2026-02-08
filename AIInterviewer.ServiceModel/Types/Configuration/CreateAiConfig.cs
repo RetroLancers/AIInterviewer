@@ -9,5 +9,6 @@ public class CreateAiConfig : IReturn<AiConfigResponse>
     public string ProviderType { get; set; }
     public string ApiKey { get; set; }
     public string ModelId { get; set; }
+    public string? FallbackModelId { get; set; }
     public string? BaseUrl { get; set; }
 }

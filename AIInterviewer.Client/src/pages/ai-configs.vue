@@ -34,7 +34,10 @@
                                 {{ config.providerType }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 font-mono">{{ config.modelId }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400 font-mono">
+                            {{ config.modelId }}
+                            <span v-if="config.fallbackModelId" class="text-xs text-gray-400 ml-1">(Fallback: {{ config.fallbackModelId }})</span>
+                        </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <button @click="editConfig(config)" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 mr-4">Edit</button>
                             <button @click="confirmDelete(config)" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">Delete</button>
@@ -69,7 +72,7 @@
                                             <div>
                                                 <label for="provider" class="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100">Provider</label>
                                                 <div class="mt-1">
-                                                    <select v-model="form.providerType" id="provider" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:bg-gray-700 dark:text-white dark:ring-gray-600">
+                                                    <select v-model="form.providerType" id="provider" required @change="onProviderChange" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:bg-gray-700 dark:text-white dark:ring-gray-600">
                                                         <option value="Gemini">Gemini</option>
                                                         <option value="OpenAI">OpenAI</option>
                                                     </select>
@@ -78,17 +81,35 @@
 
                                             <div>
                                                 <label for="apiKey" class="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100">API Key</label>
-                                                <div class="mt-1">
+                                                <div class="mt-1 flex gap-2">
                                                     <input type="password" v-model="form.apiKey" id="apiKey" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:bg-gray-700 dark:text-white dark:ring-gray-600">
+                                                    <button type="button" @click="fetchModels" :disabled="loadingModels || !form.apiKey" class="inline-flex items-center rounded-md bg-white dark:bg-gray-700 px-3 py-2 text-sm font-semibold text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50">
+                                                        <span v-if="loadingModels">...</span>
+                                                        <span v-else>Fetch</span>
+                                                    </button>
                                                 </div>
                                             </div>
 
                                             <div>
                                                 <label for="modelId" class="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100">Model ID</label>
                                                 <div class="mt-1">
-                                                    <input type="text" v-model="form.modelId" id="modelId" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:bg-gray-700 dark:text-white dark:ring-gray-600" placeholder="gemini-1.5-flash">
+                                                    <select v-if="availableModels.length > 0" v-model="form.modelId" id="modelId" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:bg-gray-700 dark:text-white dark:ring-gray-600">
+                                                        <option v-for="model in availableModels" :key="model" :value="model">{{ model }}</option>
+                                                    </select>
+                                                    <input v-else type="text" v-model="form.modelId" id="modelId" required class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:bg-gray-700 dark:text-white dark:ring-gray-600" placeholder="gemini-1.5-flash">
                                                 </div>
-                                                <p class="mt-1 text-xs text-gray-500">e.g. gemini-1.5-flash or gpt-4o</p>
+                                                <p v-if="availableModels.length === 0" class="mt-1 text-xs text-gray-500">Enter API key and click "Fetch" to see available models.</p>
+                                            </div>
+
+                                            <div>
+                                                <label for="fallbackModelId" class="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100">Fallback Model ID (Optional)</label>
+                                                <div class="mt-1">
+                                                    <select v-if="availableModels.length > 0" v-model="form.fallbackModelId" id="fallbackModelId" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:bg-gray-700 dark:text-white dark:ring-gray-600">
+                                                        <option :value="undefined">None</option>
+                                                        <option v-for="model in availableModels" :key="'fallback-'+model" :value="model">{{ model }}</option>
+                                                    </select>
+                                                    <input v-else type="text" v-model="form.fallbackModelId" id="fallbackModelId" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:bg-gray-700 dark:text-white dark:ring-gray-600" placeholder="gemini-1.5-pro">
+                                                </div>
                                             </div>
                                             
                                             <div>
@@ -114,7 +135,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useClient } from '@servicestack/vue';
 import { 
     ListAiConfigs, 
@@ -123,6 +144,7 @@ import {
     DeleteAiConfig,
     AiConfigResponse
 } from '@/lib/dtos';
+import { GetAiModels } from '@/lib/dtos';
 
 const client = useClient();
 const configs = ref<AiConfigResponse[]>([]);
@@ -130,12 +152,16 @@ const loading = ref(true);
 const showModal = ref(false);
 const isEditing = ref(false);
 
+const availableModels = ref<string[]>([]);
+const loadingModels = ref(false);
+
 const form = ref({
     id: 0,
     name: '',
     providerType: 'Gemini',
     apiKey: '',
     modelId: '',
+    fallbackModelId: undefined as string | undefined,
     baseUrl: ''
 });
 
@@ -155,14 +181,48 @@ async function loadConfigs() {
     }
 }
 
+async function fetchModels() {
+    if (!form.value.apiKey || !form.value.providerType) return;
+    
+    loadingModels.value = true;
+    try {
+        const response = await client.api(new GetAiModels({
+            providerType: form.value.providerType,
+            apiKey: form.value.apiKey
+        }));
+        
+        if (response.succeeded && response.response) {
+            availableModels.value = response.response.models || [];
+            if (availableModels.value.length > 0 && !form.value.modelId) {
+                form.value.modelId = availableModels.value[0];
+            }
+        } else {
+            alert('Failed to fetch models. Check your API key.');
+        }
+    } catch (e) {
+        console.error('Error fetching models', e);
+        alert('Error fetching models: ' + (e as any).message);
+    } finally {
+        loadingModels.value = false;
+    }
+}
+
+function onProviderChange() {
+    availableModels.value = [];
+    form.value.modelId = '';
+    form.value.fallbackModelId = undefined;
+}
+
 function openAddModal() {
     isEditing.value = false;
+    availableModels.value = [];
     form.value = {
         id: 0,
         name: '',
         providerType: 'Gemini',
         apiKey: '',
         modelId: '',
+        fallbackModelId: undefined,
         baseUrl: ''
     };
     showModal.value = true;
@@ -170,8 +230,17 @@ function openAddModal() {
 
 function editConfig(config: AiConfigResponse) {
     isEditing.value = true;
-    form.value = { ...config, baseUrl: config.baseUrl || '' };
+    availableModels.value = [];
+    form.value = { 
+        ...config, 
+        fallbackModelId: config.fallbackModelId || undefined,
+        baseUrl: config.baseUrl || '' 
+    };
     showModal.value = true;
+    // Attempt to fetch models if API key is present
+    if (form.value.apiKey) {
+        fetchModels();
+    }
 }
 
 function closeModal() {
@@ -180,23 +249,22 @@ function closeModal() {
 
 async function saveConfig() {
     try {
+        const payload = {
+            name: form.value.name,
+            providerType: form.value.providerType,
+            apiKey: form.value.apiKey,
+            modelId: form.value.modelId,
+            fallbackModelId: form.value.fallbackModelId,
+            baseUrl: form.value.baseUrl || undefined
+        };
+
         if (isEditing.value) {
             await client.api(new UpdateAiConfig({
                 id: form.value.id,
-                name: form.value.name,
-                providerType: form.value.providerType,
-                apiKey: form.value.apiKey,
-                modelId: form.value.modelId,
-                baseUrl: form.value.baseUrl || undefined
+                ...payload
             }));
         } else {
-            await client.api(new CreateAiConfig({
-                name: form.value.name,
-                providerType: form.value.providerType,
-                apiKey: form.value.apiKey,
-                modelId: form.value.modelId,
-                baseUrl: form.value.baseUrl || undefined
-            }));
+            await client.api(new CreateAiConfig(payload));
         }
         await loadConfigs();
         closeModal();

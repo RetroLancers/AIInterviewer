@@ -1,0 +1,23 @@
+[
+    "AIInterviewer.ServiceInterface/Interfaces/IAiProvider.cs",
+    "AIInterviewer.ServiceInterface/Providers/GeminiAiProvider.cs",
+    "AIInterviewer.ServiceInterface/Interfaces/IAiProviderFactory.cs",
+    "AIInterviewer.ServiceInterface/Factories/AiProviderFactory.cs",
+    "AIInterviewer.ServiceModel/Tables/Configuration/AiServiceConfig.cs",
+    "AIInterviewer.ServiceModel/Types/Ai/AiMessage.cs",
+    "AIInterviewer.ServiceModel/Types/Ai/AiRole.cs",
+    "AIInterviewer.ServiceInterface/Services/AI/AiModelsService.cs",
+    "AIInterviewer.ServiceModel/Types/Ai/GetAiModels.cs",
+    "AIInterviewer.ServiceModel/Types/Ai/GetAiModelsResponse.cs",
+    "AIInterviewer.ServiceInterface/Providers/OpenAiProvider.cs",
+    "AIInterviewer.ServiceInterface/Services/Configuration/AiConfigService.cs",
+    "AIInterviewer.ServiceModel/Types/Configuration/AiConfigRequest.cs",
+    "AIInterviewer.ServiceModel/Types/Configuration/AiConfigResponse.cs",
+    "AIInterviewer.ServiceModel/Types/Configuration/ExtensionMethods/AiConfigExtensions.cs",
+    "AIInterviewer.Client/src/pages/ai-configs.vue",
+    "AIInterviewer.ServiceModel/Types/Ai/AiSchemaDefinition.cs",
+    "AIInterviewer.ServiceInterface/Services/Interview/InterviewService.cs",
+    "AIInterviewer.ServiceInterface/Providers/Generators/OpenAiSchemaGenerator.cs",
+    "AIInterviewer.ServiceInterface/Providers/Generators/GeminiSchemaGenerator.cs",
+    "AIInterviewer.Tests/GenericProviderTests.cs"
+]

@@ -1,8 +1,8 @@
 /* Options:
-Date: 2026-02-07 20:30:53
+Date: 2026-02-07 21:05:45
 Version: 10.04
 Tip: To override a DTO option, remove "//" prefix before updating
-BaseUrl: https://localhost:5001
+BaseUrl: https://localhost:5033
 
 //GlobalNamespace: 
 //MakePropertiesOptional: False
@@ -606,6 +606,7 @@ export class AiConfigResponse
     public providerType: string;
     public apiKey: string;
     public modelId: string;
+    public fallbackModelId?: string;
     public baseUrl?: string;
 
     public constructor(init?: Partial<AiConfigResponse>) { (Object as any).assign(this, init); }
@@ -648,12 +649,12 @@ export class TranscribeAudioResponse
     public constructor(init?: Partial<TranscribeAudioResponse>) { (Object as any).assign(this, init); }
 }
 
-export class GetGeminiModelsResponse
+export class GetAiModelsResponse
 {
     public models: string[] = [];
     public responseStatus: ResponseStatus;
 
-    public constructor(init?: Partial<GetGeminiModelsResponse>) { (Object as any).assign(this, init); }
+    public constructor(init?: Partial<GetAiModelsResponse>) { (Object as any).assign(this, init); }
 }
 
 // @DataContract
@@ -862,6 +863,7 @@ export class CreateAiConfig implements IReturn<AiConfigResponse>
     public providerType: string;
     public apiKey: string;
     public modelId: string;
+    public fallbackModelId?: string;
     public baseUrl?: string;
 
     public constructor(init?: Partial<CreateAiConfig>) { (Object as any).assign(this, init); }
@@ -878,6 +880,7 @@ export class UpdateAiConfig implements IReturn<AiConfigResponse>
     public providerType: string;
     public apiKey: string;
     public modelId: string;
+    public fallbackModelId?: string;
     public baseUrl?: string;
 
     public constructor(init?: Partial<UpdateAiConfig>) { (Object as any).assign(this, init); }
@@ -950,14 +953,15 @@ export class TextToSpeechRequest implements IReturn<Blob>
 }
 
 // @Route("/ai/models", "GET")
-export class GetGeminiModels implements IReturn<GetGeminiModelsResponse>
+export class GetAiModels implements IReturn<GetAiModelsResponse>
 {
+    public providerType?: string;
     public apiKey?: string;
 
-    public constructor(init?: Partial<GetGeminiModels>) { (Object as any).assign(this, init); }
-    public getTypeName() { return 'GetGeminiModels'; }
+    public constructor(init?: Partial<GetAiModels>) { (Object as any).assign(this, init); }
+    public getTypeName() { return 'GetAiModels'; }
     public getMethod() { return 'GET'; }
-    public createResponse() { return new GetGeminiModelsResponse(); }
+    public createResponse() { return new GetAiModelsResponse(); }
 }
 
 /** @description Chat Completions API (OpenAI-Compatible) */

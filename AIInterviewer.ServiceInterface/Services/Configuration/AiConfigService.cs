@@ -10,7 +10,7 @@ namespace AIInterviewer.ServiceInterface.Services.Configuration;
 
 public class AiConfigService : Service
 {
-    public object Any(ListAiConfigs request)
+    public ListAiConfigsResponse Any(ListAiConfigs request)
     {
         return new ListAiConfigsResponse
         {
@@ -18,14 +18,14 @@ public class AiConfigService : Service
         };
     }
 
-    public object Any(GetAiConfig request)
+    public AiConfigResponse Any(GetAiConfig request)
     {
         var config = Db.SingleById<AiServiceConfig>(request.Id);
         if (config == null) throw HttpError.NotFound("Config not found");
         return config.ToDto();
     }
 
-    public object Any(CreateAiConfig request)
+    public AiConfigResponse Any(CreateAiConfig request)
     {
         Validate(request.ProviderType, request.ApiKey);
 
@@ -36,7 +36,7 @@ public class AiConfigService : Service
         return config.ToDto();
     }
 
-    public object Any(UpdateAiConfig request)
+    public AiConfigResponse Any(UpdateAiConfig request)
     {
         var config = Db.SingleById<AiServiceConfig>(request.Id);
         if (config == null) throw HttpError.NotFound("Config not found");

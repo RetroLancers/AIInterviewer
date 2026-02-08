@@ -7,21 +7,21 @@ using Microsoft.Extensions.Logging;
 
 namespace AIInterviewer.ServiceInterface.Services.AI;
 
-public class GeminiModelsService(IAiProviderFactory aiProviderFactory, SiteConfigHolder siteConfigHolder, ILogger<GeminiModelsService> logger) : Service
+public class AiModelsService(IAiProviderFactory aiProviderFactory, SiteConfigHolder siteConfigHolder, ILogger<AiModelsService> logger) : Service
 {
-    public async Task<GetGeminiModelsResponse> Get(GetGeminiModels request)
+    public async Task<GetAiModelsResponse> Get(GetAiModels request)
     {
-        logger.LogInformation("Fetching available Gemini models.");
+        logger.LogInformation("Fetching available {ProviderType} models.", request.ProviderType ?? "active");
         
         AiServiceConfig? config = null;
 
-        if (!string.IsNullOrEmpty(request.ApiKey))
+        if (!string.IsNullOrEmpty(request.ApiKey) && !string.IsNullOrEmpty(request.ProviderType))
         {
             config = new AiServiceConfig 
             { 
-                ProviderType = "Gemini", 
+                ProviderType = request.ProviderType, 
                 ApiKey = request.ApiKey,
-                ModelId = "gemini-2.0-flash-exp"
+                ModelId = request.ProviderType == "Gemini" ? "gemini-1.5-flash" : "gpt-4o"
             };
         }
         else
@@ -30,20 +30,23 @@ public class GeminiModelsService(IAiProviderFactory aiProviderFactory, SiteConfi
             if (siteConfig is { ActiveAiConfigId: > 0 })
             {
                 config = await Db.SingleByIdAsync<AiServiceConfig>(siteConfig.ActiveAiConfigId);
-                if (config?.ProviderType != "Gemini") config = null; // Only use if it's Gemini
+                if (!string.IsNullOrEmpty(request.ProviderType) && config?.ProviderType != request.ProviderType) 
+                {
+                    config = null; 
+                }
             }
         }
 
 
         if (config == null)
         {
-            throw new HttpError(400, "ConfigurationError", "No Gemini configuration found.");
+            throw new HttpError(400, "ConfigurationError", "No valid AI configuration found.");
         }
 
         var provider = aiProviderFactory.GetProvider(config);
         var models = await provider.ListModelsAsync();
 
-        return new GetGeminiModelsResponse
+        return new GetAiModelsResponse
         {
             Models = models.ToList()
         };
