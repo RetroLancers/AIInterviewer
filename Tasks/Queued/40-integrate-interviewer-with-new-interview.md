@@ -57,12 +57,19 @@ This task affects files tracked in the following clood groups:
 
 3. **Update CreateInterview DTO**:
     - Open `AIInterviewer.ServiceModel/Types/Interview/CreateInterview.cs`
-    - Add optional property:
+    - Add optional properties:
         ```csharp
         /// <summary>
         /// Optional saved interviewer ID. If provided, loads configuration from saved interviewer.
         /// </summary>
         public int? InterviewerId { get; set; }
+
+        /// <summary>
+        /// Optional voice selection for temporary interviewers. Used when InterviewerId is null.
+        /// If not provided, will use the voice from the selected AI config.
+        /// </summary>
+        [StringLength(100)]
+        public string? Voice { get; set; }
         ```
 
 4. **Run Migrations**:
@@ -78,8 +85,10 @@ This task affects files tracked in the following clood groups:
             - Fetch the `Interviewer` record
             - Use its `SystemPrompt` and `AiConfigId`
             - Store the `InterviewerId` in the `Interview` record
-        - If `InterviewerId` is not provided:
+            - Voice will come from the interviewer's AI config
+        - If `InterviewerId` is not provided (temporary interviewer):
             - Use the provided `SystemPrompt` and `AiConfigId` from the request (current behavior)
+            - Use the provided `Voice` parameter if specified
             - `InterviewerId` remains null (temporary interviewer)
 
 6. **Update DTOs**:
@@ -98,6 +107,15 @@ This task affects files tracked in the following clood groups:
             - Auto-fill the prompt fields with the interviewer's system prompt
             - Auto-select the interviewer's AI config (if set)
             - Show "Using saved interviewer: {name}" indicator
+            - Voice will come from the selected AI config
+    - **Add Voice Selection for Temporary Interviewers**:
+        - When creating a temporary interviewer (no saved interviewer selected):
+            - Add a voice selection dropdown (similar to what was in SiteConfig)
+            - Options: "alloy", "echo", "fable", "onyx", "nova", "shimmer" (or fetch from AI config)
+            - This is required since voice was removed from SiteConfig (Task 34)
+            - The selected voice should be used for the interview session
+        - When using a saved interviewer:
+            - Voice comes from the interviewer's AI config, so no manual selection needed
     - Update the action buttons:
         - If using a saved interviewer:
             - "Start Interview" button
@@ -109,7 +127,7 @@ This task affects files tracked in the following clood groups:
                 - Then starts the interview with the newly saved interviewer
     - Update form submission:
         - If saved interviewer selected: Include `interviewerId` in request
-        - If temporary: Include `systemPrompt` and optional `aiConfigId` (current behavior)
+        - If temporary: Include `systemPrompt`, optional `aiConfigId`, and selected voice (current behavior)
 
 8. **Handle Query Parameters**:
     - Check for `?interviewerId={id}` query parameter on page load
@@ -137,3 +155,4 @@ This task affects files tracked in the following clood groups:
 - Temporary interviewers (current behavior) remain fully supported
 - The "Save and Start" option bridges the gap between temporary and saved
 - Consider showing which interviewer was used in the interview history
+- **Voice Selection**: Since voice was moved from SiteConfig to AiConfig (Task 34), temporary interviewers must select a voice on the new interview page. Saved interviewers get their voice from their associated AI config.
