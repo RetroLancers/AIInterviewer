@@ -113,9 +113,12 @@
                                             </div>
                                             
                                             <div>
-                                                <label for="baseUrl" class="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100">Base URL (Optional)</label>
+                                                <label for="voice" class="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100">Voice (Optional)</label>
                                                 <div class="mt-1">
-                                                    <input type="text" v-model="form.baseUrl" id="baseUrl" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:bg-gray-700 dark:text-white dark:ring-gray-600">
+                                                    <select v-model="form.voice" id="voice" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 dark:bg-gray-700 dark:text-white dark:ring-gray-600">
+                                                        <option :value="undefined">Use Site Default</option>
+                                                        <option v-for="voice in availableVoices" :key="voice" :value="voice">{{ voice }}</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
@@ -155,6 +158,13 @@ const isEditing = ref(false);
 const availableModels = ref<string[]>([]);
 const loadingModels = ref(false);
 
+const availableVoices = [
+    'af_heart', 'af_bella', 'af_nicole', 'af_sarah', 'af_sky',
+    'am_adam', 'am_michael',
+    'bf_emma', 'bf_isabella',
+    'bm_george', 'bm_lewis'
+];
+
 const form = ref({
     id: 0,
     name: '',
@@ -162,7 +172,7 @@ const form = ref({
     apiKey: '',
     modelId: '',
     fallbackModelId: undefined as string | undefined,
-    baseUrl: ''
+    voice: 'af_heart'
 });
 
 async function loadConfigs() {
@@ -194,7 +204,10 @@ async function fetchModels() {
         if (response.succeeded && response.response) {
             availableModels.value = response.response.models || [];
             if (availableModels.value.length > 0 && !form.value.modelId) {
-                form.value.modelId = availableModels.value[0];
+                const firstModel = availableModels.value[0];
+                if (firstModel) {
+                    form.value.modelId = firstModel;
+                }
             }
         } else {
             alert('Failed to fetch models. Check your API key.');
@@ -223,7 +236,7 @@ function openAddModal() {
         apiKey: '',
         modelId: '',
         fallbackModelId: undefined,
-        baseUrl: ''
+        voice: 'af_heart'
     };
     showModal.value = true;
 }
@@ -234,7 +247,7 @@ function editConfig(config: AiConfigResponse) {
     form.value = { 
         ...config, 
         fallbackModelId: config.fallbackModelId || undefined,
-        baseUrl: config.baseUrl || '' 
+        voice: config.voice || 'af_heart' 
     };
     showModal.value = true;
     // Attempt to fetch models if API key is present
@@ -255,7 +268,7 @@ async function saveConfig() {
             apiKey: form.value.apiKey,
             modelId: form.value.modelId,
             fallbackModelId: form.value.fallbackModelId,
-            baseUrl: form.value.baseUrl || undefined
+            voice: form.value.voice
         };
 
         if (isEditing.value) {

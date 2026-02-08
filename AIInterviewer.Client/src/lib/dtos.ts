@@ -1,8 +1,8 @@
 /* Options:
-Date: 2026-02-07 21:05:45
+Date: 2026-02-07 22:31:48
 Version: 10.04
 Tip: To override a DTO option, remove "//" prefix before updating
-BaseUrl: https://localhost:5033
+BaseUrl: https://localhost:5044
 
 //GlobalNamespace: 
 //MakePropertiesOptional: False
@@ -607,7 +607,7 @@ export class AiConfigResponse
     public apiKey: string;
     public modelId: string;
     public fallbackModelId?: string;
-    public baseUrl?: string;
+    public voice?: string;
 
     public constructor(init?: Partial<AiConfigResponse>) { (Object as any).assign(this, init); }
 }
@@ -624,7 +624,7 @@ export class SiteConfigResponse
     public id: number;
     public activeAiConfigId: number;
     public globalFallbackModel?: string;
-    public kokoroVoice?: string;
+    public defaultVoice?: string;
     public transcriptionProvider: string;
 
     public constructor(init?: Partial<SiteConfigResponse>) { (Object as any).assign(this, init); }
@@ -771,6 +771,7 @@ export class CreateInterview implements IReturn<CreateInterviewResponse>
 {
     public systemPrompt: string;
     public userId?: string;
+    public aiConfigId?: number;
 
     public constructor(init?: Partial<CreateInterview>) { (Object as any).assign(this, init); }
     public getTypeName() { return 'CreateInterview'; }
@@ -864,7 +865,7 @@ export class CreateAiConfig implements IReturn<AiConfigResponse>
     public apiKey: string;
     public modelId: string;
     public fallbackModelId?: string;
-    public baseUrl?: string;
+    public voice?: string;
 
     public constructor(init?: Partial<CreateAiConfig>) { (Object as any).assign(this, init); }
     public getTypeName() { return 'CreateAiConfig'; }
@@ -881,7 +882,7 @@ export class UpdateAiConfig implements IReturn<AiConfigResponse>
     public apiKey: string;
     public modelId: string;
     public fallbackModelId?: string;
-    public baseUrl?: string;
+    public voice?: string;
 
     public constructor(init?: Partial<UpdateAiConfig>) { (Object as any).assign(this, init); }
     public getTypeName() { return 'UpdateAiConfig'; }
@@ -919,7 +920,7 @@ export class UpdateSiteConfigRequest implements IReturn<IdResponse>
     public activeAiConfigId: number;
 
     public globalFallbackModel?: string;
-    public kokoroVoice?: string;
+    public defaultVoice?: string;
     // @Validate(Validator="NotEmpty")
     public transcriptionProvider: string;
 
@@ -945,6 +946,7 @@ export class TranscribeAudioRequest implements IReturn<TranscribeAudioResponse>
 export class TextToSpeechRequest implements IReturn<Blob>
 {
     public text: string;
+    public interviewId?: number;
 
     public constructor(init?: Partial<TextToSpeechRequest>) { (Object as any).assign(this, init); }
     public getTypeName() { return 'TextToSpeechRequest'; }

@@ -27,6 +27,11 @@
         "AIInterviewer.ServiceModel/Types/Configuration/ListAiConfigs.cs",
         "AIInterviewer.ServiceModel/Types/Configuration/ListAiConfigsResponse.cs",
         "AIInterviewer.ServiceModel/Types/Configuration/ExtensionMethods/AiServiceConfigExtensions.cs",
-        "AIInterviewer.ServiceInterface/Services/Configuration/AiConfigService.cs"
+        "AIInterviewer.ServiceInterface/Services/Configuration/AiConfigService.cs",
+        "AIInterviewer/Migrations/Migration1006_RemoveBaseUrlFromAiConfig.cs",
+        "AIInterviewer/Migrations/Migration1007_UpdateAiConfigAddVoice.cs",
+        "AIInterviewer/Migrations/Migration1008_RemoveVoiceFromSiteConfig.cs",
+        "AIInterviewer/Migrations/Migration1010_AddDefaultVoiceToSiteConfig.cs",
+        "AIInterviewer.Client/src/pages/ai-configs.vue"
     ]
 }

@@ -28,7 +28,7 @@ export function useSiteConfig() {
     const saveSiteConfig = async (
         activeAiConfigId: number,
         globalFallbackModel?: string,
-        kokoroVoice?: string,
+        defaultVoice?: string,
         transcriptionProvider?: string
     ) => {
         if (!siteConfig.value) {
@@ -44,7 +44,7 @@ export function useSiteConfig() {
             id: siteConfig.value.id,
             activeAiConfigId,
             globalFallbackModel: globalFallbackModel || undefined,
-            kokoroVoice: kokoroVoice || undefined,
+            defaultVoice: defaultVoice || undefined,
             transcriptionProvider: transcriptionProvider || siteConfig.value.transcriptionProvider || 'Gemini'
         }))
 

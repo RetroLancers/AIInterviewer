@@ -7,4 +7,5 @@ namespace AIInterviewer.ServiceModel.Types.Chat;
 public class TextToSpeechRequest : IReturn<Stream>
 {
     public string Text { get; set; }
+    public int? InterviewId { get; set; }
 }

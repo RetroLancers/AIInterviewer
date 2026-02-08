@@ -24,8 +24,7 @@ public class GeminiAiProvider(AiServiceConfig config, ILogger<GeminiAiProvider> 
         
         return new Client(apiKey: apiKey, httpOptions: new HttpOptions()
         {
-            Timeout = 180 * 1000 * 2,
-            BaseUrl = config.BaseUrl
+            Timeout = 180 * 1000 * 2
         });
     }
 

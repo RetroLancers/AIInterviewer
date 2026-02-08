@@ -29,10 +29,7 @@ public class OpenAiProvider : IAiProvider
         _logger = logger;
 
         var options = new OpenAIClientOptions();
-        if (!string.IsNullOrEmpty(config.BaseUrl))
-        {
-            options.Endpoint = new Uri(config.BaseUrl);
-        }
+
 
         _modelClient = new OpenAIModelClient(new ApiKeyCredential(config.ApiKey), options);
         _chatClient = new ChatClient(config.ModelId ?? "gpt-4o", new ApiKeyCredential(config.ApiKey), options);

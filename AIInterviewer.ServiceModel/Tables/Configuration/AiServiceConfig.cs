@@ -28,6 +28,6 @@ public class AiServiceConfig
     [StringLength(255)]
     public string? FallbackModelId { get; set; }
 
-    [StringLength(2096)]
-    public string? BaseUrl { get; set; }
+    [StringLength(100)]
+    public string? Voice { get; set; }
 }

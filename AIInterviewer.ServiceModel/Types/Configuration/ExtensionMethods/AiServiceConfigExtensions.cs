@@ -15,7 +15,7 @@ public static class AiServiceConfigExtensions
             ApiKey = request.ApiKey,
             ModelId = request.ModelId,
             FallbackModelId = request.FallbackModelId,
-            BaseUrl = request.BaseUrl
+            Voice = request.Voice
         };
     }
 
@@ -26,7 +26,7 @@ public static class AiServiceConfigExtensions
         table.ApiKey = request.ApiKey;
         table.ModelId = request.ModelId;
         table.FallbackModelId = request.FallbackModelId;
-        table.BaseUrl = request.BaseUrl;
+        table.Voice = request.Voice;
     }
 
     public static AiConfigResponse ToDto(this AiServiceConfig table)
@@ -39,7 +39,7 @@ public static class AiServiceConfigExtensions
             ApiKey = table.ApiKey,
             ModelId = table.ModelId,
             FallbackModelId = table.FallbackModelId,
-            BaseUrl = table.BaseUrl
+            Voice = table.Voice
         };
     }
 
