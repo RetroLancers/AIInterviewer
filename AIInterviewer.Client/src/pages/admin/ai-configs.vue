@@ -143,7 +143,11 @@ async function loadConfigs() {
     loading.value = true;
     try {
         const response = await client.api(new ListAiConfigs());
-        configs.value = response.response || [];
+        if (response.succeeded && response.response) {
+            configs.value = response.response.configs || [];
+        } else {
+            configs.value = [];
+        }
     } catch (e) {
         console.error('Failed to load configs', e);
     } finally {

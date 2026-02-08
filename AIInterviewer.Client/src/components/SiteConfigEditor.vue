@@ -146,7 +146,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useSiteConfig } from '@/composables/useSiteConfig'
 import { useAiConfigs } from '@/composables/useAiConfigs'
 
@@ -159,6 +159,17 @@ const formData = ref({
   globalFallbackModel: '',
   kokoroVoice: 'af_heart',
   transcriptionProvider: 'Gemini'
+})
+
+// Available models for fallback (unique models from all configs)
+const availableModels = computed(() => {
+  const models = new Set<string>()
+  aiConfigs.value.forEach(config => {
+    if (config.modelId) {
+      models.add(config.modelId)
+    }
+  })
+  return Array.from(models).sort()
 })
 
 // Watch for siteConfig changes and update form
@@ -179,8 +190,4 @@ const handleSubmit = async () => {
     formData.value.transcriptionProvider
   )
 }
-
-onMounted(() => {
-    loadAiConfigs()
-})
 </script>
