@@ -32,6 +32,11 @@
         "AIInterviewer/Migrations/Migration1007_UpdateAiConfigAddVoice.cs",
         "AIInterviewer/Migrations/Migration1008_RemoveVoiceFromSiteConfig.cs",
         "AIInterviewer/Migrations/Migration1010_AddDefaultVoiceToSiteConfig.cs",
-        "AIInterviewer.Client/src/pages/ai-configs.vue"
+        "AIInterviewer.Client/src/pages/ai-configs.vue",
+        "AIInterviewer.Client/src/composables/useAiConfigs.ts",
+        "AIInterviewer.Client/src/composables/useModelFetching.ts",
+        "AIInterviewer.Client/src/components/ai-config/AiConfigList.vue",
+        "AIInterviewer.Client/src/components/ai-config/AiConfigForm.vue",
+        "AIInterviewer.Client/src/components/ai-config/AiConfigModal.vue"
     ]
 }

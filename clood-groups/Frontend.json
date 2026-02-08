@@ -15,6 +15,11 @@
         "AIInterviewer.Client/src/composables/useVocal.ts",
         "AIInterviewer.Client/src/composables/useSiteConfig.ts",
         "AIInterviewer.Client/src/composables/useInterview.ts",
-        "Tasks/Queued/09-prompt-source-options.md"
+        "Tasks/Queued/09-prompt-source-options.md",
+        "AIInterviewer.Client/src/composables/useAiConfigs.ts",
+        "AIInterviewer.Client/src/composables/useModelFetching.ts",
+        "AIInterviewer.Client/src/components/ai-config/AiConfigList.vue",
+        "AIInterviewer.Client/src/components/ai-config/AiConfigForm.vue",
+        "AIInterviewer.Client/src/components/ai-config/AiConfigModal.vue"
     ]
 }
