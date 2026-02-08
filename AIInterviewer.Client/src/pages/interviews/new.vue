@@ -137,17 +137,37 @@
           </div>
 
           <!-- Start Interview Action -->
-          <div v-if="systemPrompt" class="border-t border-gray-200 dark:border-gray-700 pt-6 flex justify-end">
-             <button
-              type="button"
-              @click="startInterview"
-              :disabled="starting"
-              class="inline-flex items-center rounded-md border border-transparent bg-green-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 transition-colors"
-            >
-              <Iconify v-if="starting" icon="line-md:loading-twotone-loop" class="mr-2 h-5 w-5" />
-              <span>Start Interview</span>
-              <Iconify v-if="!starting" icon="mdi:arrow-right" class="ml-2 h-5 w-5" />
-            </button>
+          <div v-if="systemPrompt" class="mt-6 border-t border-gray-200 dark:border-gray-700 pt-6">
+            <div class="mb-6 max-w-sm ml-auto">
+                <label for="aiConfig" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Interviewer Model (Optional)
+                </label>
+                <div class="mt-1">
+                    <select
+                        id="aiConfig"
+                        v-model="selectedAiConfigId"
+                        class="block w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm p-2.5 border"
+                    >
+                        <option :value="undefined">Use Site Default</option>
+                        <option v-for="config in aiConfigs" :key="config.id" :value="config.id">
+                            {{ config.name }} ({{ config.providerType }} - {{ config.modelId }})
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex justify-end">
+                <button
+                type="button"
+                @click="startInterview"
+                :disabled="starting"
+                class="inline-flex items-center rounded-md border border-transparent bg-green-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 transition-colors"
+                >
+                <Iconify v-if="starting" icon="line-md:loading-twotone-loop" class="mr-2 h-5 w-5" />
+                <span>Start Interview</span>
+                <Iconify v-if="!starting" icon="mdi:arrow-right" class="ml-2 h-5 w-5" />
+                </button>
+            </div>
           </div>
         </div>
       </div>
@@ -175,10 +195,10 @@
 import { computed, ref, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { client } from '@/lib/gateway'
-import { GenerateInterviewPrompt, CreateInterview } from '@/lib/dtos'
+import { GenerateInterviewPrompt, CreateInterview, ListAiConfigs, AiServiceConfig } from '@/lib/dtos'
 
 const router = useRouter()
-const route = useRoute('/interviews/new')
+const route = useRoute()
 
 const targetRole = ref('')
 const context = ref('')
@@ -187,11 +207,26 @@ const systemPrompt = ref('')
 const loading = ref(false)
 const starting = ref(false)
 const error = ref<string | null>(null)
+const aiConfigs = ref<AiServiceConfig[]>([])
+const selectedAiConfigId = ref<number | undefined>(undefined)
+
 const prefilledPrompt = computed(() => {
     const prompt = route.query.prompt
     return typeof prompt === 'string' ? prompt : ''
 })
 const hasPrefilledPrompt = computed(() => prefilledPrompt.value.length > 0)
+
+onMounted(async () => {
+    applyPrefilledPrompt()
+    await fetchAiConfigs()
+})
+
+async function fetchAiConfigs() {
+    const api = await client.api(new ListAiConfigs())
+    if (api.succeeded && api.response) {
+        aiConfigs.value = api.response.results || []
+    }
+}
 
 async function generatePrompt() {
     if (!targetRole.value) return
@@ -220,7 +255,8 @@ async function startInterview() {
     error.value = null
 
     const api = await client.api(new CreateInterview({
-        systemPrompt: systemPrompt.value
+        systemPrompt: systemPrompt.value,
+        aiConfigId: selectedAiConfigId.value
     }))
 
     if (api.succeeded && api.response) {
@@ -237,10 +273,6 @@ const applyPrefilledPrompt = () => {
         systemPrompt.value = prefilledPrompt.value
     }
 }
-
-onMounted(() => {
-    applyPrefilledPrompt()
-})
 
 watch(() => route.query.prompt, () => {
     applyPrefilledPrompt()

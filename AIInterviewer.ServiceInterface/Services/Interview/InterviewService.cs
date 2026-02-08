@@ -13,9 +13,12 @@ namespace AIInterviewer.ServiceInterface.Services.Interview;
 
 public class InterviewService(IAiProviderFactory aiProviderFactory, SiteConfigHolder siteConfigHolder, ILogger<InterviewService> logger) : Service
 {
-    private async Task<IAiProvider> GetAiProviderAsync()
+    private async Task<IAiProvider> GetAiProviderAsync(int? interviewAiConfigId = null)
     {
-        var activeConfigId = siteConfigHolder.SiteConfig?.ActiveAiConfigId ?? 0;
+        var activeConfigId = interviewAiConfigId.HasValue && interviewAiConfigId.Value > 0
+            ? interviewAiConfigId.Value
+            : siteConfigHolder.SiteConfig?.ActiveAiConfigId ?? 0;
+
         AiServiceConfig? config = null;
 
         if (activeConfigId > 0)
@@ -79,11 +82,14 @@ public class InterviewService(IAiProviderFactory aiProviderFactory, SiteConfigHo
 
     public async Task<CreateInterviewResponse> Post(CreateInterview request)
     {
+        var aiConfigId = request.AiConfigId ?? siteConfigHolder.SiteConfig?.ActiveAiConfigId;
+        
         var interview = new AIInterviewer.ServiceModel.Tables.Interview.Interview
         {
             Prompt = ApplyBaseInterviewRules(request.SystemPrompt),
             CreatedDate = DateTime.UtcNow,
-            UserId = request.UserId
+            UserId = request.UserId,
+            AiConfigId = aiConfigId > 0 ? aiConfigId : null
         };
 
         await Db.SaveAsync(interview);
@@ -148,7 +154,7 @@ public class InterviewService(IAiProviderFactory aiProviderFactory, SiteConfigHo
         using var trans = Db.OpenTransaction();
         try
         {
-            var provider = await GetAiProviderAsync();
+            var provider = await GetAiProviderAsync(interview.AiConfigId);
             var aiResponse = await provider.GenerateTextAsync(
                 "Begin the interview now.",
                 systemPrompt: interview.Prompt
@@ -215,7 +221,7 @@ public class InterviewService(IAiProviderFactory aiProviderFactory, SiteConfigHo
                 Content = entry.Content
             }).ToList();
 
-            var provider = await GetAiProviderAsync();
+            var provider = await GetAiProviderAsync(interview.AiConfigId);
             var aiResponse = await provider.GenerateTextAsync(
                 messages: messages,
                 systemPrompt: interview.Prompt
@@ -286,7 +292,7 @@ The ""Feedback"" must be markdown and include a section titled ""Final Evaluatio
         InterviewResult result;
         try
         {
-            var provider = await GetAiProviderAsync();
+            var provider = await GetAiProviderAsync(interview.AiConfigId);
             var schema = new AiSchemaDefinition
             {
                 Description = "Evaluation response containing score and feedback.",

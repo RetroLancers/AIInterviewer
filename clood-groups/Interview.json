@@ -15,6 +15,7 @@
         "AIInterviewer.ServiceModel/Types/Interview/CreateInterview.cs",
         "AIInterviewer.ServiceModel/Types/Interview/ExtensionMethods/InterviewExtensions.cs",
         "AIInterviewer/Migrations/Migration1001_CreateInterviewTables.cs",
+        "AIInterviewer/Migrations/Migration1009_AddAiConfigIdToInterview.cs",
         "AIInterviewer.Client/src/pages/interviews/new.vue",
         "AIInterviewer.Client/src/pages/interviews/[id]/result.vue",
         "AIInterviewer.Client/src/pages/interviews/[id]/index.vue",

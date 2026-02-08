@@ -19,4 +19,9 @@ public class Interview
 
     [StringLength(255)]
     public string? UserId { get; set; }
+
+    /// <summary>
+    /// Optional override for AI config. If null, uses site default.
+    /// </summary>
+    public int? AiConfigId { get; set; }
 }
