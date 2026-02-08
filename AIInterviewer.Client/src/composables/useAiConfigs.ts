@@ -1,35 +1,73 @@
-import { ref, onMounted } from 'vue'
-import { client } from '@/lib/gateway'
-import { ListAiConfigs, type AiConfigResponse } from '@/lib/dtos'
+import { ref } from 'vue';
+import { useClient } from '@servicestack/vue';
+import {
+    ListAiConfigs,
+    CreateAiConfig,
+    UpdateAiConfig,
+    DeleteAiConfig,
+    AiConfigResponse
+} from '@/lib/dtos';
 
 export function useAiConfigs() {
-    const aiConfigs = ref<AiConfigResponse[]>([])
-    const isLoading = ref(false)
-    const error = ref<string | null>(null)
+    const client = useClient();
+    const configs = ref<AiConfigResponse[]>([]);
+    const loading = ref(true);
 
-    const loadAiConfigs = async () => {
-        isLoading.value = true
-        error.value = null
-
-        const response = await client.api(new ListAiConfigs())
-
-        if (response.succeeded && response.response) {
-            aiConfigs.value = response.response.configs || []
-        } else {
-            error.value = response.error?.message || 'Failed to load AI configurations'
+    async function loadConfigs() {
+        loading.value = true;
+        try {
+            const response = await client.api(new ListAiConfigs());
+            if (response.succeeded && response.response) {
+                configs.value = response.response.configs || [];
+            } else {
+                configs.value = [];
+            }
+        } catch (e) {
+            console.error('Failed to load configs', e);
+        } finally {
+            loading.value = false;
         }
-
-        isLoading.value = false
     }
 
-    onMounted(() => {
-        loadAiConfigs()
-    })
+    async function saveConfig(config: Partial<AiConfigResponse>) {
+        try {
+            const payload = {
+                name: config.name || '',
+                providerType: config.providerType || 'Gemini',
+                apiKey: config.apiKey || '',
+                modelId: config.modelId || '',
+                fallbackModelId: config.fallbackModelId,
+                voice: config.voice
+            };
+
+            if (config.id && config.id > 0) {
+                await client.api(new UpdateAiConfig({
+                    id: config.id,
+                    ...payload
+                }));
+            } else {
+                await client.api(new CreateAiConfig(payload));
+            }
+            await loadConfigs();
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    async function deleteConfig(configId: number) {
+        try {
+            await client.api(new DeleteAiConfig({ id: configId }));
+            await loadConfigs();
+        } catch (e) {
+            throw e;
+        }
+    }
 
     return {
-        aiConfigs,
-        isLoading,
-        error,
-        loadAiConfigs
-    }
+        configs,
+        loading,
+        loadConfigs,
+        saveConfig,
+        deleteConfig
+    };
 }
