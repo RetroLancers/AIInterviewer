@@ -1,9 +1,0 @@
-
-> aiinterviewer@0.0.0 type-check C:\DevCurrent\AIInterviewer\AIInterviewer-verify-42\AIInterviewer.Client
-> vue-tsc --build --force
-
-src/components/SiteConfigEditor.vue(154,9): error TS2339: Property 'aiConfigs' does not exist on type '{ configs: Ref<{ id: number; name: string; providerType: string; apiKey: string; modelId: string; fallbackModelId?: string | undefined; voice?: string | undefined; }[], AiConfigResponse[] | { ...; }[]>; loading: Ref<...>; loadConfigs: () => Promise<...>; saveConfig: (config: Partial<...>) => Promise<...>; deleteConf...'.
-src/components/SiteConfigEditor.vue(154,20): error TS2339: Property 'isLoading' does not exist on type '{ configs: Ref<{ id: number; name: string; providerType: string; apiKey: string; modelId: string; fallbackModelId?: string | undefined; voice?: string | undefined; }[], AiConfigResponse[] | { ...; }[]>; loading: Ref<...>; loadConfigs: () => Promise<...>; saveConfig: (config: Partial<...>) => Promise<...>; deleteConf...'.
-src/components/SiteConfigEditor.vue(154,49): error TS2339: Property 'error' does not exist on type '{ configs: Ref<{ id: number; name: string; providerType: string; apiKey: string; modelId: string; fallbackModelId?: string | undefined; voice?: string | undefined; }[], AiConfigResponse[] | { ...; }[]>; loading: Ref<...>; loadConfigs: () => Promise<...>; saveConfig: (config: Partial<...>) => Promise<...>; deleteConf...'.
-src/components/SiteConfigEditor.vue(167,27): error TS7006: Parameter 'config' implicitly has an 'any' type.
-ΓÇëELIFECYCLEΓÇë Command failed with exit code 2.
