@@ -2,7 +2,7 @@
 
 We follow a file-based task management system to keep track of our progress.
 
-Important -> when creating a new branch you have to create the App_Data folder in the same folder as program.cs and then run npm run migrage
+Important -> when creating a new branch you have to create the App_Data folder in the same folder as program.cs and then run npm run migrate. Also when starting a new task if there is front end work you will need to use pnpm on the front end.
 
 ## Project Layout
 
@@ -43,7 +43,7 @@ The repository is structured such that the main branch and project files are loc
 *   **Port Selection**: When working in a task-specific worktree, use a port number derived from the task number to avoid conflicts with other worktrees.
     *   **Rule**: `50` + `<Task Number>`. (e.g., Task `01` uses port `5001`, Task `12` uses `5012`).
     *   **Fallback Port**: `51` + `<Task Number>`.
-*   **Updating DTOs**: Use the `Update-Dtos.ps1` script at the root. It handles starting the server on the correct task port, updating the TypeScript definitions, and shutting the server down.
+*   **Updating DTOs**: Use the `Update-Dtos.ps1` script at the root. It handles starting the server on the correct task port, updating the TypeScript definitions, and shutting the server down. This will often create a file called "localhost-xxx" which if it does you need to copy it over dtos as the different port numbers cause issues.
     *   **Command**: `.\Update-Dtos.ps1 -TaskNumber <Number>`
     *   Example: For task `04`, run `.\Update-Dtos.ps1 -TaskNumber 4`.
 
