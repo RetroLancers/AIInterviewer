@@ -146,12 +146,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, onMounted } from 'vue'
 import { useSiteConfig } from '@/composables/useSiteConfig'
 import { useAiConfigs } from '@/composables/useAiConfigs'
 
 const { siteConfig, isLoading, isSaving, error, saveSuccess, saveSiteConfig } = useSiteConfig()
-const { aiConfigs, isLoading: aiConfigsLoading, error: aiConfigsError } = useAiConfigs()
+const { configs: aiConfigs, loading: aiConfigsLoading, error: aiConfigsError, loadConfigs } = useAiConfigs()
 
 // Form data
 const formData = ref({
@@ -190,4 +190,8 @@ const handleSubmit = async () => {
     formData.value.transcriptionProvider
   )
 }
+
+onMounted(() => {
+  loadConfigs()
+})
 </script>
