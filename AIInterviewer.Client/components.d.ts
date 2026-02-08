@@ -13,6 +13,8 @@ declare module 'vue' {
   export interface GlobalComponents {
     ChatHistory: typeof import('./src/components/interview/ChatHistory.vue')['default']
     ChatInput: typeof import('./src/components/interview/ChatInput.vue')['default']
+    InterviewHistoryCard: typeof import('./src/components/interview/InterviewHistoryCard.vue')['default']
+    InterviewHistoryList: typeof import('./src/components/interview/InterviewHistoryList.vue')['default']
     NavFooter: typeof import('./src/components/NavFooter.vue')['default']
     NavHeader: typeof import('./src/components/NavHeader.vue')['default']
     NavItem: typeof import('./src/components/NavItem.vue')['default']

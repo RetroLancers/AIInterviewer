@@ -15,6 +15,9 @@
         "AIInterviewer.Client/src/composables/useVocal.ts",
         "AIInterviewer.Client/src/composables/useSiteConfig.ts",
         "AIInterviewer.Client/src/composables/useInterview.ts",
+        "AIInterviewer.Client/src/composables/useInterviewHistory.ts",
+        "AIInterviewer.Client/src/components/interview/InterviewHistoryCard.vue",
+        "AIInterviewer.Client/src/components/interview/InterviewHistoryList.vue",
         "Tasks/Queued/09-prompt-source-options.md"
     ]
 }
