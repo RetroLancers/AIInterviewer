@@ -11,6 +11,9 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AiConfigForm: typeof import('./src/components/ai-config/AiConfigForm.vue')['default']
+    AiConfigList: typeof import('./src/components/ai-config/AiConfigList.vue')['default']
+    AiConfigModal: typeof import('./src/components/ai-config/AiConfigModal.vue')['default']
     ChatHistory: typeof import('./src/components/interview/ChatHistory.vue')['default']
     ChatInput: typeof import('./src/components/interview/ChatInput.vue')['default']
     NavFooter: typeof import('./src/components/NavFooter.vue')['default']

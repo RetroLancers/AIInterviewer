@@ -29,7 +29,7 @@ public class Migration1011_CreateInterviewerTable : MigrationBase
         [StringLength(8000)]
         public string SystemPrompt { get; set; }
 
-        [ForeignKey(typeof(AiServiceConfig))]
+        [ForeignKey(typeof(AiServiceConfig), OnDelete = "Set Null")]
         public int? AiConfigId { get; set; }
 
         [References(typeof(AiServiceConfig))]
