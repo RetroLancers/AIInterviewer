@@ -53,7 +53,6 @@ public class ConfigureSiteConfig : IHostingStartup
                     {
                         ActiveAiConfigId = firstAiConfig.Id,
                         GlobalFallbackModel = "",
-                        KokoroVoice = "af_heart",
                         TranscriptionProvider = "Gemini"
                     };
                     siteConfigHolder.SiteConfig = siteConfig;
