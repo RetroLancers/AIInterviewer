@@ -1,5 +1,6 @@
 using ServiceStack.DataAnnotations;
 using System;
+using AIInterviewer.ServiceModel.Tables.Configuration;
 
 namespace AIInterviewer.ServiceModel.Tables.Interview;
 
@@ -21,13 +22,11 @@ public class Interviewer
     /// <summary>
     /// Optional AI config override. If null, uses site default.
     /// </summary>
+    [References(typeof(AiServiceConfig))]
     public int? AiConfigId { get; set; }
 
-    /// <summary>
-    /// Optional user ID if we want to support per-user interviewers in the future
-    /// </summary>
-    [StringLength(255)]
-    public string? UserId { get; set; }
+    [Reference]
+    public AiServiceConfig AiConfig { get; set; }
 
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }

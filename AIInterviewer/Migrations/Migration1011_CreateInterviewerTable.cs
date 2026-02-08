@@ -6,6 +6,14 @@ namespace AIInterviewer.Migrations;
 
 public class Migration1011_CreateInterviewerTable : MigrationBase
 {
+    [Alias("ai_service_config")]
+    public class AiServiceConfig
+    {
+        [AutoIncrement]
+        [PrimaryKey]
+        public int Id { get; set; }
+    }
+
     [Alias("interviewer")]
     public class Interviewer
     {
@@ -21,10 +29,8 @@ public class Migration1011_CreateInterviewerTable : MigrationBase
         [StringLength(8000)]
         public string SystemPrompt { get; set; }
 
+        [References(typeof(AiServiceConfig))]
         public int? AiConfigId { get; set; }
-
-        [StringLength(255)]
-        public string? UserId { get; set; }
 
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
