@@ -6,6 +6,7 @@
         "AIInterviewer.ServiceInterface/Services/Chat/ChatService.cs",
         "AIInterviewer.ServiceInterface/Services/Chat/TtsService.cs",
         "AIInterviewer.ServiceInterface/Services/Configuration/SiteConfigService.cs",
-        "AIInterviewer.ServiceInterface/Services/Interview/InterviewService.cs"
+        "AIInterviewer.ServiceInterface/Services/Interview/InterviewService.cs",
+        "AIInterviewer.ServiceInterface/Services/Interview/InterviewerService.cs"
     ]
 }
