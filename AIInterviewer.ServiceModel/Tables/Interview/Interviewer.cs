@@ -22,10 +22,10 @@ public class Interviewer
     /// <summary>
     /// Optional AI config override. If null, uses site default.
     /// </summary>
-    [References(typeof(AiServiceConfig))]
+    [ForeignKey(typeof(AiServiceConfig))]
     public int? AiConfigId { get; set; }
 
-    [Reference]
+    [References(typeof(AiServiceConfig))]
     public AiServiceConfig AiConfig { get; set; }
 
     public DateTime CreatedAt { get; set; }
