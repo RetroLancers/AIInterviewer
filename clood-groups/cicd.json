@@ -1,0 +1,12 @@
+{
+    "name": "CI/CD",
+    "description": "Continuous Integration and Continuous Deployment pipelines, build automation, and release workflows.",
+    "files": [
+        ".github/workflows/build.yml",
+        ".github/workflows/build-container.yml",
+        ".github/workflows/release.yml",
+        ".github/workflows/release-build.yml",
+        "config/deploy.yml",
+        "Dockerfile"
+    ]
+}

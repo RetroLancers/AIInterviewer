@@ -1,0 +1,124 @@
+name: Release Build
+
+on:
+  push:
+    branches:
+      - release
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        include:
+          - runtime: win-x64
+            archive: zip
+          - runtime: linux-x64
+            archive: tar.gz
+          - runtime: osx-x64
+            archive: tar.gz
+          - runtime: osx-arm64
+            archive: tar.gz
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+      
+      - name: Restore NuGet packages
+        run: dotnet restore AIInterviewer.slnx
+      
+      - name: Get version
+        id: version
+        run: |
+          # Use date-based versioning: YYYY.MM.DD.BUILD
+          VERSION=$(date +'%Y.%m.%d').${{ github.run_number }}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+      
+      - name: Build and Publish for ${{ matrix.runtime }}
+        run: |
+          dotnet publish AIInterviewer/AIInterviewer.csproj \
+            -c Release \
+            -r ${{ matrix.runtime }} \
+            --self-contained true \
+            -p:PublishSingleFile=true \
+            -p:Version=${{ steps.version.outputs.version }} \
+            -o ./publish/${{ matrix.runtime }}
+      
+      - name: Create archive (tar.gz)
+        if: matrix.archive == 'tar.gz'
+        run: |
+          cd ./publish/${{ matrix.runtime }}
+          tar -czf ../../aiinterviewer-${{ matrix.runtime }}-v${{ steps.version.outputs.version }}.tar.gz .
+          cd ../..
+      
+      - name: Create archive (zip)
+        if: matrix.archive == 'zip'
+        run: |
+          cd ./publish/${{ matrix.runtime }}
+          zip -r ../../aiinterviewer-${{ matrix.runtime }}-v${{ steps.version.outputs.version }}.zip .
+          cd ../..
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: aiinterviewer-${{ matrix.runtime }}-v${{ steps.version.outputs.version }}
+          path: aiinterviewer-${{ matrix.runtime }}-v${{ steps.version.outputs.version }}.${{ matrix.archive }}
+          retention-days: 30
+  
+  create-release:
+    needs: build-and-release
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      
+      - name: Get version
+        id: version
+        run: |
+          VERSION=$(date +'%Y.%m.%d').${{ github.run_number }}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+      
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+      
+      - name: Display structure of downloaded files
+        run: ls -R ./artifacts
+      
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: Release v${{ steps.version.outputs.version }}
+          body: |
+            ## AI Interviewer Release v${{ steps.version.outputs.version }}
+            
+            ### Downloads
+            - **Windows (x64)**: `aiinterviewer-win-x64-v${{ steps.version.outputs.version }}.zip`
+            - **Linux (x64)**: `aiinterviewer-linux-x64-v${{ steps.version.outputs.version }}.tar.gz`
+            - **macOS (Intel)**: `aiinterviewer-osx-x64-v${{ steps.version.outputs.version }}.tar.gz`
+            - **macOS (Apple Silicon)**: `aiinterviewer-osx-arm64-v${{ steps.version.outputs.version }}.tar.gz`
+            
+            ### Installation
+            1. Download the appropriate archive for your platform
+            2. Extract the archive
+            3. Run the executable
+            
+            ### Changes
+            ${{ github.event.head_commit.message }}
+          draft: false
+          prerelease: false
+          files: ./artifacts/**/*

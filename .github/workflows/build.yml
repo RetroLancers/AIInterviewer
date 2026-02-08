@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - '**'        # matches every branch
+      - '!release'  # exclude release branch
 
 jobs:
   build:
