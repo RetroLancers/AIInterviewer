@@ -35,7 +35,7 @@ public class Migration1001_CreateInterviewTables : MigrationBase
         [ForeignKey(typeof(Interview), OnDelete = "Cascade")]
         public int InterviewId { get; set; }
 
-        [References(typeof(Interview))] 
+        [Reference]
         public Interview Interview { get; set; }
 
         [Required]
@@ -60,7 +60,7 @@ public class Migration1001_CreateInterviewTables : MigrationBase
         [ForeignKey(typeof(Interview), OnDelete = "Cascade")]
         public int InterviewId { get; set; }
 
-        [References(typeof(Interview))]
+        [Reference]
         public Interview Interview { get; set; }
 
         [Required]

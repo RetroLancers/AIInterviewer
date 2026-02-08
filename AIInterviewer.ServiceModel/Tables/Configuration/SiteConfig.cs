@@ -10,7 +10,7 @@ public class SiteConfig
     public int Id { get; set; }
 
     [Required]
-    [References(typeof(AiServiceConfig))]
+    [ForeignKey(typeof(AiServiceConfig), OnDelete = "Set Null")]
     public int ActiveAiConfigId { get; set; }
 
     [StringLength(255)]

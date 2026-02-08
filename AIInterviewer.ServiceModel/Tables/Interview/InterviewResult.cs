@@ -13,7 +13,7 @@ public class InterviewResult
     [ForeignKey(typeof(Interview), OnDelete = "Cascade")]
     public int InterviewId { get; set; }
 
-    [References(typeof(Interview))]
+    [Reference]
     public Interview Interview { get; set; }
 
     [Required]

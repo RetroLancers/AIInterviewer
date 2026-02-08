@@ -32,7 +32,7 @@ public class Migration1011_CreateInterviewerTable : MigrationBase
         [ForeignKey(typeof(AiServiceConfig), OnDelete = "Set Null")]
         public int? AiConfigId { get; set; }
 
-        [References(typeof(AiServiceConfig))]
+        [Reference]
         public AiServiceConfig AiConfig { get; set; }
 
         public DateTime CreatedAt { get; set; }

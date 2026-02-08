@@ -25,7 +25,7 @@ public class Interviewer
     [ForeignKey(typeof(AiServiceConfig))]
     public int? AiConfigId { get; set; }
 
-    [References(typeof(AiServiceConfig))]
+    [Reference]
     public AiServiceConfig AiConfig { get; set; }
 
     public DateTime CreatedAt { get; set; }
