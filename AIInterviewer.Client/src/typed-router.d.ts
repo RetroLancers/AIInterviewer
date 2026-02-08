@@ -114,72 +114,9 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/posts/': RouteRecordInfo<
-      '/posts/',
-      '/posts',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/posts/[slug]': RouteRecordInfo<
-      '/posts/[slug]',
-      '/posts/:slug',
-      { slug: ParamValue<true> },
-      { slug: ParamValue<false> },
-      | never
-    >,
-    '/posts/author/[name]': RouteRecordInfo<
-      '/posts/author/[name]',
-      '/posts/author/:name',
-      { name: ParamValue<true> },
-      { name: ParamValue<false> },
-      | never
-    >,
-    '/posts/tagged/[tag]': RouteRecordInfo<
-      '/posts/tagged/[tag]',
-      '/posts/tagged/:tag',
-      { tag: ParamValue<true> },
-      { tag: ParamValue<false> },
-      | never
-    >,
-    '/posts/year/[year]': RouteRecordInfo<
-      '/posts/year/[year]',
-      '/posts/year/:year',
-      { year: ParamValue<true> },
-      { year: ParamValue<false> },
-      | never
-    >,
     '/privacy': RouteRecordInfo<
       '/privacy',
       '/privacy',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/profile': RouteRecordInfo<
-      '/profile',
-      '/profile',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/signin': RouteRecordInfo<
-      '/signin',
-      '/signin',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/signup': RouteRecordInfo<
-      '/signup',
-      '/signup',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/signup-confirm': RouteRecordInfo<
-      '/signup-confirm',
-      '/signup-confirm',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -282,63 +219,9 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
-    'src/pages/posts/index.vue': {
-      routes:
-        | '/posts/'
-      views:
-        | never
-    }
-    'src/pages/posts/[slug].vue': {
-      routes:
-        | '/posts/[slug]'
-      views:
-        | never
-    }
-    'src/pages/posts/author/[name].vue': {
-      routes:
-        | '/posts/author/[name]'
-      views:
-        | never
-    }
-    'src/pages/posts/tagged/[tag].vue': {
-      routes:
-        | '/posts/tagged/[tag]'
-      views:
-        | never
-    }
-    'src/pages/posts/year/[year].vue': {
-      routes:
-        | '/posts/year/[year]'
-      views:
-        | never
-    }
     'src/pages/privacy.md': {
       routes:
         | '/privacy'
-      views:
-        | never
-    }
-    'src/pages/profile.vue': {
-      routes:
-        | '/profile'
-      views:
-        | never
-    }
-    'src/pages/signin.vue': {
-      routes:
-        | '/signin'
-      views:
-        | never
-    }
-    'src/pages/signup.vue': {
-      routes:
-        | '/signup'
-      views:
-        | never
-    }
-    'src/pages/signup-confirm.vue': {
-      routes:
-        | '/signup-confirm'
       views:
         | never
     }
