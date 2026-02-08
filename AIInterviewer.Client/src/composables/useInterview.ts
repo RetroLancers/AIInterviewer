@@ -33,7 +33,10 @@ export function useInterview(interviewId: any) {
         if (skipVoicePlayback.value) return
 
         // TextToSpeechRequest returns a Blob (WAV)
-        const api = await client.api(new TextToSpeechRequest({ text: sanitizedText }))
+        const api = await client.api(new TextToSpeechRequest({
+            text: sanitizedText,
+            interviewId: id.value
+        }))
         if (api.succeeded && api.response) {
             const url = URL.createObjectURL(api.response)
             const audio = new Audio(url)
@@ -91,22 +94,22 @@ export function useInterview(interviewId: any) {
         processingAi.value = true
 
         const api = await client.api(new AddChatMessage({
-             interviewId: id.value,
-             message: message
+            interviewId: id.value,
+            message: message
         }))
 
         if (api.succeeded && api.response) {
             history.value = api.response.history ?? []
-             const lastMsg = history.value[history.value.length - 1]
+            const lastMsg = history.value[history.value.length - 1]
             if (lastMsg && lastMsg.role === 'Interviewer') {
                 await playAiResponse(lastMsg.content)
             }
             processingAi.value = false
             return { success: true }
         } else {
-             history.value = history.value.filter(entry => entry.id !== optimisticId)
-             processingAi.value = false
-             return { success: false, error: api.error?.message || 'Failed to send message.' }
+            history.value = history.value.filter(entry => entry.id !== optimisticId)
+            processingAi.value = false
+            return { success: false, error: api.error?.message || 'Failed to send message.' }
         }
     }
 
