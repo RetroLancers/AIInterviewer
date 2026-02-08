@@ -13,7 +13,6 @@
     "AIInterviewer.ServiceModel/Types/Configuration/AiConfigResponse.cs",
     "AIInterviewer.ServiceModel/Types/Configuration/ExtensionMethods/AiConfigExtensions.cs",
     "AIInterviewer.Client/src/pages/admin/ai-configs.vue",
-    "AIInterviewer.ServiceInterface/Utilities/AiSchemaGenerator.cs",
     "AIInterviewer.ServiceModel/Types/Ai/AiSchemaDefinition.cs",
     "AIInterviewer.ServiceInterface/Services/Interview/InterviewService.cs",
     "AIInterviewer.ServiceInterface/Providers/Generators/OpenAiSchemaGenerator.cs",
