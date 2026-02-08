@@ -8,7 +8,6 @@ using AIInterviewer.ServiceInterface.Interfaces;
 using AIInterviewer.ServiceModel.Types.Ai;
 using Microsoft.Extensions.Logging;
 using AIInterviewer.ServiceInterface.Extensions;
-using AIInterviewer.ServiceInterface.Utilities;
 
 namespace AIInterviewer.ServiceInterface.Services.Interview;
 
@@ -288,7 +287,16 @@ The ""Feedback"" must be markdown and include a section titled ""Final Evaluatio
         try
         {
             var provider = await GetAiProviderAsync();
-            var schema = AiSchemaGenerator.Generate(typeof(EvaluationResponse));
+            var schema = new AiSchemaDefinition
+            {
+                Description = "Evaluation response containing score and feedback.",
+                Properties = new Dictionary<string, AiSchemaDefinition>
+                {
+                    { "score", new AiSchemaDefinition { Type = "integer", Description = "Score from 0-100 based on the candidate's performance." } },
+                    { "feedback", new AiSchemaDefinition { Type = "string", Description = "Comprehensive markdown report including Summary, Strengths, Areas for Improvement, Role Fit, Hiring Recommendation, and Next Steps." } }
+                },
+                Required = ["score", "feedback"]
+            };
             var evaluation = await provider.GenerateJsonAsync<EvaluationResponse>(evaluationPrompt, schema, nameof(EvaluationResponse));
 
             if (evaluation == null) throw new Exception("Failed to generate evaluation");
