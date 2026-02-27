@@ -128,7 +128,8 @@ const textEntryValue = computed({
 const isTransmitting = computed(() => textEntry.value.status === TextEntryStatus.Transmitting)
 const useBrowserTranscription = computed(() => props.transcriptionProvider === 'Browser')
 
-// Pass manualMode ref to useSpeechRecognition if supported, otherwise it uses initial value
+// Use a reactive ref for `continuous` so it reflects the current manualMode at recording time
+const manualModeRef = toRef(props, 'manualMode')
 const {
     result: speechResult,
     isListening,
@@ -136,7 +137,7 @@ const {
     start: startListening,
     stop: stopListening
 } = useSpeechRecognition({
-    continuous: props.manualMode,
+    continuous: manualModeRef.value,
     interimResults: false
 })
 
